@@ -1,0 +1,71 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    position: relative;
+}
+
+.container-flex {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.bg-gradient {
+    border-radius: 20px;
+    max-width: 400px;
+    width: 100%;
+    padding: 2px;
+    position: relative; /* Aseguramos que el contenido posicionado sea relativo */
+    overflow: hidden; /* Ocultamos el contenido que se extiende más allá del contenedor */
+}
+
+.bg-gradient::before,
+.bg-gradient::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 100%; /* Ajustamos la altura del pseudoelemento al 50% */
+    background: linear-gradient(to bottom, red, white); /* Degradado de arriba a abajo, de rojo a blanco */
+    z-index: -1; /* Enviamos los pseudoelementos detrás del contenido */
+}
+
+.bg-gradient::before {
+    top: 0; /* Aplicamos el degradado en la parte superior */
+}
+
+.bg-gradient::after {
+    bottom: 0; /* Aplicamos el degradado en la parte inferior */
+}
+
+.card-inner {
+    background: white;
+    border-radius: 18px;
+    padding: 1rem;
+}
+
+.form-control {
+    border-radius: 10px;
+}
+
+.btn-danger {
+    background-color: #ED1C24;
+    border-color: #ED1C24;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+footer {
+    background-color: #ED1C24;
+    color: white;
+}
+
