@@ -1,15 +1,33 @@
-body, html {
-    height: 100%;
+:root {
+    --bs-breakpoint-xs: 0;
+    --bs-breakpoint-sm: 530px; 
+    --bs-breakpoint-md: 768px;
+    --bs-breakpoint-lg: 992px;
+    --bs-breakpoint-xl: 1200px;
+    --bs-breakpoint-xxl: 1400px;
+}
+
+html, body {
+    min-height: 100vh;
     margin: 0;
+    padding: 0;
     box-sizing: border-box;
 }
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 
 .content-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 100vh;
-    position: relative;
+    flex: 1;
+    padding: 0;
+    margin: 0; 
 }
 
 .container-flex {
@@ -17,15 +35,17 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
+    padding: 0;
+    margin: 0;
 }
+
 .bg-gradient {
     border-radius: 20px;
     max-width: 400px;
     width: 100%;
-    padding: 2px;
-    position: relative; /* Aseguramos que el contenido posicionado sea relativo */
-    overflow: hidden; /* Ocultamos el contenido que se extiende más allá del contenedor */
+    padding: 0.2vh;
+    position: relative;
+    overflow: hidden;
 }
 
 .bg-gradient::before,
@@ -34,17 +54,17 @@ body, html {
     position: absolute;
     left: 0;
     right: 0;
-    height: 100%; /* Ajustamos la altura del pseudoelemento al 50% */
-    background: linear-gradient(to bottom, red, white); /* Degradado de arriba a abajo, de rojo a blanco */
-    z-index: -1; /* Enviamos los pseudoelementos detrás del contenido */
+    height: 100%;
+    background: linear-gradient(to bottom, red, white);
+    z-index: -1;
 }
 
 .bg-gradient::before {
-    top: 0; /* Aplicamos el degradado en la parte superior */
+    top: 0;
 }
 
 .bg-gradient::after {
-    bottom: 0; /* Aplicamos el degradado en la parte inferior */
+    bottom: 0;
 }
 
 .card-inner {
@@ -67,5 +87,6 @@ body, html {
 footer {
     background-color: #ED1C24;
     color: white;
+    margin-top: auto;
+    padding: 1rem 0;
 }
-
