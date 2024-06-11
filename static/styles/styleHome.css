@@ -1,0 +1,141 @@
+html,
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  margin: 0;
+  padding-left: 2vh;
+  padding-right: 2vh;
+}
+
+.content-wrapper-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  padding: 0;
+  margin: 0;
+}
+
+.container-flex {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  padding-left: 2vh;
+  padding-right: 2vh;
+  margin: 0;
+}
+
+.report-card {
+  min-height: 300px;
+}
+
+.manuales-card,
+.directorio-card {
+  min-height: 75px;
+}
+
+.bg-gradient {
+  border-radius: 20px;
+  width: 100%;
+  padding: 0.2vh;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.bg-gradient::before,
+.bg-gradient::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(to bottom, #ed1c24, #ffffff);
+  z-index: -1;
+}
+
+.bg-gradient-manuales::before,
+.bg-gradient-manuales::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(to right, #ed1c24, #ffffff);
+  z-index: -1;
+}
+
+.bg-gradient-directorio::before,
+.bg-gradient-directorio::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(to right, #ed1c24, #ffffff);
+  z-index: -1;
+}
+
+.bg-gradient::before {
+  top: 0;
+}
+
+.bg-gradient::after {
+  bottom: 0;
+}
+
+.card-inner {
+  background: white;
+  border-radius: 18px;
+  padding: 1.5rem;
+  box-shadow: 0px 4px 8px rgba(168, 168, 168, 0.5);
+  height: 100%;
+}
+
+.form-control {
+  border-radius: 10px;
+}
+
+.btn-danger {
+  background-color: #ed1c24;
+  border-color: #ed1c24;
+  border-radius: 10px;
+  padding: 10px 50px;
+}
+
+.btn-dark {
+  background-color: #000000;
+  border-color: #000;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.header {
+  background-color: #ffffff;
+  color: #ed1c24;
+  padding: 10px;
+  text-align: left;
+}
+
+footer {
+  background-color: #ed1c24;
+  color: white;
+  margin-top: auto;
+  padding: 0;
+}
