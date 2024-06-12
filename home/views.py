@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 @login_required
 def home_view(request):
+    
     categorias_reporte = { 
         "Ventas": [
                    "Por Producto",
@@ -54,7 +56,7 @@ def home_view(request):
                                                 "Consignatarios por Segmento",
                                                 "Consignatarios por Producto",
                                                 "Consignatarios por Familia",
-                                                "Ventas a Clientes/Consignatarios por Mes"
+                                                "Ventas a Clientes/Consignatarios por Mes",
                                                 "Ventas de Clientes por Grupo, Consignatario y Producto",
                                                 "Clientes y Productos por Grupo",
                                                 "Consignatarios por Sucursal",
@@ -74,9 +76,17 @@ def home_view(request):
                          "Devoluciones por Zona en Pesos",
                          "Devoluciones por Zona en Kilogramos"],
     }
+    
+    if request.method == 'POST':
+                categoria_reporte = request.POST.get('categoria_reporte')
+                tipo_reporte = request.POST.get('tipo_reporte')
 
+                # Obtener la URL inversa de 'report' y pasar los parámetros como argumentos de consulta
+                report_url = reverse('report')
+                report_url += '?categoria_reporte={}&tipo_reporte={}'.format(categoria_reporte, tipo_reporte)
+                return redirect(report_url)
+            
     context = {
-        'categorias_reporte': categorias_reporte
+        'categorias_reporte': categorias_reporte,
     }
-
     return render(request, 'portal/home.html', context)

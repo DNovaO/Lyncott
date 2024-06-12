@@ -41,6 +41,13 @@ body {
   margin: 0;
 }
 
+.custom-btn {
+  display: block;
+  width: auto;
+  margin: 0 auto;
+  text-align: center;
+}
+
 .report-card {
   min-height: 300px;
 }
@@ -103,7 +110,7 @@ body {
 .card-inner {
   background: white;
   border-radius: 18px;
-  padding: 1.5rem;
+  padding: 3vh;
   box-shadow: 0px 4px 8px rgba(168, 168, 168, 0.5);
   height: 100%;
 }

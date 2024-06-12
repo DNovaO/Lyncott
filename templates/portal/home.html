@@ -1,138 +1,234 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="{% static 'resources/lyncott-logo.png' %}" alt="LyncottIcon" />
+    <link
+      rel="icon"
+      href="{% static 'resources/lyncott-logo.png' %}"
+      alt="LyncottIcon"
+    />
     <title>Portal Lyncott</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="{% static 'styles/styleHome.css' %}" />
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light" style="padding-left: 2vh; padding-right: 4vh">
-        <div class="container-fluid justify-content-between">
-            <a class="navbar-brand" href="#">
-                <img src="{% static 'resources/logo-lyncott.png' %}" alt="Lyncott" class="img-fluid" style="max-width: 225px" />
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light" style="padding-left: 2vh; padding-right: 2vh">
+      <div class="container-fluid d-flex justify-content-between align-items-center">
+        <a class="navbar-brand">
+          <img
+            src="{% static 'resources/logo-lyncott.png' %}"
+            alt="Lyncott"
+            class="img-fluid"
+            style="max-width: 150px"
+          />
+        </a>
+    
+        <!-- Botón de colapso -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="mx-auto">
+            <h1 class="mb-0 text-center">
+              <strong>Seleccionar Reporte a Consultar</strong>
+            </h1>
+          </div>
+          <div class="d-flex align-items-center justify-content-end">
+            <button type="submit" class="btn btn-danger custom-btn w-100">
+              Salir
             </button>
-            <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item justify-content-center text-center">
-                        <button type="submit" class="btn btn-danger">Salir</button>
-                    </li>
-                </ul>
-            </div>
+          </div>
         </div>
+      </div>
     </nav>
 
     <div class="container-flex">
-        <div class="content-wrapper">
-            <div class="row">
-                <div class="col-md-6 d-flex flex-column">
-                    <div class="bg-gradient flex-grow-1">
-                        <div class="card-inner text-center report-card">
-                            <h5 class="card-title display-3 font-weight-normal">Reportes</h5>
-                            <form>
-                                <div class="form-group mt-4 display-6">
-                                    <label for="categoriaReporte">Categoría de Reporte</label>
-                                    <select class="form-control mt-2" id="categoriaReporte" onchange="updateTiposReporte()">
-                                        <option value="">Seleccione una categoría</option>
-                                        {% for categoria in categorias_reporte %}
-                                            <option value="{{ categoria }}">{{ categoria }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="form-group mt-4 display-6">
-                                    <label for="tipoReporte">Tipo de Reporte</label>
-                                    <select class="form-control mt-2" id="tipoReporte">
-                                        <option value="">Seleccione un tipo</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-sm mt-3 btn-dark font-weight-bold">Buscar Reporte</button>
-                                <img class="ml-0 ml-md-2 mt-3" style="max-width: 50px" src="{% static 'resources/analysis-analytics-data-svgrepo-com.svg' %}" alt="Reportes" />
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 d-flex flex-column">
-                    <div class="row flex-grow-1">
-                        <div class="col-md-12 d-flex flex-column">
-                            <div class="bg-gradient bg-gradient-manuales flex-grow-1 mb-4 manuales-card">
-                                <div class="card-inner d-flex align-items-center justify-content-between">
-                                    <div>
-                                        <h5 class="card-title display-4 font-weight-normal">Manuales</h5>
-                                        <a class="btn btn-dark btn-sm mt-2 font-weight-bold justify-content-center text-center" href="#">Ir a KAM</a>
-                                    </div>
-                                    <img class="ml-0 ml-md-2" style="max-width: 55px" src="{% static 'resources/user-manual-svgrepo-com.svg' %}" alt="Manuales" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 d-flex flex-column mt-3">
-                            <div class="bg-gradient bg-gradient-directorio flex-grow-1 mt-4">
-                                <div class="card-inner d-flex align-items-center justify-content-between directorio-card">
-                                    <div>
-                                        <h5 class="card-title display-4 font-weight-normal">Directorio</h5>
-                                        <a class="btn btn-dark btn-sm mt-2 font-weight-bold justify-content-center text-center" href="#">Ir a Directorio</a>
-                                    </div>
-                                    <img class="ml-0 ml-md-2" style="max-width: 55px" src="{% static 'resources/contacts-svgrepo-com.svg' %}" alt="Directorio" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <div class="content-wrapper">
+        <div class="row">
+          <div class="col-md-6 d-flex flex-column">
+            <div class="bg-gradient flex-grow-1 mb-4">
+              <div class="card-inner text-center report-card">
+                <h5 class="card-title display-3 font-weight-normal">
+                  Reportes
+                </h5>
+                <form method="post">
+                  {% csrf_token %}
+                  <div class="form-group mt-4 display-6">
+                    <label for="categoriaReporte">Categoría de Reporte</label>
+                    <select
+                      class="form-control mt-2"
+                      id="categoriaReporte"
+                      name="categoria_reporte"
+                      onchange="updateTiposReporte()"
+                    >
+                      <option value="">Seleccione una categoría</option>
+                      {% for categoria in categorias_reporte %}
+                      <option value="{{ categoria }}">{{ categoria }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group mt-4 display-6">
+                    <label for="tipoReporte">Tipo de Reporte</label>
+                    <select
+                      class="form-control mt-2"
+                      id="tipoReporte"
+                      name="tipo_reporte"
+                    >
+                      <option value="">Seleccione un tipo</option>
+                    </select>
+                  </div>
+                  <button
+                    type="submit"
+                    class="btn btn-sm mt-3 btn-dark font-weight-bold"
+                  >
+                    Buscar Reporte
+                  </button>
+                  <img
+                    class="ml-0 ml-md-2 mt-3"
+                    style="max-width: 50px"
+                    src="{% static 'resources/analysis-analytics-data-svgrepo-com.svg' %}"
+                    alt="Reportes"
+                  />
+                </form>
+              </div>
             </div>
+          </div>
+          <div class="col-md-6 d-flex flex-column">
+            <div class="row flex-grow-1">
+              <div class="col-md-12 d-flex flex-column">
+                <div
+                  class="bg-gradient bg-gradient-manuales flex-grow-1 mb-2 manuales-card"
+                >
+                  <div
+                    class="card-inner d-flex align-items-center justify-content-between"
+                  >
+                    <div>
+                      <h5 class="card-title display-4 font-weight-normal">
+                        Manuales
+                      </h5>
+                      <a
+                        class="btn btn-dark btn-sm mt-2 font-weight-bold justify-content-center text-center"
+                        href="#"
+                        >Ir a KAM</a
+                      >
+                    </div>
+                    <img
+                      class="ml-0 ml-md-2"
+                      style="max-width: 55px"
+                      src="{% static 'resources/user-manual-svgrepo-com.svg' %}"
+                      alt="Manuales"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 d-flex flex-column mt-1">
+                <div
+                  class="bg-gradient bg-gradient-directorio flex-grow-1 mt-4"
+                >
+                  <div
+                    class="card-inner d-flex align-items-center justify-content-between directorio-card"
+                  >
+                    <div>
+                      <h5 class="card-title display-4 font-weight-normal">
+                        Directorio
+                      </h5>
+                      <a
+                        class="btn btn-dark btn-sm mt-2 font-weight-bold justify-content-center text-center"
+                        href="#"
+                        >Ir a Directorio</a
+                      >
+                    </div>
+                    <img
+                      class="ml-0 ml-md-2"
+                      style="max-width: 55px"
+                      src="{% static 'resources/contacts-svgrepo-com.svg' %}"
+                      alt="Directorio"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
 
     <div class="content-wrapper-footer">
-        <footer class="bg-danger text-white">
-            <div class="container">
-                <div class="row align-items-start">
-                    <div class="col-md-2">
-                        <div class="d-flex align-items-start mt-4">
-                            <img src="{% static 'resources/lyncott-80.png' %}" alt="LogoBlanco" class="img-fluid" style="max-height: 70px" />
-                        </div>
-                    </div>
-                    <div class="col-md-7">
-                        <div class="d-flex align-items-center">
-                            <div class="contact-info">
-                                <p class="mb-1">Contáctanos</p>
-                                <p class="mb-1">
-                                    Circuito El Marqués Sur #9, Parque Industrial El Marqués El Colorado, El Marqués. Querétaro, Querétaro México
-                                </p>
-                                <p class="mb-1">
-                                    Email:
-                                    <a href="mailto:atencion.clientes@lyncott.mx">atencion.clientes@lyncott.mx</a> | Teléfono: <a href="tel:8005962688">800-596-2688</a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 d-flex justify-content-end">
-                        <div>
-                            <img src="{% static 'resources/certificaciones-lyncott-2019.png' %}" alt="Imagen Inferior Derecha" class="img-fluid" style="max-width: 100%" />
-                            <div class="text-right">
-                                <p class="mb-0">
-                                    &copy; 2024 Lyncott. Todos los derechos reservados.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+      <footer class="bg-danger text-white">
+        <div class="container">
+          <div class="row align-items-start">
+            <div class="col-md-2">
+              <div class="d-flex align-items-start mt-4">
+                <img
+                  src="{% static 'resources/lyncott-80.png' %}"
+                  alt="LogoBlanco"
+                  class="img-fluid"
+                  style="max-height: 70px"
+                />
+              </div>
             </div>
-        </footer>
+            <div class="col-md-7">
+              <div class="d-flex align-items-center">
+                <div class="contact-info">
+                  <p class="mb-1">Contáctanos</p>
+                  <p class="mb-1">
+                    Circuito El Marqués Sur #9, Parque Industrial El Marqués El
+                    Colorado, El Marqués. Querétaro, Querétaro México
+                  </p>
+                  <p class="mb-1">
+                    Email:
+                    <a href="mailto:atencion.clientes@lyncott.mx"
+                      >atencion.clientes@lyncott.mx</a
+                    >
+                    | Teléfono: <a href="tel:8005962688">800-596-2688</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex justify-content-end">
+              <div>
+                <img
+                  src="{% static 'resources/certificaciones-lyncott-2019.png' %}"
+                  alt="Imagen Inferior Derecha"
+                  class="img-fluid"
+                  style="max-width: 100%"
+                />
+                <div class="text-right">
+                  <p class="mb-0">
+                    &copy; 2024 Lyncott. Todos los derechos reservados.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
 
     <!-- Script para pasar la variable de contexto a JavaScript -->
     <script>
-        const categoriasReporte = {{ categorias_reporte|safe }};
+      const categoriasReporte = {{ categorias_reporte|safe }};
     </script>
     <!-- Incluir tu archivo JavaScript separado -->
     <script src="{% static 'scripts/categorias.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
+  </body>
 </html>
