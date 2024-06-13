@@ -67,38 +67,18 @@
       </div>
     </nav>
 
+  <div class"content-wrapper">
     <div class="container mt-4">
       <div class="row">
         <div class="col-md-3">
-          <!-- Menú de navegación -->
-          <div class="card">
+          <div class="card bg-gradient">
             <div class="card-header">Parámetros de Reporte</div>
             <div class="card-body">
               <form>
-                <div class="mb-3">
-                  <label for="tipo_reporte_select" class="form-label"
-                    >Tipo de Reporte</label
-                  >
-                  <select
-                    class="form-select"
-                    id="tipo_reporte_select"
-                    onchange="mostrarCampos()"
-                  >
-                    <option value="reporte1">Reporte 1</option>
-                    <option value="reporte2">Reporte 2</option>
-                    <option value="reporte3">Reporte 3</option>
-                  </select>
-                </div>
+                <!--- Empiezan los parametros--> 
+                
 
-                <div class="mb-3" id="campo_fecha">
-                  <label for="fecha" class="form-label">Fecha</label>
-                  <input type="date" class="form-control" id="fecha" />
-                </div>
 
-                <div class="mb-3" id="campo_clientes">
-                  <label for="clientes" class="form-label">Clientes</label>
-                  <input type="text" class="form-control" id="clientes" />
-                </div>
 
                 <button type="submit" class="btn btn-dark">
                   Generar Reporte
@@ -152,7 +132,7 @@
               </table>
             </div>
             <div class="card-footer">
-              <!-- Aquí se colocará la paginación -->
+              <!-- Paginación -->
               <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-end">
                   <li class="page-item disabled">
@@ -199,7 +179,8 @@
         </div>
       </div>
     </div>
-
+  </div>
+  
     <div class="content-wrapper-footer">
       <footer class="bg-danger text-white">
         <div class="container">
@@ -252,7 +233,6 @@
       </footer>
     </div>
 
-    <script src="{%static 'scripts/mostrarParemetros.js'%}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

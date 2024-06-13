@@ -36,8 +36,6 @@ body {
   flex: 1;
   justify-content: center;
   align-items: center;
-  padding-left: 2vh;
-  padding-right: 2vh;
   margin: 0;
 }
 
@@ -46,15 +44,6 @@ body {
   width: auto;
   margin: 0 auto;
   text-align: center;
-}
-
-.report-card {
-  min-height: 300px;
-}
-
-.manuales-card,
-.directorio-card {
-  min-height: 75px;
 }
 
 .bg-gradient {

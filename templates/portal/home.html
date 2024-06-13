@@ -19,8 +19,13 @@
     <link rel="stylesheet" href="{% static 'styles/styleHome.css' %}" />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light" style="padding-left: 2vh; padding-right: 2vh">
-      <div class="container-fluid d-flex justify-content-between align-items-center">
+    <nav
+      class="navbar navbar-expand-lg navbar-light"
+      style="padding-left: 2vh; padding-right: 2vh"
+    >
+      <div
+        class="container-fluid d-flex justify-content-between align-items-center"
+      >
         <a class="navbar-brand">
           <img
             src="{% static 'resources/logo-lyncott.png' %}"
@@ -29,8 +34,7 @@
             style="max-width: 150px"
           />
         </a>
-    
-        <!-- Botón de colapso -->
+
         <button
           class="navbar-toggler"
           type="button"
@@ -42,10 +46,13 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-    
+
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <div class="mx-auto">
-            <h1 class="mb-0 text-center">
+            <h1
+              class="mb-0 text-center font-weight-normal"
+              style="font-size: 2.75rem"
+            >
               <strong>Seleccionar Reporte a Consultar</strong>
             </h1>
           </div>
@@ -58,39 +65,55 @@
       </div>
     </nav>
 
-    <div class="container-flex">
+    <div class="container-flex pt-3 pl-3 pr-3">
       <div class="content-wrapper">
         <div class="row">
           <div class="col-md-6 d-flex flex-column">
-            <div class="bg-gradient flex-grow-1 mb-4">
-              <div class="card-inner text-center report-card">
-                <h5 class="card-title display-3 font-weight-normal">
+            <div class="bg-gradient flex-grow-1 mb-4 card-uniform">
+              <div class="card-inner text-center report-card p-5">
+                <h5
+                  class="card-title font-weight-normal"
+                  style="font-size: 2rem"
+                >
                   Reportes
                 </h5>
                 <form method="post">
                   {% csrf_token %}
-                  <div class="form-group mt-4 display-6">
-                    <label for="categoriaReporte">Categoría de Reporte</label>
+                  <div class="form-group mt-4">
+                    <label for="categoriaReporte" style="font-size: 1.25rem"
+                      >Categoría de Reporte</label
+                    >
+                    {% if dbname %}
+                    <p>Conectado a la base de datos {{ dbname }}</p>
+                    {% else %}
+                    <p>No se pudo conectar a la base de datos</p>
+                    {% endif %}
                     <select
-                      class="form-control mt-2"
+                      class="form-control mt-2 border-2 border-dark"
                       id="categoriaReporte"
                       name="categoria_reporte"
                       onchange="updateTiposReporte()"
                     >
-                      <option value="">Seleccione una categoría</option>
+                      <option value="" class="opacity-50">
+                        Seleccione una categoría
+                      </option>
                       {% for categoria in categorias_reporte %}
                       <option value="{{ categoria }}">{{ categoria }}</option>
                       {% endfor %}
                     </select>
                   </div>
-                  <div class="form-group mt-4 display-6">
-                    <label for="tipoReporte">Tipo de Reporte</label>
+                  <div class="form-group mt-4">
+                    <label for="tipoReporte" style="font-size: 1.25rem"
+                      >Tipo de Reporte</label
+                    >
                     <select
-                      class="form-control mt-2"
+                      class="form-control mt-2 border-2 border-dark"
                       id="tipoReporte"
                       name="tipo_reporte"
                     >
-                      <option value="">Seleccione un tipo</option>
+                      <option value="" class="opacity-50">
+                        Seleccione un tipo
+                      </option>
                     </select>
                   </div>
                   <button
@@ -109,57 +132,78 @@
               </div>
             </div>
           </div>
+
           <div class="col-md-6 d-flex flex-column">
             <div class="row flex-grow-1">
               <div class="col-md-12 d-flex flex-column">
                 <div
-                  class="bg-gradient bg-gradient-manuales flex-grow-1 mb-2 manuales-card"
+                  class="bg-gradient bg-gradient-manuales flex-grow-1 card-uniform"
                 >
                   <div
-                    class="card-inner d-flex align-items-center justify-content-between"
+                    class="card-inner d-flex align-items-center flex-wrap p-2"
                   >
-                    <div>
-                      <h5 class="card-title display-4 font-weight-normal">
+                    <div
+                      class="col-12 col-md-4 d-flex flex-column text-center text-md-left mb-2 mb-md-0"
+                    >
+                      <h5
+                        class="card-title font-weight-normal"
+                        style="font-size: 1.5rem"
+                      >
                         Manuales
                       </h5>
-                      <a
-                        class="btn btn-dark btn-sm mt-2 font-weight-bold justify-content-center text-center"
-                        href="#"
+                    </div>
+                    <div
+                      class="col-12 col-md-4 d-flex justify-content-center mb-2 mb-md-0"
+                    >
+                      <a class="btn btn-dark btn-sm font-weight-bold" href="#"
                         >Ir a KAM</a
                       >
                     </div>
-                    <img
-                      class="ml-0 ml-md-2"
-                      style="max-width: 55px"
-                      src="{% static 'resources/user-manual-svgrepo-com.svg' %}"
-                      alt="Manuales"
-                    />
+                    <div
+                      class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end"
+                    >
+                      <img
+                        style="max-width: 55px"
+                        src="{% static 'resources/user-manual-svgrepo-com.svg' %}"
+                        alt="Manuales"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
               <div class="col-md-12 d-flex flex-column mt-1">
                 <div
-                  class="bg-gradient bg-gradient-directorio flex-grow-1 mt-4"
+                  class="bg-gradient bg-gradient-directorio flex-grow-1 mt-4 card-uniform"
                 >
                   <div
-                    class="card-inner d-flex align-items-center justify-content-between directorio-card"
+                    class="card-inner d-flex align-items-center flex-wrap p-2"
                   >
-                    <div>
-                      <h5 class="card-title display-4 font-weight-normal">
+                    <div
+                      class="col-12 col-md-4 d-flex flex-column text-center text-md-left mb-2 mb-md-0"
+                    >
+                      <h5
+                        class="card-title font-weight-normal"
+                        style="font-size: 1.5rem"
+                      >
                         Directorio
                       </h5>
-                      <a
-                        class="btn btn-dark btn-sm mt-2 font-weight-bold justify-content-center text-center"
-                        href="#"
+                    </div>
+                    <div
+                      class="col-12 col-md-4 d-flex justify-content-center mb-2 mb-md-0"
+                    >
+                      <a class="btn btn-dark btn-sm font-weight-bold" href="#"
                         >Ir a Directorio</a
                       >
                     </div>
-                    <img
-                      class="ml-0 ml-md-2"
-                      style="max-width: 55px"
-                      src="{% static 'resources/contacts-svgrepo-com.svg' %}"
-                      alt="Directorio"
-                    />
+                    <div
+                      class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end"
+                    >
+                      <img
+                        style="max-width: 55px"
+                        src="{% static 'resources/contacts-svgrepo-com.svg' %}"
+                        alt="Directorio"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

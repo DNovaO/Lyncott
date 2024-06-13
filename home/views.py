@@ -1,10 +1,20 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render   
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.db import connection
 
 @login_required
 def home_view(request):
     
+    #Conexion a base de datos para mostrar que la conexion es valida
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT DB_NAME() AS dbname")
+            row = cursor.fetchone()
+            dbname = row[0] if row else None
+    except Exception as e:
+        dbname = False
+        
     categorias_reporte = { 
         "Ventas": [
                    "Por Producto",
@@ -19,7 +29,7 @@ def home_view(request):
                    "Comparativo de Ventas por (Producto Sin Refacturación)",
                    "Ventas en General (Pesos Sin Refacturación)",
                    "Tendencia de las Ventas",
-                   "Tendencia de las Ventas por Sector",
+                   "Tendencia de las Ventas por Sector (2020)",
                    "Trazabilidad por Producto"],
         
         "Contable": [
@@ -40,7 +50,7 @@ def home_view(request):
                         "Ventas por Familia en Kilos 2019 vs 20XX (Sin Refacturación)",
                         "Informe de Ventas por Zonas en Pesos",
                         "Informe de Ventas por Zonas en Kilogramos y por Marca (Sin Refacturación)",
-                        "ventas Sin Cargo",
+                        "Ventas Sin Cargo",
                         "Ventas de Cadenas FoodService KAM",
                         "Ventas de Cadenas AutoService KAM",
                         "Comparativa de Notas de Crédito en Kilogramos",
@@ -85,8 +95,9 @@ def home_view(request):
                 report_url = reverse('report')
                 report_url += '?categoria_reporte={}&tipo_reporte={}'.format(categoria_reporte, tipo_reporte)
                 return redirect(report_url)
-            
+    
     context = {
         'categorias_reporte': categorias_reporte,
+        'dbname': dbname,
     }
     return render(request, 'portal/home.html', context)
