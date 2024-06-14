@@ -19,8 +19,13 @@
     />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light" style="padding-left: 2vh; padding-right: 4vh">
-      <div class="container-fluid">
+    <nav
+      class="navbar navbar-expand-lg navbar-light"
+      style="padding-left: 2vh; padding-right: 2vh"
+    >
+      <div
+        class="container-fluid d-flex justify-content-between align-items-center"
+      >
         <a class="navbar-brand">
           <img
             src="{% static 'resources/logo-lyncott.png' %}"
@@ -30,7 +35,6 @@
           />
         </a>
 
-        <!-- Botón de colapso -->
         <button
           class="navbar-toggler"
           type="button"
@@ -43,62 +47,533 @@
           <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="navbar-text text-center flex-grow-1">
-          <h4 class"mb-0">
-            <strong>Categoría de Reporte:</strong>
-            <span style="font-weight: normal">{{ categoria_reporte }}</span>
-            <strong>Tipo de Reporte:</strong>
-            <span style="font-weight: normal" id="tipo_reporte"
-              >{{ tipo_reporte }}</span
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="mx-auto">
+            <h1
+              class="mb-0 text-center font-weight-normal"
+              style="font-size: 1.5rem; font-weight: bold"
             >
-          </h4>
-        </div>
-
-        <div
-          class="collapse navbar-collapse justify-content-end"
-          id="navbarSupportedContent"
-        >
-          <div class="d-flex align-items-center justify-content-end w-100">
-            <button type="submit" class="btn btn-danger custom-btn w-100">
-              Salir
-            </button>
+              Categoría de Reporte:
+              <span style="font-weight: normal">{{ categoria_reporte }}</span>
+              Tipo de Reporte:
+              <span style="font-weight: normal" id="tipo_reporte"
+                >{{ tipo_reporte }}</span
+              >
+            </h1>
+          </div>
+          <div class="d-flex align-items-center justify-content-center mt-3">
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'logout' %}" class="d-inline">
+              {% csrf_token %}
+              <button
+                type="submit"
+                class="btn btn-danger custom-btn w-100 text-center"
+              >
+                Cerrar Sesión
+              </button>
+            </form>
+            {% endif %}
           </div>
         </div>
       </div>
     </nav>
 
-  <div class"content-wrapper">
-    <div class="container mt-4">
+    <div class="content-wrapper pb-auto p-3">
       <div class="row">
-        <div class="col-md-3">
-          <div class="card bg-gradient">
-            <div class="card-header">Parámetros de Reporte</div>
+        <div class="col-md-3 pb-auto pt-3">
+          <div class="card">
+            <div class="card-header">
+              <strong>Parámetros de Reporte</strong>
+            </div>
             <div class="card-body">
-              <form>
-                <!--- Empiezan los parametros--> 
-                
+              <form method="post">
+                {% csrf_token %}
 
+                <!-- Primera fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="fecha_inicial parametro form-group mb-2">
+                      <label for="fecha_inicial">Fecha Inicial:</label>
+                      <input
+                        type="date"
+                        id="fecha_inicial"
+                        name="fecha_inicial"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="fecha_final parametro form-group">
+                      <label for="fecha_final">Fecha Final:</label>
+                      <input
+                        type="date"
+                        id="fecha_final"
+                        name="fecha_final"
+                        class="form-control"
+                      />
+                    </div>
+                  </div>
+                </div>
 
+                <!-- Segunda fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="cliente_inicial parametro form-group">
+                      <label for="cliente_inicial">Cliente Inicial:</label>
+                      <select
+                        id="cliente_inicial"
+                        name="cliente_inicial"
+                        class="form-select"
+                      >
+                        {% for cliente in clientes %}
+                        <option value="{{ cliente.id }}">
+                          {{ cliente.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="cliente_final parametro form-group">
+                      <label for="cliente_final">Cliente Final:</label>
+                      <select
+                        id="cliente_final"
+                        name="cliente_final"
+                        class="form-select"
+                      >
+                        {% for cliente in clientes %}
+                        <option value="{{ cliente.id }}">
+                          {{ cliente.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
 
-                <button type="submit" class="btn btn-dark">
+                <!-- Tercera fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="producto_inicial parametro form-group">
+                      <label for="producto_inicial">Producto Inicial:</label>
+                      <select
+                        id="producto_inicial"
+                        name="producto_inicial"
+                        class="form-select"
+                      >
+                        {% for producto in productos %}
+                        <option value="{{ producto.id }}">
+                          {{ producto.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="producto_final parametro form-group">
+                      <label for="producto_final">Producto Final:</label>
+                      <select
+                        id="producto_final"
+                        name="producto_final"
+                        class="form-select"
+                      >
+                        {% for producto in productos %}
+                        <option value="{{ producto.id }}">
+                          {{ producto.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Cuarta fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="sucursal_inicial parametro form-group">
+                      <label for="sucursal_inicial">Sucursal Inicial:</label>
+                      <select
+                        id="sucursal_inicial"
+                        name="sucursal_inicial"
+                        class="form-select"
+                      >
+                        {% for sucursal in sucursales %}
+                        <option value="{{ sucursal.id }}">
+                          {{ sucursal.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="sucursal_final parametro form-group">
+                      <label for="sucursal_final">Sucursal Final:</label>
+                      <select
+                        id="sucursal_final"
+                        name="sucursal_final"
+                        class="form-select"
+                      >
+                        {% for sucursal in sucursales %}
+                        <option value="{{ sucursal.id }}">
+                          {{ sucursal.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Quinta fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="vendedor_inicial parametro form-group">
+                      <label for="vendedor_inicial">Vendedor Inicial:</label>
+                      <select
+                        id="vendedor_inicial"
+                        name="vendedor_inicial"
+                        class="form-select"
+                      >
+                        {% for vendedor in vendedores %}
+                        <option value="{{ vendedor.id }}">
+                          {{ vendedor.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="vendedor_final parametro form-group">
+                      <label for="vendedor_final">Vendedor Final:</label>
+                      <select
+                        id="vendedor_final"
+                        name="vendedor_final"
+                        class="form-select"
+                      >
+                        {% for vendedor in vendedores %}
+                        <option value="{{ vendedor.id }}">
+                          {{ vendedor.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sexta fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="linea_inicial parametro form-group">
+                      <label for="linea_inicial">Línea Inicial:</label>
+                      <select
+                        id="linea_inicial"
+                        name="linea_inicial"
+                        class="form-select"
+                      >
+                        {% for linea in lineas %}
+                        <option value="{{ linea.id }}">
+                          {{ linea.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="linea_final parametro form-group">
+                      <label for="linea_final">Línea Final:</label>
+                      <select
+                        id="linea_final"
+                        name="linea_final"
+                        class="form-select"
+                      >
+                        {% for linea in lineas %}
+                        <option value="{{ linea.id }}">
+                          {{ linea.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Séptima fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="familia_inicial parametro form-group">
+                      <label for="familia_inicial">Familia Inicial:</label>
+                      <select
+                        id="familia_inicial"
+                        name="familia_inicial"
+                        class="form-select"
+                      >
+                        {% for familia in familias %}
+                        <option value="{{ familia.id }}">
+                          {{ familia.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="familia_final parametro form-group">
+                      <label for="familia_final">Familia Final:</label>
+                      <select
+                        id="familia_final"
+                        name="familia_final"
+                        class="form-select"
+                      >
+                        {% for familia in familias %}
+                        <option value="{{ familia.id }}">
+                          {{ familia.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Octava fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="marca_inicial parametro form-group">
+                      <label for="marca_inicial">Marca Inicial:</label>
+                      <select
+                        id="marca_inicial"
+                        name="marca_inicial"
+                        class="form-select"
+                      >
+                        {% for marca in marcas %}
+                        <option value="{{ marca.id }}">
+                          {{ marca.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="marca_final parametro form-group">
+                      <label for="marca_final">Marca Final:</label>
+                      <select
+                        id="marca_final"
+                        name="marca_final"
+                        class="form-select"
+                      >
+                        {% for marca in marcas %}
+                        <option value="{{ marca.id }}">
+                          {{ marca.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Novena fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="grupoCorporativo_inicial parametro form-group">
+                      <label for="grupoCorporativo_inicial"
+                        >Grupo Corporativo Inicial:</label
+                      >
+                      <select
+                        id="grupoCorporativo_inicial"
+                        name="grupoCorporativo_inicial"
+                        class="form-select"
+                      >
+                        {% for grupo in grupos %}
+                        <option value="{{ grupo.id }}">
+                          {{ grupo.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="grupoCorporativo_final parametro form-group">
+                      <label for="grupoCorporativo_final"
+                        >Grupo Corporativo Final:</label
+                      >
+                      <select
+                        id="grupoCorporativo_final"
+                        name="grupoCorporativo_final"
+                        class="form-select"
+                      >
+                        {% for grupo in grupos %}
+                        <option value="{{ grupo.id }}">
+                          {{ grupo.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Décima fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="grupoCorporativo parametro form-group">
+                      <label for="grupoCorporativo">Grupo Corporativo:</label>
+                      <select
+                        id="grupoCorporativo"
+                        name="grupoCorporativo"
+                        class="form-select"
+                      >
+                        {% for grupo in grupos %}
+                        <option value="{{ grupo.id }}">
+                          {{ grupo.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Onceava fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="segmento_inicial parametro form-group">
+                      <label for="segmento_inicial">Segmento Inicial:</label>
+                      <select
+                        id="segmento_inicial"
+                        name="segmento_inicial"
+                        class="form-select"
+                      >
+                        {% for segmento in segmentos %}
+                        <option value="{{ segmento.id }}">
+                          {{ segmento.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="segmento_final parametro form-group">
+                      <label for="segmento_final">Segmento Final:</label>
+                      <select
+                        id="segmento_final"
+                        name="segmento_final"
+                        class="form-select"
+                      >
+                        {% for segmento in segmentos %}
+                        <option value="{{ segmento.id }}">
+                          {{ segmento.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Doceava fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="status parametro form-group">
+                      <label for="status">Status:</label>
+                      <select id="status" name="status" class="form-select">
+                        {% for status in statuses %}
+                        <option value="{{ status.id }}">
+                          {{ status.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="zona parametro form-group">
+                      <label for="zona">Zona:</label>
+                      <select id="zona" name="zona" class="form-select">
+                        {% for zona in zonas %}
+                        <option value="{{ zona.id }}">{{ zona.nombre }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Decimotercera fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="sucursal parametro form-group">
+                      <label for="sucursal">Sucursal:</label>
+                      <select id="sucursal" name="sucursal" class="form-select">
+                        {% for sucursal in sucursales %}
+                        <option value="{{ sucursal.id }}">
+                          {{ sucursal.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="grupo parametro form-group">
+                      <label for="grupo">Grupo:</label>
+                      <select id="grupo" name="grupo" class="form-select">
+                        {% for grupo in grupos %}
+                        <option value="{{ grupo.id }}">
+                          {{ grupo.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Decimocuarta fila -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="familia parametro form-group">
+                      <label for="familia">Familia:</label>
+                      <select id="familia" name="familia" class="form-select">
+                        {% for familia in familias %}
+                        <option value="{{ familia.id }}">
+                          {{ familia.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="region parametro form-group">
+                      <label for="region">Región:</label>
+                      <select id="region" name="region" class="form-select">
+                        {% for region in regiones %}
+                        <option value="{{ region.id }}">
+                          {{ region.nombre }}
+                        </option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Terminan los parameteros -->
+
+                <button
+                  type="submit"
+                  class="btn btn-dark mt-4 justify-content-center align-items-center"
+                >
                   Generar Reporte
                 </button>
               </form>
             </div>
           </div>
         </div>
-        <div class="col-md-9 mb-4 pb-1">
-          <div class="card">
-            <div class="card-header">Resultados del Reporte</div>
+
+        <div class="col-md-9 pb-auto pt-3">
+          <div class="card h-100">
+            <div class="card-header">
+              <strong>Resultados del Reporte</strong>
+            </div>
             <div class="card-body">
               <!-- Aquí se mostrarán los resultados de los reportes -->
-              <!-- Esta tabla puede ser generada dinámicamente dependiendo de los datos recibidos -->
+              <!-- Esta tabla puede debe ser generada dinámicamente dependiendo de los datos recibidos de las consultas SQL -->
               <table class="table">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Valor</th>
+                    <th scope="col">Domicilio</th>
+                    <th scope="col">Status</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -106,26 +581,36 @@
                     <th scope="row">1</th>
                     <td>Ejemplo 1</td>
                     <td>123</td>
+                    <td>asd#!23</td>
+                    <td>Activo</td>
                   </tr>
                   <tr>
                     <th scope="row">2</th>
                     <td>Ejemplo 1</td>
                     <td>123</td>
+                    <td>asd#!23</td>
+                    <td>Activo</td>
                   </tr>
                   <tr>
                     <th scope="row">3</th>
                     <td>Ejemplo 1</td>
                     <td>123</td>
+                    <td>asd#!23</td>
+                    <td>Activo</td>
                   </tr>
                   <tr>
                     <th scope="row">4</th>
                     <td>Ejemplo 1</td>
                     <td>123</td>
+                    <td>asd#!23</td>
+                    <td>Activo</td>
                   </tr>
                   <tr>
                     <th scope="row">5</th>
                     <td>Ejemplo 1</td>
                     <td>123</td>
+                    <td>asd#!23</td>
+                    <td>Activo</td>
                   </tr>
                   <!-- Más filas según los datos -->
                 </tbody>
@@ -134,7 +619,7 @@
             <div class="card-footer">
               <!-- Paginación -->
               <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-end">
+                <ul class="pagination justify-content-start">
                   <li class="page-item disabled">
                     <a
                       class="page-link"
@@ -144,9 +629,15 @@
                       >Previous</a
                     >
                   </li>
-                  <li class="page-item"><a class="page-link" href="#">1</a></li>
-                  <li class="page-item"><a class="page-link" href="#">2</a></li>
-                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">1</a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">2</a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">3</a>
+                  </li>
                   <li class="page-item">
                     <a class="page-link" href="#">Next</a>
                   </li>
@@ -179,8 +670,7 @@
         </div>
       </div>
     </div>
-  </div>
-  
+
     <div class="content-wrapper-footer">
       <footer class="bg-danger text-white">
         <div class="container">
@@ -233,6 +723,8 @@
       </footer>
     </div>
 
+    <script src="{% static 'scripts/formatoFecha.js' %}"></script>
+    <script src="{% static 'scripts/mostrarParametros.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

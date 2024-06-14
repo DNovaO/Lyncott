@@ -12,6 +12,13 @@ body {
   justify-content: center;
 }
 
+.custom-btn {
+  display: block;
+  width: auto;
+  margin: 0 auto;
+  text-align: center;
+}
+
 .content-wrapper {
   display: flex;
   flex-direction: column;
@@ -30,6 +37,11 @@ body {
   padding: 0;
   margin: 0;
 }
+
+.parametro {
+  display: none;
+}
+
 
 .bg-gradient {
   border-radius: 20px;
@@ -62,6 +74,8 @@ body {
 .btn-danger {
   background-color: #ed1c24;
   border-color: #ed1c24;
+  border-radius: 10px;
+  padding: 10px 50px;
 }
 
 footer {

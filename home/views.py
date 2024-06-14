@@ -11,6 +11,7 @@ def home_view(request):
         with connection.cursor() as cursor:
             cursor.execute("SELECT DB_NAME() AS dbname")
             row = cursor.fetchone()
+            print("Base de datos conectada")
             dbname = row[0] if row else None
     except Exception as e:
         dbname = False
@@ -88,14 +89,14 @@ def home_view(request):
     }
     
     if request.method == 'POST':
-                categoria_reporte = request.POST.get('categoria_reporte')
-                tipo_reporte = request.POST.get('tipo_reporte')
+        categoria_reporte = request.POST.get('categoria_reporte')
+        tipo_reporte = request.POST.get('tipo_reporte')
+        
+        # Obtener la URL inversa de 'report' y pasar los parámetros como argumentos de consulta
+        report_url = reverse('report')
+        report_url += '?categoria_reporte={}&tipo_reporte={}'.format(categoria_reporte, tipo_reporte)
+        return redirect(report_url)
 
-                # Obtener la URL inversa de 'report' y pasar los parámetros como argumentos de consulta
-                report_url = reverse('report')
-                report_url += '?categoria_reporte={}&tipo_reporte={}'.format(categoria_reporte, tipo_reporte)
-                return redirect(report_url)
-    
     context = {
         'categorias_reporte': categorias_reporte,
         'dbname': dbname,
