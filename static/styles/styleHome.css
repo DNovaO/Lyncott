@@ -1,5 +1,5 @@
-/* Estilos generales */
-html, body {
+html,
+body {
   min-height: 100vh;
   margin: 0;
   padding: 0;
@@ -10,98 +10,118 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-family: Arial, sans-serif;
 }
 
-/* Contenedor principal */
-.content-wrapper, .content-wrapper-footer, .container-flex {
+.content-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   flex: 1;
   margin: 0;
-  padding: 0 2vh;
+  padding-left: 2vh;
+  padding-right: 2vh;
 }
 
-/* Botones personalizados */
-.custom-btn, .btn-danger, .btn-dark {
-  display: inline-block;
-  padding: 10px 20px;
-  border-radius: 10px;
-  text-align: center;
-  cursor: pointer;
+.content-wrapper-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  padding: 0;
+  margin: 0;
+}
+
+.container-flex {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
 }
 
 .custom-btn {
-  background-color: #ffffff;
-  color: #ed1c24;
-  border: 2px solid #ed1c24;
+  display: block;
+  width: auto;
+  margin: 0 auto;
+  text-align: center;
 }
 
-.btn-danger {
-  background-color: #ed1c24;
-  color: #ffffff;
-  border: 2px solid #ed1c24;
-}
-
-.btn-dark {
-  background-color: #000000;
-  color: #ffffff;
-  border: 2px solid #000000;
-}
-
-/* Fondos gradientes */
-.bg-gradient, .bg-gradient-manuales, .bg-gradient-directorio {
+.bg-gradient {
+  border-radius: 20px;
+  width: 100%;
+  padding: 0.2vh;
   position: relative;
   overflow: hidden;
   margin-bottom: 20px;
 }
 
-.bg-gradient::before, .bg-gradient::after,
-.bg-gradient-manuales::before, .bg-gradient-manuales::after,
-.bg-gradient-directorio::before, .bg-gradient-directorio::after {
+.bg-gradient::before,
+.bg-gradient::after {
   content: "";
   position: absolute;
   left: 0;
   right: 0;
   height: 100%;
+  background: linear-gradient(to bottom, #ed1c24, #ffffff);
+  z-index: -1;
+}
+
+.bg-gradient-manuales::before,
+.bg-gradient-manuales::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(to right, #ed1c24, #ffffff);
+  z-index: -1;
+}
+
+.bg-gradient-directorio::before,
+.bg-gradient-directorio::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(to right, #ed1c24, #ffffff);
   z-index: -1;
 }
 
 .bg-gradient::before {
   top: 0;
-  background: linear-gradient(to bottom, #ed1c24, #ffffff);
 }
 
 .bg-gradient::after {
   bottom: 0;
-  background: linear-gradient(to top, #ed1c24, #ffffff);
 }
 
-.bg-gradient-manuales::before, .bg-gradient-manuales::after,
-.bg-gradient-directorio::before, .bg-gradient-directorio::after {
-  top: 0;
-  bottom: 0;
-  background: linear-gradient(to right, #ed1c24, #ffffff);
-}
-
-/* Tarjetas */
 .card-inner {
   background: white;
   border-radius: 18px;
   padding: 3vh;
   box-shadow: 0px 4px 8px rgba(168, 168, 168, 0.5);
+  height: 100%;
 }
 
-/* Formularios */
 .form-control {
   border-radius: 10px;
-  padding: 10px;
-  border: 1px solid #ccc;
 }
 
-/* Encabezado y pie de página */
+.btn-danger {
+  background-color: #ed1c24;
+  border-color: #ed1c24;
+  border-radius: 10px;
+  padding: 10px 50px;
+}
+
+.btn-dark {
+  background-color: #000000;
+  border-color: #000;
+  border-radius: 10px;
+  padding: 10px;
+}
+
 .header {
   background-color: #ffffff;
   color: #ed1c24;
@@ -112,6 +132,6 @@ body {
 footer {
   background-color: #ed1c24;
   color: white;
-  padding: 10px;
-  text-align: center;
+  margin-top: auto;
+  padding: 0;
 }

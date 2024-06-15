@@ -98,12 +98,12 @@
                     <p>No se pudo conectar a la base de datos</p>
                     {% endif %}
                     <select
-                      class="form-control mt-2 border-2 border-dark"
+                      class="mt-2 border-2 border-dark form-select"
                       id="categoriaReporte"
                       name="categoria_reporte"
                       onchange="updateTiposReporte()"
                     >
-                      <option value="" class="opacity-50">
+                      <option value="" class="opacity-50 ">
                         Seleccione una categoría
                       </option>
                       {% for categoria in categorias_reporte %}
@@ -116,7 +116,7 @@
                       >Tipo de Reporte</label
                     >
                     <select
-                      class="form-control mt-2 border-2 border-dark"
+                      class="mt-2 border-2 border-dark form-select"
                       id="tipoReporte"
                       name="tipo_reporte"
                     >

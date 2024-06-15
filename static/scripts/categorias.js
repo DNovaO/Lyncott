@@ -17,7 +17,3 @@ function updateTiposReporte() {
   }
 }
 
-// Ejecutar updateTiposReporte al cargar la página (opcional)
-window.onload = function() {
-  updateTiposReporte();
-};
