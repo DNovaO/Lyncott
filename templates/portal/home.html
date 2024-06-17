@@ -166,9 +166,17 @@
                     <div
                       class="col-12 col-md-4 d-flex justify-content-center mb-2 mb-md-0"
                     >
-                      <a class="btn btn-dark btn-sm font-weight-bold" href="#"
-                        >Ir a KAM</a
-                      >
+                    {% if user.is_authenticated %}
+                      <form method="post" action="{% url 'manuales' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button
+                          type="submit"
+                          class="btn btn-dark custom-btn w-100 text-center"
+                        >
+                          Ir a KAM
+                        </button>
+                      </form>
+                    {% endif %}
                     </div>
                     <div
                       class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end"
@@ -202,9 +210,17 @@
                     <div
                       class="col-12 col-md-4 d-flex justify-content-center mb-2 mb-md-0"
                     >
-                      <a class="btn btn-dark btn-sm font-weight-bold" href="#"
-                        >Ir a Directorio</a
-                      >
+                    {% if user.is_authenticated %}
+                      <form method="post" action="{% url 'directorios' %}" class="d-inline">
+                        {% csrf_token %}
+                        <button
+                          type="submit"
+                          class="btn btn-dark custom-btn w-100 text-center"
+                        >
+                          Ir a Directorio
+                        </button>
+                      </form>
+                    {% endif %}
                     </div>
                     <div
                       class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end"
