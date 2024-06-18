@@ -16,7 +16,7 @@
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="{% static 'styles/styleLogin.css' %}" />
+    <link rel="stylesheet" href="{% static 'styles/styleManuales.css' %}" />
   </head>
   <body>
     <nav
@@ -74,6 +74,56 @@
       </div>
     </nav>
 
+    <div class="container pt-3 flex mt-5" style ="overflow: hidden;">
+      <div class="row justify-content-center">
+        <div class="col-md-4" id="manualCard">
+          <div class="bg-gradient mb-4 card-uniform">
+            <div class="card-inner text-center manual-card p-3">
+              <h5 class="card-title font-weight-normal" style="font-size: 2.5rem">Manuales</h5>
+              <form>
+                <div class="form-group">
+                  <label for="categoriaReporte" class="mt-1" style="font-size: 1rem; font-weight: bold">Categoría de Reporte</label>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="" id="checkVentas" />
+                    <label class="form-check-label" for="checkVentas">Ventas</label>
+                  </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="" id="checkContable" />
+                    <label class="form-check-label" for="checkContable">Contable</label>
+                  </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="" id="checkIndicadores" />
+                    <label class="form-check-label" for="checkIndicadores">Indicadores</label>
+                  </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="" id="checkClientes" />
+                    <label class="form-check-label" for="checkClientes">Clientes, Consignatarios, etc...</label>
+                  </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="" id="checkRegional" />
+                    <label class="form-check-label" for="checkRegional">Regional</label>
+                  </div>
+                  <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" value="" id="checkDevoluciones" />
+                    <label class="form-check-label" for="checkDevoluciones">Devoluciones</label>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-8" id="infoCard">
+          <div class="bg-gradient mb-4 card-uniform">
+            <div class="card-inner text-center manual-card p-3">
+              <h5 class="card-title font-weight-normal" style="font-size: 2rem">Información Adicional</h5>
+              <p id="infoContent">Aquí va la información específica.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="content-wrapper-footer">
       <footer class="bg-danger text-white">
         <div class="container">
@@ -126,15 +176,9 @@
       </footer>
     </div>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-      integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-      crossorigin="anonymous"
-    ></script>
+    <script src="{% static 'scripts/infoCheckBox.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
 </html>
