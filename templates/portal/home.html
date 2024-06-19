@@ -88,14 +88,14 @@
                 </h5>
                 <form method="post">
                   {% csrf_token %}
-                  <div class="form-group mt-4">
-                    <label for="categoriaReporte" style="font-size: 1.25rem"
+                  <div class="form-group mt-3">
+                    <label for="categoriaReporte" style="font-size: 1.25rem; font-weight:500;"
                       >Categoría de Reporte</label
                     >
                     {% if dbname %}
-                    <p>Conectado a la base de datos {{ dbname }}</p>
+                    <p style = "font-weight:500;">Conectado a la base de datos {{ dbname }}</p>
                     {% else %}
-                    <p>No se pudo conectar a la base de datos</p>
+                    <p style="font-weight: 500; color: #ed1c24;">¡No se pudo conectar a la base de datos!</p>
                     {% endif %}
                     <select
                       class="mt-2 border-2 border-dark form-select"

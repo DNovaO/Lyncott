@@ -54,45 +54,43 @@ body {
 .card-inner {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centrar los elementos horizontalmente */
-  padding: 1.25rem; /* Ajusta según sea necesario para el espacio interno */
+  align-items: center; 
+  padding: 1.25rem; 
 }
 
 .card-inner {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centrar los elementos horizontalmente */
-  padding: 1.25rem; /* Ajusta según sea necesario para el espacio interno */
+  align-items: center; 
+  padding: 1.25rem; 
 }
 
 .form-check {
   display: flex;
-  align-items: center; /* Alinear verticalmente dentro del contenedor */
+  align-items: center; 
   margin-bottom: 10px;
-  text-align: left; /* Alinear texto a la izquierda dentro de .form-check */
+  text-align: left; 
 }
 
 .form-check-input {
-  margin-right: 10px; /* Margen derecho para separación entre checkbox y texto */
-  /* Estilo del borde y color del checkbox */
+  margin-right: 10px;
   border: 2px solid #000000;
-  width: 20px; /* Ancho del checkbox */
-  height: 20px; /* Altura del checkbox */
-  border-radius: 4px; /* Borde redondeado */
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
 }
 
-/* Estilo cuando el checkbox está marcado */
 .form-check-input:checked {
   background-color: #000000;
   border: #000000;
 }
 
 .form-check-label {
-  margin: 0; /* Eliminar margen para alinear correctamente */
-  font-size: 1rem; /* Tamaño de fuente deseado para el texto de la etiqueta */
-  text-align: left; /* Alinear texto a la izquierda dentro de .form-check-label */
-  cursor: pointer; /* Cambiar cursor a pointer para indicar que es clickeable */
-  user-select: none; /* Evitar que el texto se seleccione accidentalmente */
+  margin: 0; 
+  font-size: 1rem; 
+  text-align: left;
+  cursor: pointer; 
+  user-select: none; 
   font-weight: 500;
 }
 
@@ -194,6 +192,12 @@ footer {
   transition: all ease-in-out 0.3s ; 
 }
 
+#infoContent {
+  overflow: hidden;
+  padding: 10px;
+  box-sizing: border-box; 
+}
+
 #infoCard {
   width: 0px;
   opacity: 0;
@@ -207,4 +211,22 @@ footer {
 #infoCard.visible {
   opacity: 1; 
   transform: translateX(0); 
+}
+
+.info-section {
+  text-align: left;
+  margin-bottom: 20px;
+  font-size: 1.50rem;
+  font-weight: 500;
+  border-bottom: 1px solid #ed1c24;
+  padding-bottom: 2px; 
+}
+
+.info-list ul{
+  list-style-type: circle;
+  padding-left: 0;
+}
+
+.info-list li {
+  margin-bottom: 10px;
 }
