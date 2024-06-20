@@ -568,50 +568,24 @@
               <!-- Esta tabla puede debe ser generada dinámicamente dependiendo de los datos recibidos de las consultas SQL -->
               <table class="table">
                 <thead>
+                  <!-- Itera sobre todas las filas de las tablas de manera dinamica en base a los datos recibidos-->
                   <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Valor</th>
-                    <th scope="col">Domicilio</th>
-                    <th scope="col">Status</th>
+                    <th scope="col"> # </th>
+                    {% for campo in campos_reporte %}
+                    <th scope="col">{{ campo }}</th>
+                    {% endfor %}
                   </tr>
                 </thead>
                 <tbody>
+                  <!-- Itera sobre todas las filas de las tablas de manera dinamica en base a los datos recibidos-->
+                  {% for fila in datos %}
                   <tr>
-                    <th scope="row">1</th>
-                    <td>Ejemplo 1</td>
-                    <td>123</td>
-                    <td>asd#!23</td>
-                    <td>Activo</td>
+                    <th scope="row">{{ loop.index }}</th> 
+                    {% for valor in fila %}
+                      <td>{{ valor }}</td>
+                    {% endfor %}
                   </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Ejemplo 1</td>
-                    <td>123</td>
-                    <td>asd#!23</td>
-                    <td>Activo</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Ejemplo 1</td>
-                    <td>123</td>
-                    <td>asd#!23</td>
-                    <td>Activo</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">4</th>
-                    <td>Ejemplo 1</td>
-                    <td>123</td>
-                    <td>asd#!23</td>
-                    <td>Activo</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">5</th>
-                    <td>Ejemplo 1</td>
-                    <td>123</td>
-                    <td>asd#!23</td>
-                    <td>Activo</td>
-                  </tr>
+                  {% endfor %}
                   <!-- Más filas según los datos -->
                 </tbody>
               </table>
