@@ -39,12 +39,11 @@ body {
   margin: 0;
 }
 
-.custom-btn {
+/* .custom-btn {
   display: block;
   width: auto;
-  margin: 0 auto;
   text-align: center;
-}
+} */
 
 .bg-gradient {
   border-radius: 20px;
@@ -102,6 +101,7 @@ body {
   padding: 3vh;
   box-shadow: 0px 4px 8px rgba(168, 168, 168, 0.5);
   height: 100%;
+  width: 100%;
 }
 
 .form-control {

@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Devoluciones por Sucursal": 4,
     "Comparativa de Ventas y Presupuesto por Zonas en Pesos": 4,
     "Clientes y Consignatarios Activos": 4,
+    "Consignatarios por Sucursal": 4,
 
     // Familia 5
     "Folios de Facturas": 5,

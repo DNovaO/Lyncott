@@ -720,3 +720,4 @@ class Kdsegmentacion(models.Model):
     class Meta:
         managed = False
         db_table = 'KDSEGMENTACION'
+

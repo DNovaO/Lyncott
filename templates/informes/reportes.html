@@ -17,6 +17,14 @@
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
   </head>
   <body>
     <nav
@@ -94,23 +102,35 @@
                   <div class="col-md-6">
                     <div class="fecha_inicial parametro form-group mb-2">
                       <label for="fecha_inicial">Fecha Inicial:</label>
-                      <input
-                        type="date"
-                        id="fecha_inicial"
-                        name="fecha_inicial"
-                        class="form-control"
-                      />
+                      <div class="date-container">
+                        <input
+                          type="text"
+                          id="fecha_inicial"
+                          name="fecha_inicial"
+                          class="form-control"
+                        />
+                        <i
+                          class="fas fa-calendar-alt calendar-icon"
+                          id="calendar-icon-inicial"
+                        ></i>
+                      </div>
                     </div>
                   </div>
                   <div class="col-md-6">
                     <div class="fecha_final parametro form-group">
                       <label for="fecha_final">Fecha Final:</label>
-                      <input
-                        type="date"
-                        id="fecha_final"
-                        name="fecha_final"
-                        class="form-control"
-                      />
+                      <div class="date-container">
+                        <input
+                          type="text"
+                          id="fecha_final"
+                          name="fecha_final"
+                          class="form-control"
+                        />
+                        <i
+                          class="fas fa-calendar-alt calendar-icon"
+                          id="calendar-icon-final"
+                        ></i>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -125,9 +145,10 @@
                         name="cliente_inicial"
                         class="form-select"
                       >
+                        <option value="Todos">Todos</option>
                         {% for cliente in clientes %}
-                        <option value="{{ cliente.id }}">
-                          {{ cliente.nombre }}
+                        <option value="{{ cliente.clave_cliente }}">
+                          {{ cliente.clave_cliente }} - {{ cliente.nombre_cliente }}
                         </option>
                         {% endfor %}
                       </select>
@@ -141,9 +162,10 @@
                         name="cliente_final"
                         class="form-select"
                       >
+                        <option value="Todos">Todos</option>
                         {% for cliente in clientes %}
-                        <option value="{{ cliente.id }}">
-                          {{ cliente.nombre }}
+                        <option value="{{ cliente.clave_cliente }}">
+                          {{ cliente.clave_cliente }} - {{cliente.nombre_cliente }}
                         </option>
                         {% endfor %}
                       </select>
@@ -197,9 +219,10 @@
                         name="sucursal_inicial"
                         class="form-select"
                       >
+                        <option>Todas</option>
                         {% for sucursal in sucursales %}
-                        <option value="{{ sucursal.id }}">
-                          {{ sucursal.nombre }}
+                        <option value="{{ sucursal.clave_sucursal }}">
+                          {{ sucursal.clave_sucursal }} - {{ sucursal.descripcion }}
                         </option>
                         {% endfor %}
                       </select>
@@ -213,9 +236,10 @@
                         name="sucursal_final"
                         class="form-select"
                       >
+                        <option>Todas</option>
                         {% for sucursal in sucursales %}
-                        <option value="{{ sucursal.id }}">
-                          {{ sucursal.nombre }}
+                        <option value="{{ sucursal.clave_sucursal }}">
+                          {{ sucursal.clave_sucursal }} - {{ sucursal.descripcion }}
                         </option>
                         {% endfor %}
                       </select>
@@ -495,9 +519,10 @@
                     <div class="sucursal parametro form-group">
                       <label for="sucursal">Sucursal:</label>
                       <select id="sucursal" name="sucursal" class="form-select">
+                        <option>Todas</option>
                         {% for sucursal in sucursales %}
-                        <option value="{{ sucursal.id }}">
-                          {{ sucursal.nombre }}
+                        <option value="{{ sucursal.clave_sucursal }}">
+                          {{ sucursal.clave_sucursal }} - {{ sucursal.descripcion }}
                         </option>
                         {% endfor %}
                       </select>
@@ -534,7 +559,12 @@
                   <div class="col-md-6">
                     <div class="region parametro form-group">
                       <label for="region">Región:</label>
-                      <select id="region" name="region" class="form-select">
+                      <select
+                        id="region"
+                        name="region"
+                        class="form-select"
+                        autocomplete="region"
+                      >
                         {% for region in regiones %}
                         <option value="{{ region.id }}">
                           {{ region.nombre }}
@@ -547,12 +577,12 @@
 
                 <!-- Terminan los parameteros -->
 
-                <button
-                  type="submit"
-                  class="btn btn-dark mt-4 justify-content-center align-items-center"
-                >
-                  Generar Reporte
-                </button>
+                 
+                <div style = "width:100%;" class = "d-flex">
+                  <button type="submit" class="btn btn-dark mt-4 justify-content-center align-items-center" style = "margin: 0 auto;" >
+                    Generar Reporte
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -565,31 +595,40 @@
             </div>
             <div class="card-body">
               <!-- Aquí se mostrarán los resultados de los reportes -->
-              <!-- Esta tabla puede debe ser generada dinámicamente dependiendo de los datos recibidos de las consultas SQL -->
+              <!-- Esta tabla debe ser generada dinámicamente dependiendo de los datos recibidos de las consultas SQL -->
               <table class="table">
                 <thead>
-                  <!-- Itera sobre todas las filas de las tablas de manera dinamica en base a los datos recibidos-->
+                  <!-- Itera sobre todas las filas de las tablas de manera dinámica en base a los datos recibidos -->
                   <tr>
-                    <th scope="col"> # </th>
+                    <th scope="col">#</th>
                     {% for campo in campos_reporte %}
                     <th scope="col">{{ campo }}</th>
                     {% endfor %}
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Itera sobre todas las filas de las tablas de manera dinamica en base a los datos recibidos-->
+                  <!-- Itera sobre todas las filas de las tablas de manera dinámica en base a los datos recibidos -->
                   {% for fila in datos %}
                   <tr>
-                    <th scope="row">{{ loop.index }}</th> 
+                    <th scope="row">{{ forloop.counter }}</th>
                     {% for valor in fila %}
-                      <td>{{ valor }}</td>
+                    <td>{{ valor }}</td>
                     {% endfor %}
                   </tr>
+                  {% empty %}
+                  <tr>
+                    <td
+                      colspan="{{ campos_reporte|length }}"
+                      class="text-center"
+                    >
+                      No hay datos disponibles
+                    </td>
+                  </tr>
                   {% endfor %}
-                  <!-- Más filas según los datos -->
                 </tbody>
               </table>
             </div>
+
             <div class="card-footer">
               <!-- Paginación -->
               <nav aria-label="Page navigation example">
@@ -697,8 +736,9 @@
       </footer>
     </div>
 
-
+    <script src="{% static 'scripts/formatoFecha.js' %}"></script>
     <script src="{% static 'scripts/mostrarParametros.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

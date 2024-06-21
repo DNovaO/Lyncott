@@ -89,13 +89,19 @@
                 <form method="post">
                   {% csrf_token %}
                   <div class="form-group mt-3">
-                    <label for="categoriaReporte" style="font-size: 1.25rem; font-weight:500;"
+                    <label
+                      for="categoriaReporte"
+                      style="font-size: 1.25rem; font-weight: 500"
                       >Categoría de Reporte</label
                     >
                     {% if dbname %}
-                    <p style = "font-weight:500;">Conectado a la base de datos {{ dbname }}</p>
+                    <p style="font-weight: 500">
+                      Conectado a la base de datos {{ dbname }}
+                    </p>
                     {% else %}
-                    <p style="font-weight: 500; color: #ed1c24;">¡No se pudo conectar a la base de datos!</p>
+                    <p style="font-weight: 500; color: #ed1c24">
+                      ¡No se pudo conectar a la base de datos!
+                    </p>
                     {% endif %}
                     <select
                       class="mt-2 border-2 border-dark form-select"
@@ -103,7 +109,7 @@
                       name="categoria_reporte"
                       onchange="updateTiposReporte()"
                     >
-                      <option value="" class="opacity-50 ">
+                      <option value="" class="opacity-50">
                         Seleccione una categoría
                       </option>
                       {% for categoria in categorias_reporte %}
@@ -127,19 +133,28 @@
                   </div>
                   <button
                     type="submit"
-                    class="btn btn-sm mt-3 btn-dark font-weight-bold"
+                    class="btn btn-dark custom-btn max-content d-flex mt-3" style ="margin: 0 auto;"
                   >
-                    Buscar Reporte
+                    <img
+                      class="mb-auto mt-auto"
+                      style="max-width: 50px; filter: invert()"
+                      src="{% static 'resources/analysis-analytics-data-svgrepo-com.svg' %}"
+                      alt="Reportes"
+                    />
+                    <p
+                      style="
+                        padding: 0;
+                        font-weight: 200;
+                        font-size: 1.25rem;
+                        margin-left: 5px;
+                        margin-top: auto;
+                        margin-bottom: auto;
+                      "
+                    >
+                      Buscar Reporte
+                    </p>
                   </button>
-
-                  <img
-                    class="ml-0 ml-md-2 mt-3"
-                    style="max-width: 50px"
-                    src="{% static 'resources/analysis-analytics-data-svgrepo-com.svg' %}"
-                    alt="Reportes"
-                  />
                 </form>
-
               </div>
             </div>
           </div>
@@ -150,86 +165,128 @@
                 <div
                   class="bg-gradient bg-gradient-manuales flex-grow-1 card-uniform"
                 >
-                  <div
-                    class="card-inner d-flex align-items-center flex-wrap p-2"
-                  >
-                    <div
-                      class="col-12 col-md-4 d-flex flex-column text-center text-md-left mb-2 mb-md-0"
-                    >
-                      <h5
-                        class="card-title font-weight-normal"
-                        style="font-size: 1.5rem"
-                      >
-                        Manuales
-                      </h5>
-                    </div>
-                    <div
-                      class="col-12 col-md-4 d-flex justify-content-center mb-2 mb-md-0"
-                    >
-                    {% if user.is_authenticated %}
-                      <form method="post" action="{% url 'manuales' %}" class="d-inline">
-                        {% csrf_token %}
-                        <button
-                          type="submit"
-                          class="btn btn-dark custom-btn w-100 text-center"
+                  <div class="card-inner d-flex p-2 text-center justify-center">
+                    <div class="d-flex flex-column" style="margin: 0 auto">
+                      <div class="text-center mb-4">
+                        <h5
+                          class="card-title font-weight-normal mt-2"
+                          style="font-size: 2rem"
                         >
-                          Ir a KAM
-                        </button>
-                      </form>
-                    {% endif %}
-                    </div>
-                    <div
-                      class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end"
-                    >
-                      <img
-                        style="max-width: 55px"
-                        src="{% static 'resources/user-manual-svgrepo-com.svg' %}"
-                        alt="Manuales"
-                      />
+                          Manuales
+                        </h5>
+                      </div>
+                      <div class="d-flex">
+                        <div>
+                          {% if user.is_authenticated %}
+                          <form
+                            method="post"
+                            action="{% url 'manuales' %}"
+                            class="d-inline"
+                          >
+                            {% csrf_token %}
+                            <button
+                              type="submit"
+                              class="btn btn-dark custom-btn max-content d-flex"
+                            >
+                              <svg
+                                style="margin-top: auto; margin-bottom: auto"
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.25"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                class="lucide lucide-book"
+                              >
+                                <path
+                                  d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"
+                                />
+                              </svg>
+                              <p
+                                style="
+                                  padding: 0;
+                                  font-weight: 500;
+                                  font-size: 1.25rem;
+                                  margin-left: 5px;
+                                  margin-top: auto;
+                                  margin-bottom: auto;
+                                "
+                              >
+                                IR A KAM
+                              </p>
+                            </button>
+                          </form>
+                          {% endif %}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-md-12 d-flex flex-column mt-1">
+
+              <div class="col-md-12 d-flex flex-column">
                 <div
-                  class="bg-gradient bg-gradient-directorio flex-grow-1 mt-4 card-uniform"
+                  class="bg-gradient bg-gradient-directorio flex-grow-1 mt-2 card-uniform"
                 >
                   <div
-                    class="card-inner d-flex align-items-center flex-wrap p-2"
+                    class="card-inner p-2 text-center justify-center d-flex flex-column"
                   >
-                    <div
-                      class="col-12 col-md-4 d-flex flex-column text-center text-md-left mb-2 mb-md-0"
-                    >
+                    <div class="text-center mb-4">
                       <h5
-                        class="card-title font-weight-normal"
-                        style="font-size: 1.5rem"
+                        class="card-title font-weight-normal mt-2"
+                        style="font-size: 2rem; fomt-2"
                       >
                         Directorio
                       </h5>
                     </div>
-                    <div
-                      class="col-12 col-md-4 d-flex justify-content-center mb-2 mb-md-0"
-                    >
-                    {% if user.is_authenticated %}
-                      <form method="post" action="{% url 'directorios' %}" class="d-inline">
+                    <div style="margin: 0 auto">
+                      {% if user.is_authenticated %}
+                      <form
+                        method="post"
+                        action="{% url 'directorios' %}"
+                        class="d-inline"
+                      >
                         {% csrf_token %}
                         <button
                           type="submit"
-                          class="btn btn-dark custom-btn w-100 text-center"
+                          class="btn btn-dark custom-btn max-content d-flex"
                         >
-                          Ir a Directorio
+                          <svg
+                            style="margin-top: auto; margin-bottom: auto"
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.25"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            class="lucide lucide-book-marked"
+                          >
+                            <path
+                              d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"
+                            />
+                            <polyline points="10 2 10 10 13 7 16 10 16 2" />
+                          </svg>
+                          <p
+                            style="
+                              padding: 0;
+                              font-weight: 500;
+                              font-size: 1.25rem;
+                              margin-left: 5px;
+                              margin-top: auto;
+                              margin-bottom: auto;
+                            "
+                          >
+                            IR A DIRECTORIO
+                          </p>
                         </button>
                       </form>
-                    {% endif %}
-                    </div>
-                    <div
-                      class="col-12 col-md-4 d-flex justify-content-center justify-content-md-end"
-                    >
-                      <img
-                        style="max-width: 55px"
-                        src="{% static 'resources/contacts-svgrepo-com.svg' %}"
-                        alt="Directorio"
-                      />
+                      {% endif %}
                     </div>
                   </div>
                 </div>
