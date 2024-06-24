@@ -1,0 +1,407 @@
+<!-- templates/modals.html -->
+
+<div class="modal fade" id="clientesModalInicial" tabindex="-1" role="dialog" aria-labelledby="clientesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clientesModalLabel">Seleccionar Cliente Inicial</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="clientesContentInicial">
+                    <!-- Aquí se insertará dinámicamente el contenido de los clientes -->
+                </div>
+            </div>
+            <div class="modal-footer" id="paginationContainer">
+                <!-- Aquí se insertará dinámicamente la paginación -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="clientesModalFinal" tabindex="-1" role="dialog" aria-labelledby="clientesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="clientesModalLabel">Seleccionar Cliente Final</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="clientesContentFinal">
+                <!-- Contenido que se llenará dinámicamente con AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="productosModalInicial" tabindex="-1" role="dialog" aria-labelledby="productosModalLabelInicial" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productosModalLabelInicial">Seleccionar Producto Inicial</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="productosContentInicial">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="productosModalFinal" tabindex="-1" role="dialog" aria-labelledby="productosModalLabelFinal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productosModalLabelFinal">Seleccionar Producto Final</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="productosContentFinal">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sucursalesModalInicial" tabindex="-1" role="dialog" aria-labelledby="sucursalesModalLabelInicial" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sucursalesModalLabelInicial">Seleccionar Sucursal Inicial</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="sucursalesContentInicial">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sucursalesModalFinal" tabindex="-1" role="dialog" aria-labelledby="sucursalesModalLabelFinal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sucursalesModalLabelFinal">Seleccionar Sucursal Final</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="sucursalesContentFinal">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="vendedoresModalInicial" tabindex="-1" role="dialog" aria-labelledby="vendedoresModalLabelInicial" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vendedoresModalLabelInicial">Seleccionar Vendedor Inicial</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="vendedoresContentInicial">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="vendedoresModalFinal" tabindex="-1" role="dialog" aria-labelledby="vendedoresModalLabelFinal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vendedoresModalLabelFinal">Seleccionar Vendedor Final</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="vendedoresContentFinal">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="lineasModalInicial" tabindex="-1" role="dialog" aria-labelledby="lineasModalLabelInicial" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="lineasModalLabelInicial">Seleccionar Línea Inicial</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="lineasContentInicial">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="lineasModalFinal" tabindex="-1" role="dialog" aria-labelledby="lineasModalLabelFinal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="lineasModalLabelFinal">Seleccionar Línea Final</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="lineasContentFinal">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="familiasModalInicial" tabindex="-1" role="dialog" aria-labelledby="familiasModalLabelInicial" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="familiasModalLabelInicial">Seleccionar Familia Inicial</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="familiasContentInicial">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="familiasModalFinal" tabindex="-1" role="dialog" aria-labelledby="familiasModalLabelFinal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="familiasModalLabelFinal">Seleccionar Familia Final</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="familiasContentFinal">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="marcasModalInicial" tabindex="-1" role="dialog" aria-labelledby="marcasModalLabelInicial" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="marcasModalLabelInicial">Seleccionar Marca Inicial</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="marcasContentInicial">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="marcasModalFinal" tabindex="-1" role="dialog" aria-labelledby="marcasModalLabelFinal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="marcasModalLabelFinal">Seleccionar Marca Final</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="marcasContentFinal">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="gruposCorporativosModalInicial" tabindex="-1" role="dialog" aria-labelledby="gruposCorporativosModalLabelInicial" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="gruposCorporativosModalLabelInicial">Seleccionar Grupo Corporativo Inicial</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="gruposCorporativosContentInicial">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="gruposCorporativosModalFinal" tabindex="-1" role="dialog" aria-labelledby="gruposCorporativosModalLabelFinal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="gruposCorporativosModalLabelFinal">Seleccionar Grupo Corporativo Final</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="gruposCorporativosContentFinal">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="gruposCorporativosModal" tabindex="-1" role="dialog" aria-labelledby="gruposCorporativosModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="gruposCorporativosModalLabel">Seleccionar Grupo Corporativo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="gruposCorporativosContent">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="segmentosModalInicial" tabindex="-1" role="dialog" aria-labelledby="segmentosModalLabelInicial" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="segmentosModalLabelInicial">Seleccionar Segmento Inicial</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="segmentosContentInicial">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="segmentosModalFinal" tabindex="-1" role="dialog" aria-labelledby="segmentosModalLabelFinal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="segmentosModalLabelFinal">Seleccionar Segmento Final</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="segmentosContentFinal">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="statusesModal" tabindex="-1" role="dialog" aria-labelledby="statusesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="statusesModalLabel">Seleccionar Status</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="statusesContent">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="zonasModal" tabindex="-1" role="dialog" aria-labelledby="zonasModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="zonasModalLabel">Seleccionar Zona</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="zonasContent">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="sucursalesModal" tabindex="-1" role="dialog" aria-labelledby="sucursalesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sucursalesModalLabel">Seleccionar Sucursal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="sucursalesContent">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="gruposModal" tabindex="-1" role="dialog" aria-labelledby="gruposModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="gruposModalLabel">Seleccionar Grupo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="gruposContent">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="familiasModal" tabindex="-1" role="dialog" aria-labelledby="familiasModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="familiasModalLabel">Seleccionar Familia</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="familiasContent">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="regionesModal" tabindex="-1" role="dialog" aria-labelledby="regionesModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="regionesModalLabel">Seleccionar Región</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="regionesContent">
+                <!-- Contenido cargado por AJAX -->
+            </div>
+        </div>
+    </div>
+</div>

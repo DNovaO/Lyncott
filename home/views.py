@@ -2,6 +2,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.db import connection
+from django.core.paginator import Paginator
+from informes.models import Kdud
 
 @login_required
 def home_view(request):
@@ -92,9 +94,10 @@ def home_view(request):
         categoria_reporte = request.POST.get('categoria_reporte')
         tipo_reporte = request.POST.get('tipo_reporte')
         
+        clients_page = 0
         # Obtener la URL inversa de 'report' y pasar los parámetros como argumentos de consulta
         report_url = reverse('report')
-        report_url += '?categoria_reporte={}&tipo_reporte={}'.format(categoria_reporte, tipo_reporte)
+        report_url += '?categoria_reporte={}&tipo_reporte={}&page={}'.format(categoria_reporte, tipo_reporte,clients_page)
         return redirect(report_url)
 
     context = {

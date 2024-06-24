@@ -93,8 +93,8 @@ DATABASES = {
         'NAME': 'KL2020',
         'USER': '', 
         'PASSWORD': '',  
-        'HOST': 'LAPTOP-NQ0GQKUJ', 
-        'PORT': '1433',  
+        'HOST': 'LAPTOP-NQ0GQKUJ\MSSQLSERVER01', 
+        'PORT': '',  
         'OPTIONS': {
             'driver': "ODBC Driver 17 for SQL Server",
             'trust_server_certificate': 'True',  # Confía en el certificado del servidor (SSL)

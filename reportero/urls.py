@@ -1,3 +1,4 @@
+#urls.py Main
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -8,13 +9,13 @@ from manualesKAM.views import *
 from directorios.views import *
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('users.urls')),  
-    path('home/',include('home.urls')),
-    path('report/',include('informes.urls')),
-    path('KAM/', include('manualesKAM.urls') ),
-    path('directorio/', include('directorios.urls')),
+    path('admin/', admin.site.urls),  # Ruta para la administración de Django
+    path('', include('users.urls')),  # URL base que incluye las URLs de la aplicación users
+    path('home/', include('home.urls')),  # URLs relacionadas con la aplicación home
+    path('report/', include('informes.urls')),  # URLs relacionadas con la aplicación informes
+    path('KAM/', include('manualesKAM.urls')),  # URLs relacionadas con la aplicación manualesKAM
+    path('directorio/', include('directorios.urls')),  # URLs relacionadas con la aplicación directorios
 ]
 
-urlpatterns += staticfiles_urlpatterns()
+urlpatterns += staticfiles_urlpatterns()  # Incluir las URLs estáticas para el manejo de archivos estáticos
 

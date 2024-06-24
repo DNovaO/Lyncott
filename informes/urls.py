@@ -1,7 +1,8 @@
-#urls de informes
+# informes/urls.py
 from django.urls import path
-from .views import report_view
+from . import views
 
 urlpatterns = [
-    path('', report_view, name='report'),
+    path('', views.report_view, name='report'),
+    path('report/sucursales/', views.sucursales_view, name='sucursales'),
 ]
