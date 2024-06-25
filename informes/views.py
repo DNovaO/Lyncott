@@ -10,7 +10,7 @@ def report_view(request):
     
     clientes = Kdud.objects.values('clave_cliente', 'nombre_cliente').distinct().order_by('clave_cliente')
     
-    paginator = Paginator(clientes, 20)
+    paginator = Paginator(clientes, 10)
     page_number = request.GET.get('page')
     clients_page = paginator.get_page(page_number)
     

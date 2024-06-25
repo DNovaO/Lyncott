@@ -132,37 +132,34 @@
                   </div>
                 </div>
 
-                <!-- Segunda fila -->
+                <!-- Primera fila -->
                 <div class="row">
-
-                 <div class="col-md-6">
+                  <div class="col-md-6">
                     <div class="cliente_inicial parametro form-group">
-                        <label for="cliente_inicial">Cliente Inicial:</label>
-                        <div class="input-group rounded border border-dark">
-                            <button style= "width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_ClientesIniciales" data-toggle="modal" data-target="#clientesModalInicial">Buscar Cliente...</button>
-                          </div>
+                      <label for="cliente_inicial">Cliente Inicial:</label>
+                      <div class="input-group rounded border border-dark">
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button"  id="desplegar_ClientesIniciales" data-type="cliente_inicial">Buscar Cliente...</button>
+                      </div>
                     </div>
                   </div>
-                
+
                   <div class="col-md-6">
                     <div class="cliente_final parametro form-group">
-                        <label for="cliente_final">Cliente Final:</label>
-                        <div class="input-group rounded border border-dark">
-                            <button style= "width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_ClientesFinales">Buscar Cliente...</button>
-                        </div>
+                      <label for="cliente_final">Cliente Final:</label>
+                      <div class="input-group rounded border border-dark">
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button"  id="desplegar_ClientesFinales" data-type="cliente_final">Buscar Cliente...</button>
+                      </div>
                     </div>
                   </div>
-
                 </div>
 
-                <!-- Tercera fila -->
+                <!-- Segunda fila -->
                 <div class="row">
-
                   <div class="col-md-6">
                     <div class="producto_inicial parametro form-group">
                       <label for="producto_inicial">Producto Inicial:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_ProductosIniciales">Buscar Producto...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_ProductosIniciales" data-type="producto_inicial">Buscar Producto...</button>
                       </div>
                     </div>
                   </div>
@@ -171,21 +168,19 @@
                     <div class="producto_final parametro form-group">
                       <label for="producto_final">Producto Final:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_ProductosFinales">Buscar Producto...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_ProductosFinales" data-type="producto_final">Buscar Producto...</button>
                       </div>
                     </div>
                   </div>
-
                 </div>
 
-                <!-- Cuarta fila -->
+                <!-- Tercera fila -->
                 <div class="row">
-
                   <div class="col-md-6">
                     <div class="sucursal_inicial parametro form-group">
                       <label for="sucursal_inicial">Sucursal Inicial:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_SucursalesIniciales">Buscar Sucursal...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_SucursalesIniciales" data-type="sucursal_inicial">Buscar Sucursal...</button>
                       </div>
                     </div>
                   </div>
@@ -194,21 +189,19 @@
                     <div class="sucursal_final parametro form-group">
                       <label for="sucursal_final">Sucursal Final:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_SucursalesFinales">Buscar Sucursal...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_SucursalesFinales" data-type="sucursal_final">Buscar Sucursal...</button>
                       </div>
                     </div>
                   </div>
-
                 </div>
 
-                <!-- Quinta fila -->
+                <!-- Cuarta fila -->
                 <div class="row">
-                  
                   <div class="col-md-6">
                     <div class="vendedor_inicial parametro form-group">
                       <label for="vendedor_inicial">Vendedor Inicial:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_VendedoresIniciales">Buscar Vendedor...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_VendedoresIniciales" data-type="vendedor_inicial">Buscar Vendedor...</button>
                       </div>
                     </div>
                   </div>
@@ -217,21 +210,19 @@
                     <div class="vendedor_final parametro form-group">
                       <label for="vendedor_final">Vendedor Final:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_VendedoresFinales">Buscar Vendedor...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_VendedoresFinales" data-type="vendedor_final">Buscar Vendedor...</button>
                       </div>
                     </div>
                   </div>
-
                 </div>
 
-                <!-- Sexta fila -->
+                <!-- Quinta fila -->
                 <div class="row">
-
                   <div class="col-md-6">
                     <div class="linea_inicial parametro form-group">
                       <label for="linea_inicial">Línea Inicial:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_LineasIniciales">Buscar Línea...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_LineasIniciales" data-type="linea_inicial">Buscar Línea...</button>
                       </div>
                     </div>
                   </div>
@@ -240,44 +231,40 @@
                     <div class="linea_final parametro form-group">
                       <label for="linea_final">Línea Final:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_LineasFinales">Buscar Línea...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_LineasFinales" data-type="linea_final">Buscar Línea...</button>
                       </div>
                     </div>
                   </div>
-
                 </div>
 
-                <!-- Séptima fila -->
+                <!-- Sexta fila -->
                 <div class="row">
-
                   <div class="col-md-6">
-                      <div class="familia_inicial parametro form-group">
-                        <label for="familia_inicial">Familia Inicial:</label>
-                        <div class="input-group rounded border border-dark">
-                          <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_FamiliasIniciales">Buscar Familia...</button>
-                        </div>
+                    <div class="familia_inicial parametro form-group">
+                      <label for="familia_inicial">Familia Inicial:</label>
+                      <div class="input-group rounded border border-dark">
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_FamiliasIniciales" data-type="familia_inicial">Buscar Familia...</button>
                       </div>
                     </div>
+                  </div>
 
                   <div class="col-md-6">
                     <div class="familia_final parametro form-group">
                       <label for="familia_final">Familia Final:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_FamiliasFinales">Buscar Familia...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_FamiliasFinales" data-type="familia_final">Buscar Familia...</button>
                       </div>
                     </div>
                   </div>
-
                 </div>
 
-                <!-- Octava fila -->
+                <!-- Séptima fila -->
                 <div class="row">
-                  
                   <div class="col-md-6">
                     <div class="marca_inicial parametro form-group">
                       <label for="marca_inicial">Marca Inicial:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_MarcasIniciales">Buscar Marca...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_MarcasIniciales" data-type="marca_inicial">Buscar Marca...</button>
                       </div>
                     </div>
                   </div>
@@ -286,58 +273,52 @@
                     <div class="marca_final parametro form-group">
                       <label for="marca_final">Marca Final:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_MarcasFinales">Buscar Marca...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_MarcasFinales" data-type="marca_final">Buscar Marca...</button>
                       </div>
                     </div>
                   </div>
-
                 </div>
 
-                <!-- Novena fila -->
+                <!-- Octava fila -->
                 <div class="row">
-                  
                   <div class="col-md-6">
                     <div class="grupoCorporativo_inicial parametro form-group">
                       <label for="grupoCorporativo_inicial">Grupo Corporativo Inicial:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_GruposIniciales">Buscar Grupo Corporativo...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_GruposIniciales" data-type="grupoCorporativo_inicial">Buscar Grupo Corporativo...</button>
                       </div>
                     </div>
                   </div>
-                  
+
                   <div class="col-md-6">
                     <div class="grupoCorporativo_final parametro form-group">
                       <label for="grupoCorporativo_final">Grupo Corporativo Final:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_GruposFinales">Buscar Grupo Corporativo...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_GruposFinales" data-type="grupoCorporativo_final">Buscar Grupo Corporativo...</button>
                       </div>
                     </div>
                   </div>
-                  
                 </div>
 
-                <!-- Décima fila -->
+                <!-- Novena fila -->
                 <div class="row">
-
                   <div class="col-md-6">
                     <div class="grupoCorporativo parametro form-group">
                       <label for="grupoCorporativo">Grupo Corporativo:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_GrupoCorporativo">Buscar Grupo Corporativo...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_GrupoCorporativo" data-type="grupoCorporativo">Buscar Grupo Corporativo...</button>
                       </div>
                     </div>
                   </div>
-
                 </div>
 
                 <!-- Onceava fila -->
                 <div class="row">
-
                   <div class="col-md-6">
                     <div class="segmento_inicial parametro form-group">
                       <label for="segmento_inicial">Segmento Inicial:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_SegmentosIniciales">Buscar Segmento...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_SegmentosIniciales" data-type="segmento_inicial">Buscar Segmento...</button>
                       </div>
                     </div>
                   </div>
@@ -346,21 +327,19 @@
                     <div class="segmento_final parametro form-group">
                       <label for="segmento_final">Segmento Final:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_SegmentosFinales">Buscar Segmento...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_SegmentosFinales" data-type="segmento_final">Buscar Segmento...</button>
                       </div>
                     </div>
                   </div>
-                
                 </div>
 
                 <!-- Doceava fila -->
                 <div class="row">
-                  
                   <div class="col-md-6">
                     <div class="status parametro form-group">
                       <label for="status">Status:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_Status">Buscar Status...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_Status" data-type="status">Buscar Status...</button>
                       </div>
                     </div>
                   </div>
@@ -369,21 +348,19 @@
                     <div class="zona parametro form-group">
                       <label for="zona">Zona:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_Zona">Buscar Zona...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_Zona" data-type="zona">Buscar Zona...</button>
                       </div>
                     </div>
                   </div>
-                
                 </div>
 
                 <!-- Decimotercera fila -->
                 <div class="row">
-
                   <div class="col-md-6">
                     <div class="sucursal parametro form-group">
                       <label for="sucursal">Sucursal:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_Sucursal">Buscar Sucursal...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_Sucursal" data-type="sucursal">Buscar Sucursal...</button>
                       </div>
                     </div>
                   </div>
@@ -392,11 +369,10 @@
                     <div class="grupo parametro form-group">
                       <label for="grupo">Grupo:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_Grupo">Buscar Grupo...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_Grupo" data-type="grupo">Buscar Grupo...</button>
                       </div>
                     </div>
                   </div>
-
                 </div>
 
                 <!-- Decimocuarta fila -->
@@ -405,7 +381,7 @@
                     <div class="familia parametro form-group">
                       <label for="familia">Familia:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_Familia">Buscar Familia...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_Familia" data-type="familia">Buscar Familia...</button>
                       </div>
                     </div>
                   </div>
@@ -414,11 +390,12 @@
                     <div class="region parametro form-group">
                       <label for="region">Región:</label>
                       <div class="input-group rounded border border-dark">
-                        <button   style="width:100%; padding-left:0;" class="btn form-select" type="button" id="desplegar_Region">Buscar Región...</button>
+                        <button style="width:100%; padding-left:0;" class="btn form-select modal-trigger" type="button" id="desplegar_Region" data-type="region">Buscar Región...</button>
                       </div>
                     </div>
                   </div>
                 </div>
+
 
                 <!-- Terminan los parameteros -->
 
