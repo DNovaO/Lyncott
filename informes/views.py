@@ -13,16 +13,16 @@ def report_view(request):
     paginator = Paginator(clientes, 10)
     page_number = request.GET.get('page')
     clients_page = paginator.get_page(page_number)
-    
     clients_list = list(clients_page)
+    
+    buscador = list(Kdud.objects.values('clave_cliente', 'nombre_cliente').distinct().order_by('clave_cliente'))
     
     if request.method == 'POST':
         try:
-            jsonData = json.loads(request.body)
-            
             return JsonResponse({
                 'Clientes': clients_list,
                 'Pagination': get_pagination_html(clients_page),  # Aquí envías los datos de paginación
+                'Buscador' : buscador
             })
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
@@ -31,6 +31,7 @@ def report_view(request):
         'clients': clients_page,
         'categoria_reporte': categoria_reporte,
         'tipo_reporte': tipo_reporte,
+        'buscador': buscador,
     }
     return render(request, 'informes/reportes.html', context)
 
