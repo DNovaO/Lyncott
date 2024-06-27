@@ -93,11 +93,11 @@ def home_view(request):
     if request.method == 'POST':
         categoria_reporte = request.POST.get('categoria_reporte')
         tipo_reporte = request.POST.get('tipo_reporte')
-        
+        dataType = request.POST.get('dataType')
         clients_page = 0
         # Obtener la URL inversa de 'report' y pasar los parámetros como argumentos de consulta
         report_url = reverse('report')
-        report_url += '?categoria_reporte={}&tipo_reporte={}&page={}'.format(categoria_reporte, tipo_reporte,clients_page)
+        report_url += '?categoria_reporte={}&tipo_reporte={}&dataType={}&page={}'.format(categoria_reporte, tipo_reporte, dataType,clients_page)
         return redirect(report_url)
 
     context = {
