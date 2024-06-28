@@ -18,12 +18,10 @@ document.addEventListener("DOMContentLoaded", function(){
                 "Content-Type": "application/json",
                 "X-CSRFToken": getCookie("csrftoken"),
             },
+            //Json de lo que se manda al backend
             body: JSON.stringify({data_type: dataType})
         })
         .then(response => response.json())
-        .then(data => {
-            console.log("Data sent succesfully:", data);
-        })
         .catch((error)=>{
             console.error("Error:",error)
         })
