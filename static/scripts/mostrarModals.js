@@ -86,6 +86,35 @@ function handleResponseData(data) {
             modalFooter.innerHTML = renderPagination(data.sucursalesPaginados.pagination_info, currentPage, dataType);
             break;
 
+        
+        case 'vendedor_inicial':
+        case 'vendedor_final':
+            fullItemsArray = data.vendedores;
+            modalContent.innerHTML = renderGeneral(data.vendedoresPaginados.objList, 'Vendedores',dataType);
+            modalFooter.innerHTML = renderPagination(data.vendedoresPaginados.pagination_info, currentPage, dataType);
+            break;
+
+        case 'linea_inicial':
+        case 'linea_final':
+            fullItemsArray = data.lineas;
+            modalContent.innerHTML = renderGeneral(data.lineasPaginados.objList, 'Lineas',dataType);
+            modalFooter.innerHTML = renderPagination(data.lineasPaginados.pagination_info, currentPage, dataType);
+            break;
+
+        case 'familia_inicial':
+        case 'familia_final':
+            fullItemsArray = data.familias;
+            modalContent.innerHTML = renderGeneral(data.familiasPaginados.objList, 'Familias',dataType);
+            modalFooter.innerHTML = renderPagination(data.familiasPaginados.pagination_info, currentPage, dataType);
+            break;
+
+        case 'grupoCorporativo_inicial':
+        case 'grupoCorporativo_final':
+            fullItemsArray = data.gruposCorporativos;
+            modalContent.innerHTML = renderGeneral(data.gruposCorporativosPaginados.objList, 'Grupos Corporativos',dataType);
+            modalFooter.innerHTML = renderPagination(data.gruposCorporativosPaginados.pagination_info, currentPage, dataType);
+            break;
+
         default:
             console.error('Tipo de dato no reconocido');
             break;
@@ -217,8 +246,6 @@ function renderPagination(paginationInfo, currentPage, dataType) {
 
     return html;
 }
-
-
 
 // Función para cambiar de página
 function changePage(pageNumber, dataType) {

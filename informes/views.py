@@ -83,34 +83,71 @@ def handle_sucursal(request, data_type):
     
     return JsonResponse(response_data) 
     
-def handle_vendedor(request):
-    return 0
+def handle_vendedor(request, data_type):
+    vendedores = Kduv.objects.values('clave_vendedor','nombre_vendedor').distinct().order_by('clave_vendedor')
+    vendedores_paginados = objPaginator(request, vendedores)
+    
+    response_data = {
+        'data_type': data_type,
+        'vendedores' : list(vendedores),
+        'vendedoresPaginados': vendedores_paginados,
+    }
+    
+    return JsonResponse(response_data)
 
-def handle_linea(request):
+def handle_linea(request, data_type):
+    lineas = Kdig.objects.values('clave_linea','descripcion_linea').distinct().order_by('clave_linea')
+    lineas_paginados = objPaginator(request, lineas)
+    
+    response_data = {
+        'data_type': data_type,
+        'lineas' : list(lineas),
+        'lineasPaginados': lineas_paginados,
+    }
+    
+    return JsonResponse(response_data)
+    
+def handle_familia(request, data_type):
+    familias = Kdif.objects.values('clave_grupo','descripcion_grupo').distinct().order_by('clave_grupo')
+    familias_paginados = objPaginator(request, familias)
+    
+    response_data = {
+        'data_type': data_type,
+        'familias' : list(familias),
+        'familiasPaginados': familias_paginados,
+    }
+    
+    return JsonResponse(response_data)
+
+def handle_marca(request, data_type):
     return 0
     
-def handle_familia(request):
-    return 0
-
-def handle_marca(request):
-    return 0
+def handle_grupo_corporativo(request, data_type):
+    gruposCorporativos = Kdud.objects.values('clave_corporativo').distinct().order_by('clave_corporativo')
+    gruposCorporativos_paginados = objPaginator(request, gruposCorporativos)
     
-def handle_grupo_corporativo(request):
+    response_data = {
+        'data_type': data_type,
+        'gruposCorporativos' : list(gruposCorporativos),
+        'gruposCorporativosPaginados': gruposCorporativos_paginados,
+    }
+    
+    return JsonResponse(response_data)
+
+
+def handle_segmento(request, data_type):
     return 0
 
-def handle_segmento(request):
+def handle_status(request, data_type):
     return 0
 
-def handle_status(request):
+def handle_zona(request, data_type):
     return 0
 
-def handle_zona(request):
+def handle_grupo(request, data_type):
     return 0
 
-def handle_grupo(request):
-    return 0
-
-def handle_region(request):
+def handle_region(request, data_type):
     return 0
     
     

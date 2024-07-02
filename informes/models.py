@@ -563,53 +563,52 @@ class Kdud(models.Model):
     numero_exterior = models.CharField(db_column='C50', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Numero Exterior
     numero_interior = models.CharField(db_column='C51', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Numero Interior
     localidad = models.CharField(db_column='C52', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Localidad
-    notas_al_cliente = models.CharField(db_column='C53', max_length=50, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Notas al cliente
-    tienda_de_tornillos = models.CharField(db_column='C54', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tienda de Tornillos
-    direccion_domicilio = models.CharField(db_column='C55', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Dirección de Domicilio
-    datos_fiscales = models.CharField(db_column='C56', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Datos Fiscales
-    despacho_domicilio = models.CharField(db_column='C57', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Despacho a Domicilio
-    pagina_internet = models.CharField(db_column='C58', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Pagina de Internet
-    clasificacion_cliente = models.CharField(db_column='C59', max_length=13, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Clasificacion del cliente
-    orden_compra_minima = models.CharField(db_column='C60', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Orden de Compra minima
-    respaldo = models.CharField(db_column='C61', max_length=8, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Respaldo
-    dato_despliega_articulo = models.CharField(db_column='C62', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Dato a desplegar en el artículo
-    descuento_adicional = models.CharField(db_column='C63', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Descuento adicional
-    efecto_promocion = models.CharField(db_column='C64', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Efecto de promoción
-    anotaciones = models.CharField(db_column='C65', max_length=60, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Anotaciones
-    tipo_de_venta = models.CharField(db_column='C66', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tipo de Venta
-    comentarios = models.CharField(db_column='C67', max_length=80, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Comentarios
-    domicilio_fiscal = models.CharField(db_column='C68', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Domicilio Fiscal
-    telefono_adicional = models.CharField(db_column='C69', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Teléfono Adicional
-    zona_pais = models.CharField(db_column='C70', max_length=2, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Zona / País
-    contacto = models.CharField(db_column='C71', max_length=2, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Contacto
-    orden_compra_maxima = models.CharField(db_column='C72', max_length=2, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Orden de Compra máxima
-    oc_tipo = models.CharField(db_column='C73', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # OC Tipo
-    oc_grupo = models.CharField(db_column='C74', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # OC Grupo
-    inicio_credito = models.DecimalField(db_column='C75', max_digits=1, decimal_places=0, blank=True, null=True)  # Inicio de crédito
-    observaciones_bloqueo_cliente = models.CharField(db_column='C77', max_length=120, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Observaciones de bloqueo al cliente
-    tipo_de_orden_compra = models.CharField(db_column='C78', max_length=60, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tipo de orden de compra
-    validacion_de_domicilio = models.CharField(db_column='C79', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Validación de domicilio
-    fecha_actualizacion = models.CharField(db_column='C80', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Fecha de actualización
-    fecha_modificacion = models.CharField(db_column='C81', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Fecha de modificación
-    articulo_desplegar = models.CharField(db_column='C82', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Artículo a desplegar
-    clave_producto_servicio = models.CharField(db_column='C83', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Clave del Producto o Servicio
-    vence_obra_dado = models.CharField(db_column='C90', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Vence la obra que tiene dado de alta
-    fecha_bloqueo_credito = models.DateTimeField(db_column='C91', blank=True, null=True)  # Fecha de bloqueo por crédito
-    fecha_de_bloqueo_remision = models.DateTimeField(db_column='C92', blank=True, null=True)  # Fecha de bloqueo de remisión
-    seguimiento_atractivo = models.CharField(db_column='C93', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Seguimiento Atractivo
-    identificacion = models.CharField(db_column='C94', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Identificación
-    cuenta = models.CharField(db_column='C95', max_length=50, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Cuenta
-    fecha_ultima_revision = models.DateTimeField(db_column='C96', blank=True, null=True)  # Fecha de la última revisión
-    enviado_por = models.CharField(db_column='C97', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Enviado por
-    codigo_postal_secundario = models.CharField(db_column='C98', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Código postal secundario
-    serie_remision = models.CharField(db_column='C99', max_length=120, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Serie de remisión
-    nombre_cliente_vendedor = models.CharField(db_column='C100', max_length=120, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Nombre del cliente del vendedor
-    direccion_correo_electronico = models.CharField(db_column='C101', max_length=170, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Dirección de correo electrónico
-    requisito_venta = models.CharField(db_column='C102', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Requisito de Venta
-    tiempo_de_respuesta = models.CharField(db_column='C103', max_length=2, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tiempo de Respuesta
-    autoriza_pago = models.CharField(db_column='C104', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Autoriza Pago
-    impuesto_local = models.CharField(db_column='C105', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Impuesto Local
-    horario_entrega = models.CharField(db_column='C106', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Horario de Entrega
+    referencia = models.CharField(db_column='C53', max_length=50, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Notas al cliente
+    municipio = models.CharField(db_column='C54', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tienda de Tornillos
+    estado = models.CharField(db_column='C55', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Dirección de Domicilio
+    pais = models.CharField(db_column='C56', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Datos Fiscales
+    trading_partner = models.CharField(db_column='C57', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Despacho a Domicilio
+    calif_trading_partner = models.CharField(db_column='C58', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Pagina de Internet
+    EAN_proveedor = models.CharField(db_column='C59', max_length=13, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Clasificacion del cliente
+    numero_proveedor = models.CharField(db_column='C60', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Orden de Compra minima
+    formato_factura = models.CharField(db_column='C61', max_length=8, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Respaldo
+    clave_metodo_pago = models.CharField(db_column='C62', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Dato a desplegar en el artículo
+    referencia_bancaria = models.CharField(db_column='C63', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Descuento adicional
+    contacto_compra = models.CharField(db_column='C65', max_length=60, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Anotaciones
+    clave_corporativo = models.CharField(db_column='C66', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tipo de Venta
+    nombre_corporativo = models.CharField(db_column='C67', max_length=80, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Comentarios
+    digito_verificador_banco = models.CharField(db_column='C68', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Domicilio Fiscal
+    referencia_bancaria = models.CharField(db_column='C69', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Teléfono Adicional
+    pago_SAT1 = models.CharField(db_column='C70', max_length=2, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Zona / País
+    pago_SAT2 = models.CharField(db_column='C71', max_length=2, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Contacto
+    pago_SAT3 = models.CharField(db_column='C72', max_length=2, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Orden de Compra máxima
+    cfdi = models.CharField(db_column='C73', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # OC Tipo
+    control_lista_precios = models.CharField(db_column='C74', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # OC Grupo
+    control_lista_preciosAPP = models.DecimalField(db_column='C75', max_digits=1, decimal_places=0, blank=True, null=True)  # Inicio de crédito
+    respaldo_nombre_cliente = models.CharField(db_column='C77', max_length=120, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Observaciones de bloqueo al cliente
+    regimen_capital_social = models.CharField(db_column='C78', max_length=60, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tipo de orden de compra
+    status_vigente = models.CharField(db_column='C79', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Validación de domicilio
+    clave_del_banco1 = models.CharField(db_column='C80', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Fecha de actualización
+    clave_del_banco2 = models.CharField(db_column='C81', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Fecha de modificación
+    numero_de_la_cuenta1 = models.CharField(db_column='C82', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Artículo a desplegar
+    numero_de_la_cuenta2 = models.CharField(db_column='C83', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Clave del Producto o Servicio
+    revisado_validado = models.CharField(db_column='C90', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Vence la obra que tiene dado de alta
+    fecha_revision_validacion = models.DateTimeField(db_column='C91', blank=True, null=True)  # Fecha de bloqueo por crédito
+    fecha_ultima_modificacion = models.DateTimeField(db_column='C92', blank=True, null=True)  # Fecha de bloqueo de remisión
+    ultimo_usuario_en_modificar = models.CharField(db_column='C93', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Seguimiento Atractivo
+    ultima_hora_revision = models.CharField(db_column='C94', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Identificación
+    lista_precios_asignados = models.CharField(db_column='C95', max_length=50, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Cuenta
+    fecha_captura = models.DateTimeField(db_column='C96', blank=True, null=True)  # Fecha de la última revisión
+    cliente_credito_contado = models.CharField(db_column='C97', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Enviado por
+    hora_ultima_modificacion = models.CharField(db_column='C98', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Código postal secundario
+    apellido_paterno = models.CharField(db_column='C99', max_length=120, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Serie de remisión
+    apellido_materno = models.CharField(db_column='C100', max_length=120, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Nombre del cliente del vendedor
+    nombre_cliente_cb = models.CharField(db_column='C101', max_length=170, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Dirección de correo electrónico
+    plazo2 = models.CharField(db_column='C102', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Requisito de Venta
+    razon_bloqueo = models.CharField(db_column='C103', max_length=2, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tiempo de Respuesta
+    status_limites_credito = models.CharField(db_column='C104', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Autoriza Pago
+    porcentaje_limite_credito = models.CharField(db_column='C105', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Impuesto Local
+    cliente_repsico = models.CharField(db_column='C106', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Horario de Entrega
     class Meta:
         managed = False
         db_table = 'KDUD'
@@ -721,3 +720,21 @@ class Kdsegmentacion(models.Model):
         managed = False
         db_table = 'KDSEGMENTACION'
 
+class Kdif(models.Model):
+    clave_grupo = models.CharField(db_column='C1', primary_key=True, max_length=5, db_collation='Traditional_Spanish_CI_AS')  # Field name made lowercase.
+    descripcion_grupo = models.CharField(db_column='C2', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    campo_informativo = models.CharField(db_column='C3', max_length=16, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    almacen_default = models.DecimalField(db_column='C4', max_digits=4, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'KDIF'
+
+class Kdig(models.Model):
+    clave_linea = models.CharField(db_column='C1', primary_key=True, max_length=5, db_collation='Traditional_Spanish_CI_AS')  # Field name made lowercase.
+    descripcion_linea = models.CharField(db_column='C2', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    almacen_default = models.DecimalField(db_column='C4', max_digits=4, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'KDIG'
