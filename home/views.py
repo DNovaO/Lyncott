@@ -47,7 +47,7 @@ def home_view(request):
                         "Ventas por Zonas Pesos 2019 vs 20XX (Sin Refacturación)",
                         "Ventas por Zonas Kilos (Sin Refacturación)",
                         "Ventas por Zonas Kilos 2019 vs 20XX (Sin Refacturación)",
-                        "Ventas por Familia en Pesos (Sin Refacturación)"
+                        "Ventas por Familia en Pesos (Sin Refacturación)",
                         "Ventas por Familia en Pesos 2019 vs 20XX (Sin Refacturación)",
                         "Ventas por Familia en Kilos (Sin Refacturación)",
                         "Ventas por Familia en Kilos 2019 vs 20XX (Sin Refacturación)",

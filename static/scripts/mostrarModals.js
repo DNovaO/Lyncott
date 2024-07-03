@@ -21,6 +21,27 @@ document.addEventListener("DOMContentLoaded", function(){
 
 });
 
+$(document).on('click', '.selectable-item', function() {
+    // Obtener el texto del elemento seleccionado
+    const selectedItemText = $(this).text();
+    
+    // Obtener el tipo de dato del botón que abrió el modal
+    const dataType = $('#genericModal').data('type');
+    
+    // Encontrar el botón correspondiente y actualizar su texto
+    $(`button[data-type="${dataType}"]`).text(selectedItemText);
+    
+    // Cerrar el modal
+    $('#genericModal').modal('hide');
+});
+
+// Evento para abrir el modal y establecer el tipo de dato
+$('.modal-trigger').on('click', function() {
+    const dataType = $(this).data('type');
+    $('#genericModal').data('type', dataType);
+    $('#genericModal').modal('show');
+});
+
 function sendDataServer(dataType, currentPage){
     const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&data_type=${encodeURIComponent(dataType)}&page=${currentPage}`;
 
@@ -81,12 +102,12 @@ function handleResponseData(data) {
 
         case 'sucursal_inicial':
         case 'sucursal_final':
+        case 'sucursal':
             fullItemsArray = data.sucursales;
             modalContent.innerHTML = renderGeneral(data.sucursalesPaginados.objList, 'Sucursales',dataType);
             modalFooter.innerHTML = renderPagination(data.sucursalesPaginados.pagination_info, currentPage, dataType);
             break;
 
-        
         case 'vendedor_inicial':
         case 'vendedor_final':
             fullItemsArray = data.vendedores;
@@ -96,6 +117,8 @@ function handleResponseData(data) {
 
         case 'linea_inicial':
         case 'linea_final':
+        case 'marca_inicial':
+        case 'marca_final':
             fullItemsArray = data.lineas;
             modalContent.innerHTML = renderGeneral(data.lineasPaginados.objList, 'Lineas',dataType);
             modalFooter.innerHTML = renderPagination(data.lineasPaginados.pagination_info, currentPage, dataType);
@@ -103,6 +126,7 @@ function handleResponseData(data) {
 
         case 'familia_inicial':
         case 'familia_final':
+        case 'familia':
             fullItemsArray = data.familias;
             modalContent.innerHTML = renderGeneral(data.familiasPaginados.objList, 'Familias',dataType);
             modalFooter.innerHTML = renderPagination(data.familiasPaginados.pagination_info, currentPage, dataType);
@@ -110,11 +134,35 @@ function handleResponseData(data) {
 
         case 'grupoCorporativo_inicial':
         case 'grupoCorporativo_final':
+        case 'grupoCorporativo':
             fullItemsArray = data.gruposCorporativos;
             modalContent.innerHTML = renderGeneral(data.gruposCorporativosPaginados.objList, 'Grupos Corporativos',dataType);
             modalFooter.innerHTML = renderPagination(data.gruposCorporativosPaginados.pagination_info, currentPage, dataType);
             break;
 
+        case 'segmento_inicial':
+        case 'segmento_final':
+            fullItemsArray = data.segmentos;
+            modalContent.innerHTML = renderGeneral(data.segmentosPaginados.objList, 'Segmento',dataType);
+            modalFooter.innerHTML = renderPagination(data.segmentosPaginados.pagination_info, currentPage, dataType);
+            break;
+
+        case 'status':
+            fullItemsArray = data.estatus;
+            modalContent.innerHTML = renderGeneral(data.estatusPaginados.objList, 'Estatus',dataType);
+            modalFooter.innerHTML = renderPagination(data.estatusPaginados.pagination_info, currentPage, dataType);
+            break;
+
+        case 'zona':
+            fullItemsArray = data.zonas;
+            modalContent.innerHTML = renderGeneral(data.zonasPaginados.objList, 'Zonas',dataType);
+            modalFooter.innerHTML = renderPagination(data.zonasPaginados.pagination_info, currentPage, dataType);
+            break;
+
+        case 'region':
+            fullItemsArray = data.regiones;
+            modalContent.innerHTML = renderGeneral(data.regionesPaginados.objList, 'Regiones', dataType);
+            modalFooter.innerHTML = renderPagination(data.regionesPaginados.pagination_info, currentPage, dataType);
         default:
             console.error('Tipo de dato no reconocido');
             break;
@@ -133,11 +181,11 @@ function renderGeneral(paginatedItems, tipo,dataType) {
                 <circle cx="11" cy="11" r="8"></circle>
                 <path d="m21 21-4.3-4.3"></path>
             </svg>
-            <input style="margin-top: auto; margin-bottom: auto" class="rounded search-input" type="text" id="inputBusqueda" onkeyup="buscador('${tipo}','${dataType}')" placeholder="Buscar ${tipo}...">
+            <input style="margin-top: auto; margin-bottom: auto" class="rounded search-input" type="text" id="inputBusqueda" onkeyup="buscador('${dataType}')" placeholder="Buscar ${tipo}...">
         </div>
         <div id="resultList">
     `;
-
+    
     paginatedItems.forEach(item => {
         let line = '';
         for (const key in item) {
@@ -148,25 +196,22 @@ function renderGeneral(paginatedItems, tipo,dataType) {
                 line += `${item[key]}`;
             }
         }
-        html += `<li type='button' class="list-group-item list-group-item-action">${line}</li>`;
+        html += `<li type='button' class="list-group-item list-group-item-action selectable-item">${line}</li>`;
     });
 
     html += '</ul></div>';
     return html;
 }
 
-function buscador(tipo,dataType) {
+function buscador(dataType) {
     let input = document.getElementById("inputBusqueda");
     if (!input) {
         console.error("No se encontró el elemento de input");
         return;
     }
-
-    console.log("Buscando en:", tipo);
-    console.log("Tipo de dato:", dataType);
     
     let filter = input.value.trim().toLowerCase();
-
+    
     if(filter === "") {
         sendDataServer(dataType);
         return;
@@ -194,7 +239,7 @@ function buscador(tipo,dataType) {
                 line += `${item[key]}`;
             }
         }
-        html += `<li type='button' class="list-group-item list-group-item-action">${line}</li>`;
+        html += `<li type='button' class="list-group-item list-group-item-action selectable-item">${line}</li>`;
     });
 
     let resultList = document.getElementById("resultList");

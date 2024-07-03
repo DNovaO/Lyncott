@@ -400,7 +400,7 @@ class Kduv(models.Model):
     zona = models.CharField(db_column='C22', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     giro = models.CharField(db_column='C23', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     almacen_correspondiente = models.DecimalField(db_column='C24', max_digits=5, decimal_places=0, blank=True, null=True)
-    status = models.CharField(db_column='C30', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
+    estatus = models.CharField(db_column='C30', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
 
     class Meta:
         managed = False
@@ -559,7 +559,7 @@ class Kdud(models.Model):
     tipo_cliente = models.CharField(db_column='C41', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tipo de Cliente [C]rédito / Conta[D]o
     dias_vencida_cargo_suspende = models.DecimalField(db_column='C42', max_digits=3, decimal_places=0, blank=True, null=True)  # Después de x días de vencida un cargo suspender
     observaciones_ultima_suspension = models.CharField(db_column='C43', max_length=250, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Observaciones de la ultima Suspensión
-    status = models.CharField(db_column='C45', max_length=3, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Status:  [ACT]ivo / [SUS]pendido / [BAJ]a
+    estatus = models.CharField(db_column='C45', max_length=3, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Status:  [ACT]ivo / [SUS]pendido / [BAJ]a
     numero_exterior = models.CharField(db_column='C50', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Numero Exterior
     numero_interior = models.CharField(db_column='C51', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Numero Interior
     localidad = models.CharField(db_column='C52', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Localidad
@@ -587,7 +587,7 @@ class Kdud(models.Model):
     control_lista_preciosAPP = models.DecimalField(db_column='C75', max_digits=1, decimal_places=0, blank=True, null=True)  # Inicio de crédito
     respaldo_nombre_cliente = models.CharField(db_column='C77', max_length=120, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Observaciones de bloqueo al cliente
     regimen_capital_social = models.CharField(db_column='C78', max_length=60, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tipo de orden de compra
-    status_vigente = models.CharField(db_column='C79', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Validación de domicilio
+    estatus_vigente = models.CharField(db_column='C79', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Validación de domicilio
     clave_del_banco1 = models.CharField(db_column='C80', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Fecha de actualización
     clave_del_banco2 = models.CharField(db_column='C81', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Fecha de modificación
     numero_de_la_cuenta1 = models.CharField(db_column='C82', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Artículo a desplegar
@@ -606,7 +606,7 @@ class Kdud(models.Model):
     nombre_cliente_cb = models.CharField(db_column='C101', max_length=170, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Dirección de correo electrónico
     plazo2 = models.CharField(db_column='C102', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Requisito de Venta
     razon_bloqueo = models.CharField(db_column='C103', max_length=2, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Tiempo de Respuesta
-    status_limites_credito = models.CharField(db_column='C104', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Autoriza Pago
+    estatus_limites_credito = models.CharField(db_column='C104', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Autoriza Pago
     porcentaje_limite_credito = models.CharField(db_column='C105', max_length=4, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Impuesto Local
     cliente_repsico = models.CharField(db_column='C106', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Horario de Entrega
     class Meta:
@@ -666,8 +666,8 @@ class Kdvdiremb(models.Model):
     dias_visita = models.CharField(db_column='C55', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Días Visita
     hora_visita = models.CharField(db_column='C56', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Hora Visita
     contacto_cuenta = models.CharField(db_column='C57', max_length=80, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Contacto cUENTA
-    status_comunicacion = models.CharField(db_column='C64', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Status de comunicación
-    status_vigente = models.CharField(db_column='C65', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Status Vigente
+    estatus_comunicacion = models.CharField(db_column='C64', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Status de comunicación
+    estatus_vigente = models.CharField(db_column='C65', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Status Vigente
     digito_verificador_banco = models.CharField(db_column='C68', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Digito Verificador Banco
     referencia_bancaria = models.CharField(db_column='C69', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Referencia Bancaria
     lunes = models.CharField(db_column='C71', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # LUNES
@@ -738,3 +738,57 @@ class Kdig(models.Model):
     class Meta:
         managed = False
         db_table = 'KDIG'
+
+class Kdcorpo(models.Model):
+    clave_corporativo = models.CharField(db_column='C1', primary_key=True, max_length=7, db_collation='Traditional_Spanish_CI_AS')  # Field name made lowercase.
+    descripcion_corporativo = models.CharField(db_column='C2', max_length=80, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    tipo_grupo = models.CharField(db_column='C3', max_length=2, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'KDCORPO'
+        
+class Kdregiones(models.Model):
+    clave_region = models.CharField(db_column='C1', primary_key=True, max_length=3, db_collation='Traditional_Spanish_CI_AS')  # Field name made lowercase.
+    descripcion_region = models.CharField(db_column='C2', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'KDREGIONES'
+
+class Kdpord(models.Model):
+    order_trabajo = models.CharField(db_column='C1', primary_key=True, max_length=10, db_collation='Traditional_Spanish_CI_AS')  # Field name made lowercase.
+    estatus = models.CharField(db_column='C2', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    producto = models.CharField(db_column='C3', max_length=18, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    c4 = models.CharField(db_column='C4', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    fecha_compromiso = models.DateTimeField(db_column='C6', blank=True, null=True)  # Field name made lowercase.
+    hora_compromiso = models.CharField(db_column='C7', max_length=5, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    nivel_ingenieria_orden = models.DecimalField(db_column='C8', max_digits=2, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    cantidad_unidades = models.FloatField(db_column='C9', blank=True, null=True)  # Field name made lowercase.
+    unidad = models.CharField(db_column='C10', max_length=3, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    factor = models.DecimalField(db_column='C11', max_digits=15, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    entrega_sugerida = models.CharField(db_column='C12', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    cantidad_acumulada = models.FloatField(db_column='C13', blank=True, null=True)  # Field name made lowercase.
+    fecha_inicial = models.DateTimeField(db_column='C14', blank=True, null=True)  # Field name made lowercase.
+    hora_inicial = models.CharField(db_column='C15', max_length=5, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    fecha_final = models.DateTimeField(db_column='C16', blank=True, null=True)  # Field name made lowercase.
+    hora_final = models.CharField(db_column='C17', max_length=5, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    sucursal_de_orden = models.CharField(db_column='C19', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    genero_de_orden = models.CharField(db_column='C20', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    naturaleza = models.CharField(db_column='C21', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    grupo = models.DecimalField(db_column='C22', max_digits=2, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    tipo = models.DecimalField(db_column='C23', max_digits=2, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    folio_orden = models.CharField(db_column='C24', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    partida = models.DecimalField(db_column='C25', max_digits=3, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    consecutivo = models.DecimalField(db_column='C26', max_digits=3, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    talla = models.CharField(db_column='C28', max_length=20, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    modelo = models.CharField(db_column='C29', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    color = models.CharField(db_column='C30', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    campo_tmc_4 = models.CharField(db_column='C31', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    campo_tmc_5 = models.CharField(db_column='C32', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+    ruta_a_seguir = models.DecimalField(db_column='C33', max_digits=2, decimal_places=0, blank=True, null=True)  # Field name made lowercase.
+    referencia = models.CharField(db_column='C35', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'KDPORD'

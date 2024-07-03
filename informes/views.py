@@ -12,12 +12,14 @@ def report_view(request):
         try:
             data = json.loads(request.body)
             data_type = data.get('data_type')
+            selected_data = data.get('selected_data')
             
             # Para propósitos de depuración, podemos imprimir el data_type recibido
             print("Received data_type:", data_type)
             
+            print("Received selected_data:", selected_data)
+            
             if data_type:
-                print('Hola desde el data type y el handle')
                 return handle_data(request, data_type)    
             else:            
                 # Retornar el data_type en la respuesta JSON como prueba
@@ -119,11 +121,8 @@ def handle_familia(request, data_type):
     
     return JsonResponse(response_data)
 
-def handle_marca(request, data_type):
-    return 0
-    
 def handle_grupo_corporativo(request, data_type):
-    gruposCorporativos = Kdud.objects.values('clave_corporativo').distinct().order_by('clave_corporativo')
+    gruposCorporativos = Kdcorpo.objects.values('clave_corporativo', 'descripcion_corporativo').distinct().order_by('clave_corporativo')
     gruposCorporativos_paginados = objPaginator(request, gruposCorporativos)
     
     response_data = {
@@ -136,20 +135,109 @@ def handle_grupo_corporativo(request, data_type):
 
 
 def handle_segmento(request, data_type):
-    return 0
+    segmentos = Kdsegmentacion.objects.values('clave_segmentacion', 'descripcion_segmentacion').distinct().order_by('clave_segmentacion')
+    segmentos_paginados = objPaginator(request, segmentos)
+    
+    response_data = {
+        'data_type': data_type,
+        'segmentos' : list(segmentos),
+        'segmentosPaginados': segmentos_paginados,
+    }
+    
+    return JsonResponse(response_data)
+
 
 def handle_status(request, data_type):
-    return 0
+    estatus = Kdpord.objects.values('estatus').distinct().order_by('estatus')
+    
+    # Mapeo de valores
+    status_map = {
+        'A': 'Activo',
+        'I': 'Inactivo'
+    }
+    
+    # Transformar los valores de estatus
+    estatus_transformed = [{'estatus': status_map.get(item['estatus'], item['estatus'])} for item in estatus]
+    
+    estatus_paginados = objPaginator(request, estatus_transformed)
+    
+    response_data = {
+        'data_type': data_type,
+        'estatus': estatus_transformed,
+        'estatusPaginados': estatus_paginados,
+    }
+    
+    return JsonResponse(response_data)
 
 def handle_zona(request, data_type):
-    return 0
 
-def handle_grupo(request, data_type):
-    return 0
-
-def handle_region(request, data_type):
-    return 0
+    zonas = [
+        {
+            'zona': 'CENTRO',
+            'sucursales': [
+                {'clave_sucursal': '02', 'descripcion': 'Mexico Vallejo'},
+                {'clave_sucursal': '03', 'descripcion': 'Guadalajara'},
+                {'clave_sucursal': '04', 'descripcion': 'Monterrey'},
+                {'clave_sucursal': '05', 'descripcion': 'Queretaro'},
+                {'clave_sucursal': '08', 'descripcion': 'Puebla'},
+                {'clave_sucursal': '10', 'descripcion': 'Acapulco'},
+                {'clave_sucursal': '11', 'descripcion': 'Villahermosa'},
+                {'clave_sucursal': '12', 'descripcion': 'Culiacan'},
+                {'clave_sucursal': '13', 'descripcion': 'Veracruz'},
+                {'clave_sucursal': '15', 'descripcion': 'Aguascalientes'},
+                {'clave_sucursal': '16', 'descripcion': 'Toluca'},
+            ]
+        },
+        {
+            'zona': 'PENINSULA',
+            'sucursales': [
+                {'clave_sucursal': '07', 'descripcion': 'Cancun'},
+                {'clave_sucursal': '18', 'descripcion': 'Merida'},
+            ]
+        },
+        {
+            'zona': 'PACIFICO',
+            'sucursales': [
+                {'clave_sucursal': '06', 'descripcion': 'Hermosillo'},
+                {'clave_sucursal': '09', 'descripcion': 'Tijuana'},
+                {'clave_sucursal': '14', 'descripcion': 'Los Cabos'},
+                {'clave_sucursal': '20', 'descripcion': 'Puerto Vallarta'},
+            ]
+        },
+        {
+            'zona': 'CHIHUAHUA',
+            'sucursales': [
+                {'clave_sucursal': '17', 'descripcion': 'Cd. Juarez'},
+            ]
+        },
+    ]
     
+    # Crear una lista de nombres de zona para mostrar en el cliente
+    zonas_transformed = [{'zona': zona['zona']} for zona in zonas]
+    
+    # Paginar las zonas transformadas
+    zonas_paginados = objPaginator(request, zonas_transformed)
+    
+    response_data = {
+        'data_type': data_type,
+        'zonas': zonas_transformed,
+        'zonasPaginados': zonas_paginados,
+    }
+    
+    return JsonResponse(response_data)
+
+    
+def handle_region(request, data_type):
+    regiones = Kdregiones.objects.values('clave_region', 'descripcion_region').distinct().order_by('clave_region')
+    regiones_paginados = objPaginator(request, regiones)
+    
+    response_data = {
+        'data_type': data_type,
+        'regiones' : list(regiones),
+        'regionesPaginados': regiones_paginados,
+    }
+    
+    return JsonResponse(response_data)
     
 data_type_handlers = {
     'cliente_inicial': handle_cliente,
@@ -164,8 +252,8 @@ data_type_handlers = {
     'linea_final': handle_linea,
     'familia_inicial': handle_familia,
     'familia_final': handle_familia,
-    'marca_inicial': handle_marca,
-    'marca_final': handle_marca,
+    'marca_inicial': handle_linea,
+    'marca_final': handle_linea,
     'grupoCorporativo_inicial': handle_grupo_corporativo,
     'grupoCorporativo_final': handle_grupo_corporativo,
     'grupoCorporativo': handle_grupo_corporativo,
@@ -174,7 +262,6 @@ data_type_handlers = {
     'status': handle_status,
     'zona': handle_zona,
     'sucursal': handle_sucursal,
-    'grupo': handle_grupo,
     'familia': handle_familia,
     'region': handle_region,
 }
