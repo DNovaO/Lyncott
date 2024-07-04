@@ -12,12 +12,12 @@ def report_view(request):
         try:
             data = json.loads(request.body)
             data_type = data.get('data_type')
-            selected_data = data.get('selected_data')
+            selected_item = data.get('selected_item')
             
             # Para propósitos de depuración, podemos imprimir el data_type recibido
             print("Received data_type:", data_type)
             
-            print("Received selected_data:", selected_data)
+            print("Received selected_item:", selected_item)
             
             if data_type:
                 return handle_data(request, data_type)    

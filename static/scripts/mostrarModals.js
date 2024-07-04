@@ -15,34 +15,32 @@ document.addEventListener("DOMContentLoaded", function(){
         button.addEventListener("click", function(){
             const dataType = this.getAttribute("data-type");
             currentPage = 1;
-            sendDataServer(dataType);
+            sendDataAndOpenModal(dataType);
         });
+    });
+
+    $(document).on('click', '.selectable-item', function() {
+        const selectedItemText = $(this).text();
+        const dataType = $('#genericModal').data('type');
+        const selectedItemData = $(this).data('item');
+
+        updateButtonAndCloseModal(dataType, selectedItemText);
+        sendDataServer(dataType, currentPage, selectedItemData); // Pasar selectedItemData al enviar los datos al servidor
     });
 
 });
 
-$(document).on('click', '.selectable-item', function() {
-    // Obtener el texto del elemento seleccionado
-    const selectedItemText = $(this).text();
-    
-    // Obtener el tipo de dato del botón que abrió el modal
-    const dataType = $('#genericModal').data('type');
-    
-    // Encontrar el botón correspondiente y actualizar su texto
+function sendDataAndOpenModal(dataType) {
+    currentPage = 1;
+    sendDataServer(dataType, currentPage);
+}
+
+function updateButtonAndCloseModal(dataType, selectedItemText) {
     $(`button[data-type="${dataType}"]`).text(selectedItemText);
-    
-    // Cerrar el modal
     $('#genericModal').modal('hide');
-});
+}
 
-// Evento para abrir el modal y establecer el tipo de dato
-$('.modal-trigger').on('click', function() {
-    const dataType = $(this).data('type');
-    $('#genericModal').data('type', dataType);
-    $('#genericModal').modal('show');
-});
-
-function sendDataServer(dataType, currentPage){
+function sendDataServer(dataType, currentPage, selectedItemData){
     const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&data_type=${encodeURIComponent(dataType)}&page=${currentPage}`;
 
     fetch(endpointURL, {
@@ -51,20 +49,18 @@ function sendDataServer(dataType, currentPage){
             "Content-Type": "application/json",
             "X-CSRFToken": getCookie("csrftoken"),
         },
-        body: JSON.stringify({ data_type: dataType, page: currentPage })
+        body: JSON.stringify({ data_type: dataType, page: currentPage, selected_item: selectedItemData })
     })
     .then(response => response.json())
     .then(data => {
-        // Aquí manejas la data recibida del backend
-        console.log("Data received successfully desde modals:", data);
-
-        // Llama a la función en el otro script para manipular y mostrar el modal
+        console.log("Data received successfully:", data);
         handleResponseData(data);
     })
     .catch((error) => {
         console.error("Error:", error);
     });
 }
+
 
 function getCookie(name) {
     let cookieValue = null;
@@ -196,7 +192,7 @@ function renderGeneral(paginatedItems, tipo,dataType) {
                 line += `${item[key]}`;
             }
         }
-        html += `<li type='button' class="list-group-item list-group-item-action selectable-item">${line}</li>`;
+        html += `<li type='button' class="list-group-item list-group-item-action selectable-item" data-item='${JSON.stringify(item)}'>${line}</li>`;
     });
 
     html += '</ul></div>';
