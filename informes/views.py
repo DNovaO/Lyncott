@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 import json
 from .models import *
+from .queries import *
 
 def report_view(request):
     categoria_reporte = request.GET.get('categoria_reporte', 'default_categoria')
@@ -10,14 +11,19 @@ def report_view(request):
 
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)
+            data = json.loads(request.body)  # Parsea el cuerpo JSON de la solicitud
             data_type = data.get('data_type')
             selected_item = data.get('selected_item')
+            fecha_inicial = data.get('fecha_inicial')
+            fecha_final = data.get('fecha_final')
             
-            # Para propósitos de depuración, podemos imprimir el data_type recibido
+            # Ejemplo de impresión para demostración
             print("Received data_type:", data_type)
-            
-            print("Received selected_item:", selected_item)
+            print("Selected item:", selected_item)
+
+            # Ejemplo de impresión para demostración
+            print("Received data_type:", data_type)
+            printAllSelectedItems(selected_item)
             
             if data_type:
                 return handle_data(request, data_type)    
@@ -29,8 +35,10 @@ def report_view(request):
                 }
                 return JsonResponse(response_data)
         
-        except Exception as e:
+        except json.JSONDecodeError as e:
             return JsonResponse({'error': str(e)}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)   
     else:    
         context = {
             'categoria_reporte': categoria_reporte,
@@ -288,17 +296,3 @@ def get_pagination_html(page_obj):
         'number': page_obj.number,
         'num_pages': page_obj.paginator.num_pages,
     }
-    
-# def get_parametros(post_data):
-#     fields_to_extract = [
-#         'fecha_inicial', 'fecha_final', 'sucursal', 'cliente_inicial', 'cliente_final',
-#         'producto_inicial', 'producto_final', 'sucursal_inicial', 'sucursal_final',
-#         'vendedor_inicial', 'vendedor_final', 'linea_inicial', 'linea_final',
-#         'familia_inicial', 'familia_final', 'marca_inicial', 'marca_final',
-#         'grupoCorporativo_inicial', 'grupoCorporativo_final', 'grupoCorporativo',
-#         'segmento_inicial', 'segmento_final', 'status', 'zona', 'sucursal', 'grupo',
-#         'familia', 'region',
-#     ]
-
-#     extracted_data = {field: post_data.get(field, None) for field in fields_to_extract}
-#     return extracted_data

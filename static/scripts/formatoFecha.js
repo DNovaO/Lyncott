@@ -8,11 +8,13 @@ document.addEventListener('DOMContentLoaded', function () {
   const primerDiaDelMes = new Date();
   primerDiaDelMes.setDate(1); // Establecer el día como 1
 
-  // Formatear la fecha inicial en el formato "d-m-Y"
-  const fechaInicial = `${primerDiaDelMes.getDate()}-${primerDiaDelMes.getMonth() + 1}-${primerDiaDelMes.getFullYear()}`;
+  // Función para obtener la fecha en formato "d-m-Y"
+  function obtenerFechaFormateada(fecha) {
+    return `${('0' + fecha.getDate()).slice(-2)}-${('0' + (fecha.getMonth() + 1)).slice(-2)}-${fecha.getFullYear()}`;
+  }
 
-  // Obtener la fecha actual
-  const diaActual = new Date();
+  // Formatear la fecha inicial en el formato "d-m-Y"
+  const fechaInicial = obtenerFechaFormateada(primerDiaDelMes);
 
   // Función para configurar Flatpickr
   function configureFlatpickr(input, defaultDate) {
@@ -31,8 +33,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Configurar Flatpickr para ambos inputs
-  configureFlatpickr(fechaInicialInput, fechaInicial);
-  configureFlatpickr(fechaFinalInput, diaActual);
+  configureFlatpickr(fechaInicialInput, primerDiaDelMes); // Usar primer día del mes actual como predeterminado
+  configureFlatpickr(fechaFinalInput, new Date()); // Usar fecha actual como predeterminada
 
   // Abrir el calendario al hacer clic en el icono correspondiente
   calendarIconInicial.addEventListener('click', function () {
