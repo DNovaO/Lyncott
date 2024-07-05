@@ -14,8 +14,6 @@ def report_view(request):
             data = json.loads(request.body)  # Parsea el cuerpo JSON de la solicitud
             data_type = data.get('data_type')
             selected_item = data.get('selected_item')
-            fecha_inicial = data.get('fecha_inicial')
-            fecha_final = data.get('fecha_final')
             
             # Ejemplo de impresión para demostración
             print("Received data_type:", data_type)
