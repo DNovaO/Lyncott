@@ -9,6 +9,7 @@ const btnReset = document.getElementById('btnLimpiar');
 const btnGenerarInforme = document.getElementById('btnGenerarInforme');
 const fechaInicialInput = document.getElementById('fecha_inicial');
 const fechaFinalInput = document.getElementById('fecha_final');
+let debouncedBuscador;
 let parametrosSeleccionados = {};
 let currentPage = 1;
 let fullItemsArray = [];
@@ -25,13 +26,22 @@ document.addEventListener("DOMContentLoaded", function(){
         console.log("Fecha final:", fecha_final);
     }, 500); // Ajusta este tiempo si es necesario esperar más tiempo
     
+    
     modalButtons.forEach(button => {
+        
         button.addEventListener("click", function(){
             const dataType = this.getAttribute("data-type");
+            
+            debouncedBuscador = debounce(() => {
+                console.log("dataType recibido:", dataType);
+                buscador(dataType);
+            }, 300);
+
             currentPage = 1;
-            sendDataServer(dataType, currentPage);
+            sendDataToServer(dataType, currentPage);
         });
     });
+    
 
     if (btnReset) {
         btnReset.addEventListener('click', function(e) {
@@ -42,19 +52,25 @@ document.addEventListener("DOMContentLoaded", function(){
         console.error("Elemento con ID 'btnReset' no encontrado.");
     }
 
+    // Evento cuando se presiona el botón de generar informe
     if (btnGenerarInforme) {
-        // Evento cuando se presiona el botón de generar informe
         btnGenerarInforme.addEventListener('click', function(e) {
             e.preventDefault();
-
-            sendDataServer(dataType, currentPage, selectedItem)
+    
+            // Capturar los parámetros seleccionados adicionales, como fechas
+            parametrosSeleccionados['fecha_inicial'] = fechaInicialInput.value;
+            parametrosSeleccionados['fecha_final'] = fechaFinalInput.value;
+    
+            const dataType = document.querySelector(".modal-trigger.active")?.getAttribute("data-type") || '';
+            sendDataToServer(dataType, currentPage, parametrosSeleccionados);
         });
     } else {
         console.error("Elemento con ID 'btnGenerarInforme' no encontrado.");
     }
+    
 });
 
-function sendDataServer(dataType, currentPage, selectedItem){
+function sendDataToServer(dataType, currentPage, parametrosSeleccionados){
     const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPage}`;
 
     fetch(endpointURL, {
@@ -63,7 +79,7 @@ function sendDataServer(dataType, currentPage, selectedItem){
             "Content-Type": "application/json",
             "X-CSRFToken": getCookie("csrftoken"),
         },
-        body: JSON.stringify({ data_type: dataType, page: currentPage, selected_item: selectedItem })
+        body: JSON.stringify({ data_type: dataType, page: currentPage, parametros_seleccionados: parametrosSeleccionados })
     })
     .then(response => response.json())
     .then(data => {
@@ -94,44 +110,43 @@ function handleResponseData(data) {
     // Manejar la selección de un elemento de la lista
     modalContent.querySelectorAll('.selectable-item').forEach(item => {
         item.addEventListener('click', function(event) {
-            const selectedItem = JSON.parse(this.getAttribute('data-item'));
-            const button = document.querySelector(`.modal-trigger[data-type="${dataType}"]`);
-            
             // Obtener el texto del elemento seleccionado
             const buttonText = event.target.innerText.trim();
     
             // Actualizar el texto del botón con el texto del elemento seleccionado
+            const button = document.querySelector(`.modal-trigger[data-type="${dataType}"]`);
             if (button) {
                 button.textContent = buttonText;
                 console.log('Texto del botón actualizado:', button.textContent);
             }
     
+            // Guardar el elemento seleccionado en la variable global
+            parametrosSeleccionados[dataType] = buttonText;
+            console.log('Parámetros seleccionados:', parametrosSeleccionados);
+    
             // Cerrar el modal
             $("#genericModal").modal("hide");
         });
     });
-    
 }
 
 function cargarData(data, key, dataType){
-    console.log('cargar data', data[key]);
-    modalContent.innerHTML = renderGeneral(data[key].objList, dataType);
+    modalContent.innerHTML = renderGeneral(data[key].objList, key, dataType); // Asegúrate de pasar 'key' y 'dataType'
     modalFooter.innerHTML = renderPagination(data[key].pagination_info, currentPage, dataType);
 }
 
-function renderGeneral(paginatedItems, tipo,dataType) {
+// Función debounce para limitar la frecuencia de ejecución
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+// Ajusta la función renderGeneral para solo manejar la lista de elementos
+function renderGeneral(paginatedItems) {
     let html = '<ul class="list-group mt-3">';
-    
-    html += `
-        <div class="search-container d-flex mb-3">
-            <svg style="margin-top: auto; margin-bottom: auto; padding-right:5px;" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.3-4.3"></path>
-            </svg>
-            <input style="margin-top: auto; margin-bottom: auto" class="rounded search-input" type="text" id="inputBusqueda" onkeyup="buscador('${dataType}')" placeholder="Buscar ${tipo}...">
-        </div>
-        <div id="resultList">
-    `;
     
     paginatedItems.forEach(item => {
         let line = '';
@@ -143,14 +158,15 @@ function renderGeneral(paginatedItems, tipo,dataType) {
                 line += `${item[key]}`;
             }
         }
-        html += `<li type='button' class="list-group-item list-group-item-action selectable-item">${line}</li>`;
+        html += `<li type='button' class="list-group-item list-group-item-action selectable-item data-item='${JSON.stringify(item)}">${line}</li>`;
     });
 
-    html += '</ul></div>';
+    html += '</ul>';
     return html;
 }
 
 function buscador(dataType) {
+    console.log(dataType);
     let input = document.getElementById("inputBusqueda");
     if (!input) {
         console.error("No se encontró el elemento de input");
@@ -160,11 +176,11 @@ function buscador(dataType) {
     let filter = input.value.trim().toLowerCase();
     
     if(filter === "") {
-        sendDataServer(dataType);
+        sendDataToServer(dataType);
         return;
     }
 
-    let filteredItems = (filter === "") ? fullItemsArray : fullItemsArray.filter(item => {
+    let filteredItems = fullItemsArray.filter(item => {
         for (const key in item) {
             if (Object.hasOwnProperty.call(item, key)) {
                 if (typeof item[key] === 'string' && item[key].toLowerCase().includes(filter)) {
@@ -175,23 +191,9 @@ function buscador(dataType) {
         return false;
     });
 
-    let html = '';
-    filteredItems.forEach(item => {
-        let line = '';
-        for (const key in item) {
-            if (Object.hasOwnProperty.call(item, key)) {
-                if (line !== '') {
-                    line += ` - `;
-                }
-                line += `${item[key]}`;
-            }
-        }
-        html += `<li type='button' class="list-group-item list-group-item-action selectable-item">${line}</li>`;
-    });
-
-    let resultList = document.getElementById("resultList");
+    let resultList = document.getElementById("genericModalContent");
     if (resultList) {
-        resultList.innerHTML = html;
+        resultList.innerHTML = renderGeneral(filteredItems);
     } else {
         console.error("No se encontró el elemento de lista de resultados");
     }
@@ -245,8 +247,9 @@ function changePage(pageNumber, dataType) {
     currentPage = pageNumber;
 
     // Llamar a la función para cargar los datos de la página específica
-    sendDataServer(dataType, pageNumber);
+    sendDataToServer(dataType, pageNumber);
 }
+
 
 function resetFormulario() {
     // Limpiar campos de búsqueda si existen

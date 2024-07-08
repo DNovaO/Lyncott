@@ -3,7 +3,7 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 import json
 from .models import *
-from .queries import *
+from .queries import printAllSelectedItems
 
 def report_view(request):
     categoria_reporte = request.GET.get('categoria_reporte', 'default_categoria')
@@ -13,15 +13,12 @@ def report_view(request):
         try:
             data = json.loads(request.body)  # Parsea el cuerpo JSON de la solicitud
             data_type = data.get('data_type')
-            selected_item = data.get('selected_item')
+            parametrosSeleccionados = data.get('parametros_seleccionados', {})
             
             # Ejemplo de impresión para demostración
             print("Received data_type:", data_type)
-            print("Selected item:", selected_item)
-
-            # Ejemplo de impresión para demostración
-            print("Received data_type:", data_type)
-            printAllSelectedItems(selected_item)
+            print("Selected item:", parametrosSeleccionados)
+            printAllSelectedItems(parametrosSeleccionados)
             
             if data_type:
                 return handle_data(request, data_type)    
@@ -30,6 +27,7 @@ def report_view(request):
                 response_data = {
                     'status': 'success',
                     'data_type': data_type,
+                    'parametros': parametrosSeleccionados,
                 }
                 return JsonResponse(response_data)
         
