@@ -11,13 +11,13 @@ def report_view(request):
 
     if request.method == 'POST':
         try:
-            data = json.loads(request.body)  # Parsea el cuerpo JSON de la solicitud
+            # Parsea el cuerpo JSON de la solicitud
+            data = json.loads(request.body)  
             data_type = data.get('data_type')
             parametrosSeleccionados = data.get('parametros_seleccionados', {})
             
             # Ejemplo de impresión para demostración
             print("Received data_type:", data_type)
-            print("Selected item:", parametrosSeleccionados)
             printAllSelectedItems(parametrosSeleccionados)
             
             if data_type:
@@ -66,7 +66,7 @@ def handle_cliente(request,data_type):
     return JsonResponse(response_data) 
 
 def handle_producto(request, data_type):
-    productos = Kdii.objects.values('clave_producto', 'descripcion_producto', 'linea_producto').distinct().order_by('clave_producto')
+    productos = Kdii.objects.values('clave_producto', 'descripcion_producto', 'linea_producto').filter(clave_producto__range = ('0101', '9999')).distinct().order_by('clave_producto')
     productos_paginados = objPaginator(request, productos)
     
     response_data = {
@@ -114,7 +114,18 @@ def handle_linea(request, data_type):
     return JsonResponse(response_data)
     
 def handle_familia(request, data_type):
-    familias = Kdif.objects.values('clave_grupo','descripcion_grupo').distinct().order_by('clave_grupo')
+    
+    valores_especificos = [ 
+        "CREMA PARA BATIR", "CREMA ENTERA", "CREMA REDUCIDA EN GRASA", "CREMA DULCE", "CREMA PARA CAFE",
+        "CREMA NATURAL", "Q. COTTAGE", "FLETE", "INTERDELI Y MERMELADA", "LECHE UHT", "LURPAK", "LOS LLANOS", 
+        "MANTEQUILLA", "MARGARINA", "NATURA", "OTRO", "PORT BLEU", "QUESO COTTAGE", "QUESO CREMA", "QUESOS MADUROS", 
+        "QUESO OAXACA", "QUESO PANELA", "QUESUAVE", "REJAS", "TARIMAS", "YOGURT"
+    ]
+
+    familias = Kdif.objects.filter(descripcion_grupo__in=valores_especificos)\
+                       .values('clave_grupo', 'descripcion_grupo')\
+                       .distinct()\
+                       .order_by('clave_grupo')
     familias_paginados = objPaginator(request, familias)
     
     response_data = {

@@ -56,21 +56,30 @@ document.addEventListener("DOMContentLoaded", function(){
     if (btnGenerarInforme) {
         btnGenerarInforme.addEventListener('click', function(e) {
             e.preventDefault();
-    
-            // Capturar los parámetros seleccionados adicionales, como fechas
-            parametrosSeleccionados['fecha_inicial'] = fechaInicialInput.value;
-            parametrosSeleccionados['fecha_final'] = fechaFinalInput.value;
-    
-            const dataType = document.querySelector(".modal-trigger.active")?.getAttribute("data-type") || '';
-            sendDataToServer(dataType, currentPage, parametrosSeleccionados);
+
+            // Crear un nuevo objeto para almacenar todos los parámetros seleccionados
+            let parametrosInforme = {};
+
+            // Iterar sobre parametrosSeleccionados para copiar sus valores
+            for (const dataType in parametrosSeleccionados) {
+                if (Object.hasOwnProperty.call(parametrosSeleccionados, dataType)) {
+                    parametrosInforme[dataType] = parametrosSeleccionados[dataType];
+                }
+            }
+
+            // Agregar los parámetros adicionales, como fechas
+            parametrosInforme['fecha_inicial'] = fechaInicialInput.value;
+            parametrosInforme['fecha_final'] = fechaFinalInput.value;
+
+            // Enviar los parámetros al servidor
+            sendParametersToServer(parametrosInforme);
+            console.log('Parámetros enviados!');
+            resetFormulario();
         });
-    } else {
-        console.error("Elemento con ID 'btnGenerarInforme' no encontrado.");
     }
-    
 });
 
-function sendDataToServer(dataType, currentPage, parametrosSeleccionados){
+function sendDataToServer(dataType, currentPage){
     const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPage}`;
 
     fetch(endpointURL, {
@@ -79,16 +88,30 @@ function sendDataToServer(dataType, currentPage, parametrosSeleccionados){
             "Content-Type": "application/json",
             "X-CSRFToken": getCookie("csrftoken"),
         },
-        body: JSON.stringify({ data_type: dataType, page: currentPage, parametros_seleccionados: parametrosSeleccionados })
+        body: JSON.stringify({ data_type: dataType, page: currentPage})
     })
     .then(response => response.json())
     .then(data => {
-        // Aquí manejas la data recibida del backend
-        console.log("Data received successfully desde modals:", data);
-
-        // Llama a la función en el otro script para manipular y mostrar el modal
+        // Llama a la función para manipular la data y mostrar el modal
         handleResponseData(data);
     })
+    .catch((error) => {
+        console.error("Error:", error);
+    });
+}
+
+function sendParametersToServer(parametrosSeleccionados){
+    const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPage}`;
+
+    fetch(endpointURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+        },
+        body: JSON.stringify({ parametros_seleccionados: parametrosSeleccionados })
+    })
+    .then(response => response.json())
     .catch((error) => {
         console.error("Error:", error);
     });
@@ -109,23 +132,8 @@ function handleResponseData(data) {
 
     // Manejar la selección de un elemento de la lista
     modalContent.querySelectorAll('.selectable-item').forEach(item => {
-        item.addEventListener('click', function(event) {
-            // Obtener el texto del elemento seleccionado
-            const buttonText = event.target.innerText.trim();
-    
-            // Actualizar el texto del botón con el texto del elemento seleccionado
-            const button = document.querySelector(`.modal-trigger[data-type="${dataType}"]`);
-            if (button) {
-                button.textContent = buttonText;
-                console.log('Texto del botón actualizado:', button.textContent);
-            }
-    
-            // Guardar el elemento seleccionado en la variable global
-            parametrosSeleccionados[dataType] = buttonText;
-            console.log('Parámetros seleccionados:', parametrosSeleccionados);
-    
-            // Cerrar el modal
-            $("#genericModal").modal("hide");
+        item.addEventListener('click', function() {
+            handleItemSelected(dataType, this);
         });
     });
 }
@@ -153,12 +161,12 @@ function renderGeneral(paginatedItems) {
         for (const key in item) {
             if (Object.hasOwnProperty.call(item, key)) {
                 if (line !== '') {
-                    line += ` - `;
+                    line += ' - ';
                 }
                 line += `${item[key]}`;
             }
         }
-        html += `<li type='button' class="list-group-item list-group-item-action selectable-item data-item='${JSON.stringify(item)}">${line}</li>`;
+        html += `<li type="button" class="list-group-item list-group-item-action selectable-item" data-item='${JSON.stringify(item)}'>${line}</li>`;
     });
 
     html += '</ul>';
@@ -172,11 +180,11 @@ function buscador(dataType) {
         console.error("No se encontró el elemento de input");
         return;
     }
-    
+
     let filter = input.value.trim().toLowerCase();
     
-    if(filter === "") {
-        sendDataToServer(dataType);
+    if (filter === "") {
+        sendDataToServer(dataType); // Vuelve a cargar los datos originales si el filtro está vacío
         return;
     }
 
@@ -194,10 +202,55 @@ function buscador(dataType) {
     let resultList = document.getElementById("genericModalContent");
     if (resultList) {
         resultList.innerHTML = renderGeneral(filteredItems);
+
+        // Remplazar eventos después de actualizar la lista
+        resultList.querySelectorAll('.selectable-item').forEach(item => {
+            item.addEventListener('click', function() {
+                handleItemSelected(dataType, this);
+                input.value = "";
+            });
+        });
+
     } else {
         console.error("No se encontró el elemento de lista de resultados");
     }
+    
+    
 }
+
+function handleItemSelected(dataType, selectedItem) {
+    // Obtener el texto del elemento seleccionado
+    const buttonText = selectedItem.innerText.trim();
+    
+    // Obtener el objeto JSON del elemento seleccionado
+    const parsedItem = JSON.parse(selectedItem.getAttribute('data-item'));
+    
+    console.log('Elemento seleccionado:', parsedItem);
+    
+    // Actualizar el texto del botón con el texto del elemento seleccionado
+    const button = document.querySelector(`.modal-trigger[data-type="${dataType}"]`);
+    if (button) {
+        button.textContent = buttonText;
+    }
+    
+    // Inicializar el arreglo si no existe
+    if (!parametrosSeleccionados[dataType]) {
+        parametrosSeleccionados[dataType] = [];
+    }
+    
+    // Agregar el elemento seleccionado al arreglo
+    parametrosSeleccionados[dataType].push(parsedItem);
+
+    // Cerrar el modal
+    $("#genericModal").modal("hide");
+
+    // Imprimir para verificar
+    console.log('Parámetros seleccionados:', parametrosSeleccionados);
+
+    // Devolver el objeto actualizado
+    return parametrosSeleccionados;
+}
+
 
 function renderPagination(paginationInfo, currentPage, dataType) {
     let html = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
@@ -252,12 +305,6 @@ function changePage(pageNumber, dataType) {
 
 
 function resetFormulario() {
-    // Limpiar campos de búsqueda si existen
-    const searchInputs = document.querySelectorAll('.search-input');
-    searchInputs.forEach(input => {
-        input.value = ''; // Vaciar el valor del campo de búsqueda
-    });
-    
     // Restablecer texto de botones que activan los modales
     const modalButtons = document.querySelectorAll('.modal-trigger');
     modalButtons.forEach(button => {
@@ -267,6 +314,9 @@ function resetFormulario() {
     // Limpiar contenido y pie del modal
     modalContent.innerHTML = '';
     modalFooter.innerHTML = '';
+    parametrosInforme = {};
+    parametrosSeleccionados = {};
+    
 }
 
 // Función para capitalizar la primera letra de cada palabra
