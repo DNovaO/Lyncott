@@ -12,6 +12,7 @@ const fechaFinalInput = document.getElementById('fecha_final');
 let debouncedBuscador;
 let parametrosSeleccionados = {};
 let currentPage = 1;
+let currentPageTable = 1;
 let fullItemsArray = [];
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -99,9 +100,8 @@ function sendDataToServer(dataType, currentPage){
         console.error("Error:", error);
     });
 }
-
-function sendParametersToServer(parametrosSeleccionados){
-    const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPage}`;
+function sendParametersToServer(parametrosSeleccionados, currentPageTable) {
+    const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPageTable}`;
 
     fetch(endpointURL, {
         method: "POST",
@@ -109,12 +109,63 @@ function sendParametersToServer(parametrosSeleccionados){
             "Content-Type": "application/json",
             "X-CSRFToken": getCookie("csrftoken"),
         },
-        body: JSON.stringify({ parametros_seleccionados: parametrosSeleccionados })
+        body: JSON.stringify({ parametros_seleccionados: parametrosSeleccionados, page: currentPageTable })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+        // Llama a la función de renderizado con los datos recibidos
+        renderizarDatosEnTabla(data, 'datos', 'resultado');
+    })
     .catch((error) => {
         console.error("Error:", error);
     });
+}
+
+function renderizarDatosEnTabla(data, dataType) {
+    const tabla = document.querySelector('.table tbody');
+    const thead = document.querySelector('.table thead');
+    const tablaFooter = document.getElementById('genericTablaPagination');
+
+    tabla.innerHTML = ''; // Limpiar tbody antes de renderizar nuevos datos
+    thead.innerHTML = ''; // Limpiar encabezados antes de agregar nuevos
+
+    // Renderizar encabezados de tabla (thead)
+    const trEncabezados = document.createElement('tr');
+    trEncabezados.innerHTML = '<th scope="col">#</th>';
+
+    data.campos_reporte.forEach(campo => {
+        trEncabezados.innerHTML += `<th scope="col">${campo}</th>`;
+    });
+
+    thead.appendChild(trEncabezados);
+
+    // Renderizar datos en el cuerpo de la tabla (tbody)
+    if (data.resultadoPaginado.objList.length > 0) {
+        data.resultadoPaginado.objList.forEach((fila, index) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<th scope="row">${index + 1}</th>`; // Mostrar números de fila desde 1
+
+            data.campos_reporte.forEach(campo => {
+                tr.innerHTML += `<td>${fila[campo]}</td>`;
+            });
+
+            tabla.appendChild(tr);
+        });
+        // Renderizar paginación
+        tablaFooter.innerHTML = renderPaginationTabla(data.resultadoPaginado.pagination_info, currentPageTable, dataType);
+    } else {
+        // Mostrar mensaje de "No hay datos disponibles"
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td colspan="${data.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td>`;
+        tabla.appendChild(tr);
+    }
+
 }
 
 function handleResponseData(data) {
@@ -304,6 +355,58 @@ function changePage(pageNumber, dataType) {
 }
 
 
+function renderPaginationTabla(paginationInfo, currentPageTable, dataType) {
+    if (!paginationInfo) {
+        return '<p>No pagination data available.</p>';
+    }
+
+    let html = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
+
+    html += '<li class="page-item">';
+    if (paginationInfo.has_previous) {
+        html += `<a href="#" class="page-link" onclick="changePageTabla(1, '${dataType}')">&laquo;</a>`;
+    } else {
+        html += '<span class="page-link disabled" aria-disabled="true">&laquo;</span>';
+    }
+    html += '</li>';
+
+    html += '<li class="page-item">';
+    if (paginationInfo.has_previous) {
+        html += `<a href="#" class="page-link" onclick="changePageTabla(${paginationInfo.previous_page_number}, '${dataType}')">&lt;</a>`;
+    } else {
+        html += '<span class="page-link disabled" aria-disabled="true">&lt;</span>';
+    }
+    html += '</li>';
+
+    html += `<li class="page-item disabled"><span class="page-link">Page ${currentPageTable} of ${paginationInfo.num_pages}</span></li>`;
+
+    html += '<li class="page-item">';
+    if (paginationInfo.has_next) {
+        html += `<a href="#" class="page-link" onclick="changePageTabla(${paginationInfo.next_page_number}, '${dataType}')">&gt;</a>`;
+    } else {
+        html += '<span class="page-link disabled" aria-disabled="true">&gt;</span>';
+    }
+    html += '</li>';
+
+    html += '<li class="page-item">';
+    if (paginationInfo.has_next) {
+        html += `<a href="#" class="page-link" onclick="changePageTabla(${paginationInfo.num_pages}, '${dataType}')">&raquo;</a>`;
+    } else {
+        html += '<span class="page-link disabled" aria-disabled="true">&raquo;</span>';
+    } 
+    html += '</li>';
+
+    html += '</ul></nav>';
+
+    return html;
+}
+
+// Función para cambiar de página
+function changePageTabla(pageNumber) {
+    currentPageTable = pageNumber;
+    sendParametersToServer(parametrosSeleccionados, currentPageTable);
+}  
+
 function resetFormulario() {
     // Restablecer texto de botones que activan los modales
     const modalButtons = document.querySelectorAll('.modal-trigger');
@@ -314,8 +417,8 @@ function resetFormulario() {
     // Limpiar contenido y pie del modal
     modalContent.innerHTML = '';
     modalFooter.innerHTML = '';
-    parametrosInforme = {};
-    parametrosSeleccionados = {};
+    // parametrosInforme = {}
+    // parametrosSeleccionados = {};
     
 }
 
@@ -436,5 +539,5 @@ const handlers = {
     'region': function(data, dataType) {
         fullItemsArray = data.regiones;
         cargarData(data, 'regionesPaginados', dataType);
-    }
+    },
 };

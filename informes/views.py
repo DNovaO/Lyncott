@@ -12,36 +12,28 @@ def report_view(request):
     if request.method == 'POST':
         try:
             # Parsea el cuerpo JSON de la solicitud
-            data = json.loads(request.body)  
+            data = json.loads(request.body)
             data_type = data.get('data_type')
             parametrosSeleccionados = data.get('parametros_seleccionados', {})
-            
-            # Ejemplo de impresión para demostración
+
             print("Received data_type:", data_type)
-            printAllSelectedItems(parametrosSeleccionados)
-            
+
             if data_type:
-                return handle_data(request, data_type)    
-            else:            
-                # Retornar el data_type en la respuesta JSON como prueba
-                response_data = {
-                    'status': 'success',
-                    'data_type': data_type,
-                    'parametros': parametrosSeleccionados,
-                }
-                return JsonResponse(response_data)
-        
+                return handle_data(request, data_type)
+            else:
+                return handle_resultado(request, 'resultado', parametrosSeleccionados)
+
         except json.JSONDecodeError as e:
-            return JsonResponse({'error': str(e)}, status=400)
+            return JsonResponse({'error': 'Invalid JSON format: ' + str(e)}, status=400)
         except Exception as e:
-            return JsonResponse({'error': str(e)}, status=400)   
-    else:    
+            return JsonResponse({'error': 'Server error: ' + str(e)}, status=500)
+
+    else:
         context = {
             'categoria_reporte': categoria_reporte,
             'tipo_reporte': tipo_reporte,
         }
         return render(request, 'informes/reportes.html', context)
-
 
 # Función para manejar datos según el tipo recibido
 def handle_data(request, data_type):
@@ -253,6 +245,21 @@ def handle_region(request, data_type):
     }
     
     return JsonResponse(response_data)
+
+def handle_resultado(request, data_type, parametrosSeleccionados):
+    resultados = printAllSelectedItems(parametrosSeleccionados)
+    resultados_paginados = objPaginator(request, resultados)
+
+    response_data = {
+        'status': 'success',
+        'data_type': data_type,
+        'datos': list(resultados),
+        'campos_reporte': list(resultados[0].keys()) if resultados else [],  # Campos del reporte
+        'parametros': parametrosSeleccionados,
+        'resultadoPaginado': resultados_paginados,  # Información de paginación
+    }
+
+    return JsonResponse(response_data)
     
 data_type_handlers = {
     'cliente_inicial': handle_cliente,
@@ -279,10 +286,11 @@ data_type_handlers = {
     'sucursal': handle_sucursal,
     'familia': handle_familia,
     'region': handle_region,
+    'resultado': handle_resultado,
 }
 
 def objPaginator(request, obj_to_paginate):
-    paginator = Paginator(obj_to_paginate, 10)
+    paginator = Paginator(obj_to_paginate, 8)
     page_number = request.GET.get('page')
     query_page = paginator.get_page(page_number)
     objList = list(query_page)

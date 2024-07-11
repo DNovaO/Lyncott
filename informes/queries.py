@@ -1,6 +1,7 @@
 from django.db.models import Q, F, Value
 from django.db.models.functions import LTrim, RTrim
 from .models import *
+from .views import *
 from django.db.models import Count
 
 def printAllSelectedItems(parametrosSeleccionados):
@@ -22,9 +23,9 @@ def printAllSelectedItems(parametrosSeleccionados):
             print(f"{key}: {value}")
     
     if cliente_inicial and cliente_final:
-        consultaClientes(cliente_inicial, cliente_final)
+        return consultaClientes(cliente_inicial, cliente_final)
+    return None
 
-        
 def consultaClientes(cliente_inicial, cliente_final):
     print(f"Consulta de Clientes donde cliente inicial: {cliente_inicial} y cliente final: {cliente_final}")
     
@@ -32,10 +33,5 @@ def consultaClientes(cliente_inicial, cliente_final):
             .distinct() \
             .filter(clave_cliente__range=(cliente_inicial, cliente_final)) \
             .order_by('clave_cliente')
-    
-    print("Query result:")
-    for result in query:
-        print(f"Clave Cliente: {result['clave_cliente']}")
-        print(f"Nombre Cliente: {result['nombre_cliente']}")
-        print(f"Calle y Número: {result['calle_numero_direccion']}")
-        print("-" * 20)
+            
+    return query

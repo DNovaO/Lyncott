@@ -414,7 +414,7 @@
 
                   <div class="col-md-6">  
                     <div style="width: 100%;" class="d-flex">
-                      <button type="button" id="btnGenerarInforme" class="btn btn-dark custom-btn max-content d-flex mt-3 p-3 fixed-width-button" style="margin: 0 auto;">
+                      <button type="button" id="btnGenerarInforme" class="btn btn-dark custom-btn max-content d-flex mt-3 p-3 fixed-width-button" style="margin: 0 auto; " data-type="resultado">
                         <svg xmlns="http://www.w3.org/2000/svg" style="margin-top: auto; margin-bottom: auto" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
                         <p style="padding: 0; font-weight: 500; text-align: center; display: flex; justify-content:center; font-size: 1em; margin-top: auto; margin-bottom: auto; margin-left:1.5rem;">Generar Info</p>
                       </button>
@@ -429,7 +429,7 @@
         
         <!-- Incluir los modales -->
         {% include 'informes/modals.html' %}
-
+      
         <div class="col-md-8 pb-auto pt-3">
           <div class="card h-100">
             <div class="card-header">
@@ -440,7 +440,6 @@
               <!-- Esta tabla debe ser generada dinámicamente dependiendo de los datos recibidos de las consultas SQL -->
               <table class="table">
                 <thead>
-                  <!-- Itera sobre todas las filas de las tablas de manera dinámica en base a los datos recibidos -->
                   <tr>
                     <th scope="col">#</th>
                     {% for campo in campos_reporte %}
@@ -449,7 +448,6 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Itera sobre todas las filas de las tablas de manera dinámica en base a los datos recibidos -->
                   {% for fila in datos %}
                   <tr>
                     <th scope="row">{{ forloop.counter }}</th>
@@ -459,10 +457,7 @@
                   </tr>
                   {% empty %}
                   <tr>
-                    <td
-                      colspan="{{ campos_reporte | length }}"
-                      class="text-center"
-                    >
+                    <td colspan="{{ campos_reporte | length }}" class="text-center">
                       No hay datos disponibles
                     </td>
                   </tr>
@@ -473,31 +468,9 @@
 
             <div class="card-footer">
               <!-- Paginación -->
-              <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-start">
-                  <li class="page-item disabled">
-                    <a
-                      class="page-link"
-                      href="#"
-                      tabindex="-1"
-                      aria-disabled="true"
-                      >Previous</a
-                    >
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">1</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">2</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">3</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" href="#">Next</a>
-                  </li>
-                </ul>
-              </nav>
+              <div class="tabla-footer" id="genericTablaPagination">
+                  <!-- Aquí se insertará dinámicamente la paginación -->
+              </div>
               <!-- También se incluirán los botones de exportar, imprimir y activar/desactivar gráficos -->
               <div class="btn-group" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-dark " style = "font-weight: 500;">
