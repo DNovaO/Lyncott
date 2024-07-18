@@ -44,13 +44,9 @@ def home_view(request):
         
         
         "Indicadores": ["Ventas por Zonas Pesos (Sin Refacturación)",
-                        "Ventas por Zonas Pesos 2019 vs 20XX (Sin Refacturación)",
                         "Ventas por Zonas Kilos (Sin Refacturación)",
-                        "Ventas por Zonas Kilos 2019 vs 20XX (Sin Refacturación)",
                         "Ventas por Familia en Pesos (Sin Refacturación)",
-                        "Ventas por Familia en Pesos 2019 vs 20XX (Sin Refacturación)",
                         "Ventas por Familia en Kilos (Sin Refacturación)",
-                        "Ventas por Familia en Kilos 2019 vs 20XX (Sin Refacturación)",
                         "Informe de Ventas por Zonas en Pesos",
                         "Informe de Ventas por Zonas en Kilogramos y por Marca (Sin Refacturación)",
                         "Ventas Sin Cargo",

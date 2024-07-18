@@ -127,6 +127,10 @@ function sendParametersToServer(parametrosSeleccionados, currentPageTable) {
     });
 }
 
+function transformHeader(header) {
+    return header.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+}
+
 function renderizarDatosEnTabla(data, dataType) {
     const tabla = document.querySelector('.table tbody');
     const thead = document.querySelector('.table thead');
@@ -140,7 +144,8 @@ function renderizarDatosEnTabla(data, dataType) {
     trEncabezados.innerHTML = '<th scope="col">#</th>';
 
     data.campos_reporte.forEach(campo => {
-        trEncabezados.innerHTML += `<th scope="col">${campo}</th>`;
+        const transformedHeader = transformHeader(campo);
+        trEncabezados.innerHTML += `<th scope="col">${transformedHeader}</th>`;
     });
 
     thead.appendChild(trEncabezados);
@@ -165,8 +170,9 @@ function renderizarDatosEnTabla(data, dataType) {
         tr.innerHTML = `<td colspan="${data.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td>`;
         tabla.appendChild(tr);
     }
-
 }
+
+
 
 function handleResponseData(data) {
     const dataType = data.data_type;

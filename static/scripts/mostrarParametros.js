@@ -5,9 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Ventas por Tipo de Cliente (Sin Refacturación)": 1,
     "Por Tipo de Cliente (con Refacturación)": 1,
     "Ventas por Zonas Pesos (Sin Refacturación)": 1,
-    "Ventas por Zonas Pesos 2019 vs 20XX (Sin Refacturación)": 1,
     "Ventas por Zonas Kilos (Sin Refacturación)": 1,
-    "Ventas por Zonas Kilos 2019 vs 20XX (Sin Refacturación)": 1,
     "Comparativa de Notas de Crédito en Kilogramos": 1,
     "Ventas sin Notas de Crédito en Pesos": 1,
 
@@ -37,9 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Familia 6
     "Ventas por Familia en Pesos (Sin Refacturación)": 6,
-    "Ventas por Familia en Pesos 2019 vs 20XX (Sin Refacturación)": 6,
     "Ventas por Familia en Kilos (Sin Refacturación)": 6,
-    "Ventas por Familia en Kilos 2019 vs 20XX (Sin Refacturación)": 6,
 
     // Familia 7
     "Informe de Ventas por Zonas en Pesos": 7,

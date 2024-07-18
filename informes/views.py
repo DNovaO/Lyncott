@@ -47,7 +47,7 @@ def handle_data(request, data_type):
 
 def handle_cliente(request,data_type):
     clientes = Kdud.objects.values('clave_cliente', 'nombre_cliente').distinct().order_by('clave_cliente')
-    clientes_paginados  = objPaginator(request, clientes);
+    clientes_paginados  = objPaginator(request, clientes, data_type);
     
     response_data = {
         'data_type': data_type,
@@ -59,7 +59,7 @@ def handle_cliente(request,data_type):
 
 def handle_producto(request, data_type):
     productos = Kdii.objects.values('clave_producto', 'descripcion_producto', 'linea_producto').filter(clave_producto__range = ('0101', '9999')).distinct().order_by('clave_producto')
-    productos_paginados = objPaginator(request, productos)
+    productos_paginados = objPaginator(request, productos, data_type)
     
     response_data = {
         'data_type': data_type,
@@ -71,7 +71,7 @@ def handle_producto(request, data_type):
 
 def handle_sucursal(request, data_type):
     sucursales = Kdms.objects.values('clave_sucursal', 'descripcion').distinct().order_by('clave_sucursal')
-    sucursales_paginados = objPaginator(request, sucursales)
+    sucursales_paginados = objPaginator(request, sucursales, data_type)
     
     response_data = {
         'data_type': data_type,
@@ -83,7 +83,7 @@ def handle_sucursal(request, data_type):
     
 def handle_vendedor(request, data_type):
     vendedores = Kduv.objects.values('clave_vendedor','nombre_vendedor').distinct().order_by('clave_vendedor')
-    vendedores_paginados = objPaginator(request, vendedores)
+    vendedores_paginados = objPaginator(request, vendedores, data_type)
     
     response_data = {
         'data_type': data_type,
@@ -95,7 +95,7 @@ def handle_vendedor(request, data_type):
 
 def handle_linea(request, data_type):
     lineas = Kdig.objects.values('clave_linea','descripcion_linea').distinct().order_by('clave_linea')
-    lineas_paginados = objPaginator(request, lineas)
+    lineas_paginados = objPaginator(request, lineas, data_type)
     
     response_data = {
         'data_type': data_type,
@@ -118,7 +118,7 @@ def handle_familia(request, data_type):
                        .values('clave_grupo', 'descripcion_grupo')\
                        .distinct()\
                        .order_by('clave_grupo')
-    familias_paginados = objPaginator(request, familias)
+    familias_paginados = objPaginator(request, familias, data_type)
     
     response_data = {
         'data_type': data_type,
@@ -130,7 +130,7 @@ def handle_familia(request, data_type):
 
 def handle_grupo_corporativo(request, data_type):
     gruposCorporativos = Kdcorpo.objects.values('clave_corporativo', 'descripcion_corporativo').distinct().order_by('clave_corporativo')
-    gruposCorporativos_paginados = objPaginator(request, gruposCorporativos)
+    gruposCorporativos_paginados = objPaginator(request, gruposCorporativos, data_type)
     
     response_data = {
         'data_type': data_type,
@@ -143,7 +143,7 @@ def handle_grupo_corporativo(request, data_type):
 
 def handle_segmento(request, data_type):
     segmentos = Kdsegmentacion.objects.values('clave_segmentacion', 'descripcion_segmentacion').distinct().order_by('clave_segmentacion')
-    segmentos_paginados = objPaginator(request, segmentos)
+    segmentos_paginados = objPaginator(request, segmentos, data_type)
     
     response_data = {
         'data_type': data_type,
@@ -166,7 +166,7 @@ def handle_status(request, data_type):
     # Transformar los valores de estatus
     estatus_transformed = [{'estatus': status_map.get(item['estatus'], item['estatus'])} for item in estatus]
     
-    estatus_paginados = objPaginator(request, estatus_transformed)
+    estatus_paginados = objPaginator(request, estatus_transformed, data_type)
     
     response_data = {
         'data_type': data_type,
@@ -223,7 +223,7 @@ def handle_zona(request, data_type):
     zonas_transformed = [{'zona': zona['zona']} for zona in zonas]
     
     # Paginar las zonas transformadas
-    zonas_paginados = objPaginator(request, zonas_transformed)
+    zonas_paginados = objPaginator(request, zonas_transformed, data_type)
     
     response_data = {
         'data_type': data_type,
@@ -236,7 +236,7 @@ def handle_zona(request, data_type):
     
 def handle_region(request, data_type):
     regiones = Kdregiones.objects.values('clave_region', 'descripcion_region').distinct().order_by('clave_region')
-    regiones_paginados = objPaginator(request, regiones)
+    regiones_paginados = objPaginator(request, regiones, data_type)
     
     response_data = {
         'data_type': data_type,
@@ -246,20 +246,53 @@ def handle_region(request, data_type):
     
     return JsonResponse(response_data)
 
+
 def handle_resultado(request, data_type, parametrosSeleccionados):
     resultados = printAllSelectedItems(parametrosSeleccionados)
-    resultados_paginados = objPaginator(request, resultados)
+    resultados_paginados = objPaginator(request, resultados, data_type)
+
+    campos_reporte = set()
+    for resultado in resultados:
+        campos_reporte.update(resultado.keys())
 
     response_data = {
         'status': 'success',
         'data_type': data_type,
         'datos': list(resultados),
-        'campos_reporte': list(resultados[0].keys()) if resultados else [],  # Campos del reporte
+        'campos_reporte': list(campos_reporte),
         'parametros': parametrosSeleccionados,
-        'resultadoPaginado': resultados_paginados,  # Información de paginación
+        'resultadoPaginado': resultados_paginados,
     }
 
     return JsonResponse(response_data)
+    
+
+def objPaginator(request, obj_to_paginate, data_type):
+    if data_type == 'resultado':
+        paginator = Paginator(obj_to_paginate, 8)
+    else:
+        paginator = Paginator(obj_to_paginate, 10)
+        
+    page_number = request.GET.get('page')
+    query_page = paginator.get_page(page_number)
+    objList = list(query_page)
+    
+    pagination_data = {
+        'objList': objList,
+        'pagination_info': get_pagination_html(query_page),
+    }
+    
+    return pagination_data
+
+def get_pagination_html(page_obj):
+    return {
+        'has_previous': page_obj.has_previous(),
+        'has_next': page_obj.has_next(),
+        'previous_page_number': page_obj.previous_page_number() if page_obj.has_previous() else None,
+        'next_page_number': page_obj.next_page_number() if page_obj.has_next() else None,
+        'number': page_obj.number,
+        'num_pages': page_obj.paginator.num_pages,
+    }
     
 data_type_handlers = {
     'cliente_inicial': handle_cliente,
@@ -288,26 +321,3 @@ data_type_handlers = {
     'region': handle_region,
     'resultado': handle_resultado,
 }
-
-def objPaginator(request, obj_to_paginate):
-    paginator = Paginator(obj_to_paginate, 8)
-    page_number = request.GET.get('page')
-    query_page = paginator.get_page(page_number)
-    objList = list(query_page)
-    
-    pagination_data = {
-        'objList': objList,
-        'pagination_info': get_pagination_html(query_page),
-    }
-    
-    return pagination_data
-
-def get_pagination_html(page_obj):
-    return {
-        'has_previous': page_obj.has_previous(),
-        'has_next': page_obj.has_next(),
-        'previous_page_number': page_obj.previous_page_number() if page_obj.has_previous() else None,
-        'next_page_number': page_obj.next_page_number() if page_obj.has_next() else None,
-        'number': page_obj.number,
-        'num_pages': page_obj.paginator.num_pages,
-    }
