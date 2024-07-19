@@ -251,22 +251,24 @@ def handle_resultado(request, data_type, parametrosSeleccionados):
     resultados = printAllSelectedItems(parametrosSeleccionados)
     resultados_paginados = objPaginator(request, resultados, data_type)
 
-    campos_reporte = set()
+    campos_reporte = []
+    campos_set = set()
     for resultado in resultados:
-        campos_reporte.update(resultado.keys())
+        nuevos_campos = [campo for campo in resultado.keys() if campo not in campos_set]
+        campos_reporte.extend(nuevos_campos)
+        campos_set.update(nuevos_campos)
 
     response_data = {
         'status': 'success',
         'data_type': data_type,
         'datos': list(resultados),
-        'campos_reporte': list(campos_reporte),
+        'campos_reporte': campos_reporte,
         'parametros': parametrosSeleccionados,
         'resultadoPaginado': resultados_paginados,
     }
 
     return JsonResponse(response_data)
     
-
 def objPaginator(request, obj_to_paginate, data_type):
     if data_type == 'resultado':
         paginator = Paginator(obj_to_paginate, 8)

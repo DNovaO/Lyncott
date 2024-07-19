@@ -172,8 +172,6 @@ function renderizarDatosEnTabla(data, dataType) {
     }
 }
 
-
-
 function handleResponseData(data) {
     const dataType = data.data_type;
     const handler = handlers[dataType];
