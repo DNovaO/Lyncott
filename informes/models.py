@@ -199,8 +199,8 @@ class Kdij(models.Model):
     unidad_medida = models.CharField(db_column='C12', max_length=3, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     monto_costo_pesos = models.DecimalField(db_column='C13', max_digits=15, decimal_places=2, blank=True, null=True)
     monto_venta = models.DecimalField(db_column='C14', max_digits=15, decimal_places=2, blank=True, null=True)
-    clave_cliente_proveedor = models.CharField(db_column='C15', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
-    clave_vendedor_comprador = models.CharField(db_column='C16', max_length=5, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
+    clave_cliente = models.CharField(db_column='C15', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
+    clave_vendedor = models.CharField(db_column='C16', max_length=5, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     existencia_previa_unidades = models.FloatField(db_column='C17', blank=True, null=True)
     existencia_previa_ueps_pesos = models.DecimalField(db_column='C18', max_digits=15, decimal_places=2, blank=True, null=True)
     referencia = models.CharField(db_column='C19', max_length=10, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
@@ -217,7 +217,7 @@ class Kdij(models.Model):
     tipo_movimiento_anterior = models.DecimalField(db_column='C39', max_digits=2, decimal_places=0, blank=True, null=True)
     folio_movimiento_anterior = models.CharField(db_column='C40', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     numero_partida_anterior = models.DecimalField(db_column='C41', max_digits=3, decimal_places=0, blank=True, null=True)
-
+    
     class Meta:
         managed = False
         db_table = 'KDIJ'
