@@ -246,18 +246,18 @@ def handle_region(request, data_type):
     
     return JsonResponse(response_data)
 
-
 def handle_resultado(request, data_type, parametrosSeleccionados):
     resultados = printAllSelectedItems(parametrosSeleccionados)
-    resultados_paginados = objPaginator(request, resultados, data_type)
 
-    campos_reporte = []
-    campos_set = set()
+    campos_reporte = [] 
+    campos_set = set(campos_reporte)
     for resultado in resultados:
         nuevos_campos = [campo for campo in resultado.keys() if campo not in campos_set]
         campos_reporte.extend(nuevos_campos)
         campos_set.update(nuevos_campos)
 
+    resultados_paginados = objPaginator(request, resultados, data_type)
+    
     response_data = {
         'status': 'success',
         'data_type': data_type,
@@ -268,7 +268,7 @@ def handle_resultado(request, data_type, parametrosSeleccionados):
     }
 
     return JsonResponse(response_data)
-    
+
 def objPaginator(request, obj_to_paginate, data_type):
     if data_type == 'resultado':
         paginator = Paginator(obj_to_paginate, 8)

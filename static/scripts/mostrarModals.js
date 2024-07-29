@@ -72,6 +72,7 @@ document.addEventListener("DOMContentLoaded", function(){
             parametrosInforme['fecha_inicial'] = fechaInicialInput.value;
             parametrosInforme['fecha_final'] = fechaFinalInput.value;
 
+            console.log('Parámetros del informe:', parametrosInforme['fecha_inicial'], parametrosInforme['fecha_final']);
             // Enviar los parámetros al servidor
             sendParametersToServer(parametrosInforme);
             console.log('Parámetros enviados!');
@@ -296,6 +297,9 @@ function handleItemSelected(dataType, selectedItem) {
     // Agregar el elemento seleccionado al arreglo
     parametrosSeleccionados[dataType].push(parsedItem);
 
+    parametrosSeleccionados['fecha_inicial'] = fechaInicialInput.value;
+    parametrosSeleccionados['fecha_final'] = fechaFinalInput.value;
+
     // Cerrar el modal
     $("#genericModal").modal("hide");
 
@@ -358,7 +362,6 @@ function changePage(pageNumber, dataType) {
     sendDataToServer(dataType, pageNumber);
 }
 
-
 function renderPaginationTabla(paginationInfo, currentPageTable, dataType) {
     if (!paginationInfo) {
         return '<p>No pagination data available.</p>';
@@ -408,6 +411,7 @@ function renderPaginationTabla(paginationInfo, currentPageTable, dataType) {
 // Función para cambiar de página
 function changePageTabla(pageNumber) {
     currentPageTable = pageNumber;
+
     sendParametersToServer(parametrosSeleccionados, currentPageTable);
 }  
 
