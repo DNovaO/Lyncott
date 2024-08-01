@@ -196,7 +196,7 @@ class Kdij(models.Model):
     numero_partida = models.DecimalField(db_column='C9', max_digits=3, decimal_places=0)
     fecha = models.DateTimeField(db_column='C10', blank=True, null=True)
     cantidad_unidades_entrada = models.FloatField(db_column='C11', blank=True, null=True)
-    unidad_medida = models.CharField(db_column='C12', max_length=3, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
+    unidad_medida_kdij = models.CharField(db_column='C12', max_length=3, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     monto_costo_pesos = models.DecimalField(db_column='C13', max_digits=15, decimal_places=2, blank=True, null=True)
     monto_venta = models.DecimalField(db_column='C14', max_digits=15, decimal_places=2, blank=True, null=True)
     clave_cliente = models.CharField(db_column='C15', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)

@@ -216,7 +216,7 @@ class Migration(migrations.Migration):
                 ('numero_partida', models.DecimalField(db_column='C9', decimal_places=0, max_digits=3)),
                 ('fecha', models.DateTimeField(blank=True, db_column='C10', null=True)),
                 ('cantidad_unidades_entrada', models.FloatField(blank=True, db_column='C11', null=True)),
-                ('unidad_medida', models.CharField(blank=True, db_collation='Traditional_Spanish_CI_AS', db_column='C12', max_length=3, null=True)),
+                ('unidad_medida_kdij', models.CharField(blank=True, db_collation='Traditional_Spanish_CI_AS', db_column='C12', max_length=3, null=True)),
                 ('monto_costo_pesos', models.DecimalField(blank=True, db_column='C13', decimal_places=2, max_digits=15, null=True)),
                 ('monto_venta', models.DecimalField(blank=True, db_column='C14', decimal_places=2, max_digits=15, null=True)),
                 ('clave_cliente_proveedor', models.CharField(blank=True, db_collation='Traditional_Spanish_CI_AS', db_column='C15', max_length=7, null=True)),

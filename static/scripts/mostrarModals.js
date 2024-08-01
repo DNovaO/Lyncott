@@ -71,10 +71,10 @@ document.addEventListener("DOMContentLoaded", function(){
             // Agregar los parámetros adicionales, como fechas
             parametrosInforme['fecha_inicial'] = fechaInicialInput.value;
             parametrosInforme['fecha_final'] = fechaFinalInput.value;
-
+            currentPageTable = 1;
             console.log('Parámetros del informe:', parametrosInforme['fecha_inicial'], parametrosInforme['fecha_final']);
             // Enviar los parámetros al servidor
-            sendParametersToServer(parametrosInforme);
+            sendParametersToServer(parametrosInforme, currentPageTable);
             console.log('Parámetros enviados!');
             resetFormulario();
         });
