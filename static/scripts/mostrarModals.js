@@ -7,6 +7,8 @@ const categoria_reporte = document.getElementById("categoria_reporte").textConte
 const tipo_reporte = document.getElementById("tipo_reporte").textContent.trim();
 const btnReset = document.getElementById('btnLimpiar');
 const btnGenerarInforme = document.getElementById('btnGenerarInforme');
+const btnMostrarFiltros = document.getElementById('btnMostrarFiltros');
+const btnBorrarReporte = document.getElementById('btnBorrarReporte');
 const fechaInicialInput = document.getElementById('fecha_inicial');
 const fechaFinalInput = document.getElementById('fecha_final');
 let debouncedBuscador;
@@ -72,11 +74,26 @@ document.addEventListener("DOMContentLoaded", function(){
             parametrosInforme['fecha_inicial'] = fechaInicialInput.value;
             parametrosInforme['fecha_final'] = fechaFinalInput.value;
             currentPageTable = 1;
-            console.log('Parámetros del informe:', parametrosInforme['fecha_inicial'], parametrosInforme['fecha_final']);
+            
             // Enviar los parámetros al servidor
-            sendParametersToServer(parametrosInforme, currentPageTable);
-            console.log('Parámetros enviados!');
+            sendParametersToServer(parametrosInforme, currentPageTable, tipo_reporte);
+            changeSize(true);
             resetFormulario();
+        });
+    }
+
+    if (btnMostrarFiltros){
+        btnMostrarFiltros.addEventListener('click', function(e) {
+            e.preventDefault();
+            changeSize(false)
+        });
+    }
+
+    if (btnBorrarReporte){
+        btnBorrarReporte.addEventListener('click', function(e) {
+            e.preventDefault();
+            changeSize(false);
+            resetTabla();
         });
     }
 });
@@ -101,7 +118,7 @@ function sendDataToServer(dataType, currentPage){
         console.error("Error:", error);
     });
 }
-function sendParametersToServer(parametrosSeleccionados, currentPageTable) {
+function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoReporte) {
     const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPageTable}`;
 
     fetch(endpointURL, {
@@ -110,7 +127,7 @@ function sendParametersToServer(parametrosSeleccionados, currentPageTable) {
             "Content-Type": "application/json",
             "X-CSRFToken": getCookie("csrftoken"),
         },
-        body: JSON.stringify({ parametros_seleccionados: parametrosSeleccionados, page: currentPageTable })
+        body: JSON.stringify({ parametros_seleccionados: parametrosSeleccionados, page: currentPageTable, tipo_reporte: tipoReporte })
     })
     .then(response => {
         if (!response.ok) {
@@ -137,40 +154,80 @@ function renderizarDatosEnTabla(data, dataType) {
     const thead = document.querySelector('.table thead');
     const tablaFooter = document.getElementById('genericTablaPagination');
 
-    tabla.innerHTML = ''; // Limpiar tbody antes de renderizar nuevos datos
-    thead.innerHTML = ''; // Limpiar encabezados antes de agregar nuevos
+    // Limpiar tbody y thead antes de renderizar nuevos datos
+    tabla.innerHTML = '';
+    thead.innerHTML = '';
 
     // Renderizar encabezados de tabla (thead)
-    const trEncabezados = document.createElement('tr');
-    trEncabezados.innerHTML = '<th scope="col">#</th>';
-
-    data.campos_reporte.forEach(campo => {
-        const transformedHeader = transformHeader(campo);
-        trEncabezados.innerHTML += `<th scope="col">${transformedHeader}</th>`;
-    });
-
-    thead.appendChild(trEncabezados);
+    const theadHTML = `
+        <tr>
+            <th scope="col">#</th>
+            ${data.campos_reporte.map(campo => {
+                const transformedHeader = transformHeader(campo);
+                return `<th scope="col">${transformedHeader}</th>`;
+            }).join('')}
+        </tr>
+    `;
+    thead.innerHTML = theadHTML;
 
     // Renderizar datos en el cuerpo de la tabla (tbody)
     if (data.resultadoPaginado.objList.length > 0) {
-        data.resultadoPaginado.objList.forEach((fila, index) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<th scope="row">${index + 1}</th>`; // Mostrar números de fila desde 1
+        const tbodyHTML = data.resultadoPaginado.objList.map((fila, index) => {
+            const filaHTML = `
+                <tr>
+                    <th scope="row">${index + 1}</th>
+                    ${data.campos_reporte.map(campo => {
+                        const value = fila[campo];
+                        return `<td>${formatNumber(value, false, campo)}</td>`;
+                    }).join('')}
+                </tr>
+            `;
+            return filaHTML;
+        }).join('');
+        tabla.innerHTML = tbodyHTML;
 
-            data.campos_reporte.forEach(campo => {
-                tr.innerHTML += `<td>${fila[campo]}</td>`;
-            });
-
-            tabla.appendChild(tr);
-        });
         // Renderizar paginación
         tablaFooter.innerHTML = renderPaginationTabla(data.resultadoPaginado.pagination_info, currentPageTable, dataType);
     } else {
         // Mostrar mensaje de "No hay datos disponibles"
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td colspan="${data.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td>`;
-        tabla.appendChild(tr);
+        tabla.innerHTML = `<tr><td colspan="${data.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td></tr>`;
     }
+}
+
+function formatNumber(value, isCurrency = false, key = '') {
+    // Lista de claves que no deben ser formateadas
+    const keysToExcludeFromFormatting = ['clave_producto'];
+
+    // Si la clave está en la lista de exclusión, devolver el valor sin cambios
+    if (keysToExcludeFromFormatting.includes(key)) {
+        return value;
+    }
+
+    if (value == null || value === '') {
+        return '';
+    }
+
+    // Convertir el valor a una cadena si no lo es
+    let valueStr = value.toString();
+
+    // Si el valor es una cadena y comienza con $, limpiarlo
+    if (valueStr.startsWith('$')) {
+        isCurrency = true;
+        valueStr = valueStr.replace(/^\$/, ''); // Elimina el símbolo $
+    }
+    valueStr = valueStr.replace(/,/g, ''); // Elimina comas si las hay
+
+    // Convierte el valor a número
+    const numericValue = parseFloat(valueStr);
+
+    if (isNaN(numericValue)) {
+        return value; // Devuelve el valor original si no es un número válido
+    }
+
+    // Formatear el número con o sin símbolo de moneda
+    const formattedValue = numericValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    return isCurrency ? `$${formattedValue}` : formattedValue;
 }
 
 function handleResponseData(data) {
@@ -410,10 +467,32 @@ function renderPaginationTabla(paginationInfo, currentPageTable, dataType) {
 
 // Función para cambiar de página
 function changePageTabla(pageNumber) {
+    const tipo_reporte = document.getElementById("tipo_reporte").textContent.trim();
     currentPageTable = pageNumber;
 
-    sendParametersToServer(parametrosSeleccionados, currentPageTable);
+    sendParametersToServer(parametrosSeleccionados, currentPageTable, tipo_reporte);
 }  
+
+function resetTabla() {
+    const tabla = document.querySelector('.table tbody');
+    const thead = document.querySelector('.table thead');
+    const tablaFooter = document.getElementById('genericTablaPagination');
+
+    // Limpiar encabezado y cuerpo de la tabla
+    thead.innerHTML = '';
+    tabla.innerHTML = '';
+
+    const theadHTML = `
+        <tr>
+            <th scope="col">#</th>
+        </tr>
+    `;
+
+    thead.innerHTML = theadHTML;
+    tabla.innerHTML = `<tr><td class="text-center">No hay datos disponibles</td></tr>`;        
+    tablaFooter.innerHTML = ''
+}
+
 
 function resetFormulario() {
     // Restablecer texto de botones que activan los modales
@@ -425,15 +504,42 @@ function resetFormulario() {
     // Limpiar contenido y pie del modal
     modalContent.innerHTML = '';
     modalFooter.innerHTML = '';
-    // parametrosInforme = {}
-    // parametrosSeleccionados = {};
-    
+
 }
 
 // Función para capitalizar la primera letra de cada palabra
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
+
+function changeSize(flag) {
+    let parametros = document.getElementById('parametros-reporte');
+    let resultados = document.getElementById('resultado-reporte');
+    
+    console.log('La bandera está en:', flag);
+
+    if (flag) {
+        // Ocultar el div de parámetros
+        parametros.style.width = '0%';
+        parametros.style.display = 'none';
+        parametros.style.transition = 'all 0.5s ease-in-out';
+        
+        // Expandir el div de resultados
+        resultados.style.width = '100%';
+        resultados.style.float = 'none'; // Asegúrate de que los divs no floten uno al lado del otro
+        resultados.style.transition = 'all 1s ease-in-out';
+    } else {
+        // Mostrar el div de parámetros
+        parametros.style.display = 'flex'; // Usar 'flex' para mostrar el div
+        parametros.style.width = '33.33333333%';
+        parametros.style.transition = 'all 1s ease-in-out';
+        
+        // Reducir el ancho del div de resultados
+        resultados.style.width = '66.66666667%'; // Asegúrate de que esto es correcto
+        resultados.style.float = 'left'; // Ajustar flotación según el diseño
+        resultados.style.transition = 'all 1s ease-in-out';
+    }
+}
 
 function getCookie(name) {
     let cookieValue = null;
@@ -449,7 +555,6 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
 
 const handlers = {
     'cliente_inicial': function(data, dataType) {
@@ -548,4 +653,4 @@ const handlers = {
         fullItemsArray = data.regiones;
         cargarData(data, 'regionesPaginados', dataType);
     },
-};
+}; 

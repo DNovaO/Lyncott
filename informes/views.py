@@ -21,7 +21,7 @@ def report_view(request):
             if data_type:
                 return handle_data(request, data_type)
             else:
-                return handle_resultado(request, 'resultado', parametrosSeleccionados)
+                return handle_resultado(request, 'resultado', parametrosSeleccionados, tipo_reporte)
 
         except json.JSONDecodeError as e:
             return JsonResponse({'error': 'Invalid JSON format: ' + str(e)}, status=400)
@@ -246,8 +246,8 @@ def handle_region(request, data_type):
     
     return JsonResponse(response_data)
 
-def handle_resultado(request, data_type, parametrosSeleccionados):
-    resultados = printAllSelectedItems(parametrosSeleccionados)
+def handle_resultado(request, data_type, parametrosSeleccionados, tipo_reporte):
+    resultados = printAllSelectedItems(parametrosSeleccionados, tipo_reporte)
 
     campos_reporte = [] 
     campos_set = set(campos_reporte)

@@ -1,25 +1,28 @@
 from datetime import datetime
 from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, DecimalField
-from django.db.models.functions import Coalesce, Cast, Concat
+from django.db.models.functions import Coalesce, Cast, Concat, Round
 from .models import *
 
-def printAllSelectedItems(parametrosSeleccionados):
+def printAllSelectedItems(parametrosSeleccionados, tipo_reporte):
     filtros = {}
-    print("Parámetros seleccionados:")
+    
     for key, value in parametrosSeleccionados.items():
         if isinstance(value, list) and len(value) > 0 and isinstance(value[0], dict):
             for item in value:
                 key_value = item[list(item.keys())[0]].strip()
-                print(f" {key}: {key_value}")
                 if key in ('fecha_inicial', 'fecha_final', 'cliente_inicial', 'cliente_final', 'producto_inicial', 'producto_final', 'sucursal_inicial', 'sucursal_final'):
                     filtros[key] = key_value
         else:
-            print(f"{key}: {value}")
+            if isinstance(value, list) and len(value) > 0:
+                value = value[0]
+                if isinstance(value, dict):
+                    value = value[list(value.keys())[0]].strip()
+                    
             filtros[key] = value
     
-    return ejecutarConsulta(filtros)
+    return ejecutarConsulta(filtros, tipo_reporte)
 
-def ejecutarConsulta(filtros):
+def ejecutarConsulta(filtros, tipo_reporte):
     fecha_inicial_str = filtros.get('fecha_inicial')
     fecha_final_str = filtros.get('fecha_final')
     cliente_inicial = filtros.get('cliente_inicial')
@@ -34,11 +37,13 @@ def ejecutarConsulta(filtros):
     
     resultados = []
                         
-    if all([fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final]):
+    # if all([fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final]):
+    #     resultados.extend(consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
+
+    if tipo_reporte == "Por Producto (con Refacturación)":
         resultados.extend(consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
-    else:
-        print("Faltan parámetros para realizar la consulta de ventas por producto")
-        
+
+
     return resultados
     
 def parse_date(date_str):
@@ -84,18 +89,18 @@ def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, clien
         
         factor_conversion=Subquery(kdii_subquery.values('factor_conversion')),
         
-        cantidad=Sum('cantidad_unidades_entrada'),
+        cantidad=Round(Sum('cantidad_unidades_entrada'), 2),
         
         venta_sumatoria=Sum('monto_venta'),
         
         venta=Concat(
-            Value('$ '),
+            Value('$'),
             'venta_sumatoria',
             output_field=CharField()
         ),
         
         kgslts=ExpressionWrapper(
-            F('cantidad') * F('factor_conversion'),
+            Round(F('cantidad') * F('factor_conversion'), 2),
             output_field=FloatField()
         )
     )
@@ -113,15 +118,3 @@ def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, clien
     )
 
     return list(queryVentaPorProducto)
-
-def pruebas_consultas():
-    
-    queryKdii = Kdii.objects.values('factor_conversion')
-    
-    print('Esto es kdii', queryKdii)
-
-    queryKdij = Kdij.objects.values('cantidad_unidades_entrada')
-    
-    print('Esto es kdij', queryKdij)
-    
-    return 0
