@@ -5,6 +5,7 @@ const modalContent = modal.querySelector("#genericModalContent");
 const modalFooter = modal.querySelector("#genericModalPagination");
 const categoria_reporte = document.getElementById("categoria_reporte").textContent.trim();
 const tipo_reporte = document.getElementById("tipo_reporte").textContent.trim();
+const btnMostrarGrafico = document.getElementById('btnMostrarGrafico');
 const btnReset = document.getElementById('btnLimpiar');
 const btnGenerarInforme = document.getElementById('btnGenerarInforme');
 const btnMostrarFiltros = document.getElementById('btnMostrarFiltros');
@@ -19,16 +20,6 @@ let fullItemsArray = [];
 
 document.addEventListener("DOMContentLoaded", function(){
     const modalButtons = document.querySelectorAll(".modal-trigger");
-
-    setTimeout(function () {
-        // Acceder a los valores de fecha después de la inicialización
-        const fecha_inicial = fechaInicialInput.value;
-        const fecha_final = fechaFinalInput.value;
-    
-        console.log("Fecha inicial:", fecha_inicial);
-        console.log("Fecha final:", fecha_final);
-    }, 500); // Ajusta este tiempo si es necesario esperar más tiempo
-    
     
     modalButtons.forEach(button => {
         
@@ -70,36 +61,32 @@ document.addEventListener("DOMContentLoaded", function(){
                 }
             }
 
-            // Agregar los parámetros adicionales, como fechas
-            parametrosInforme['fecha_inicial'] = fechaInicialInput.value;
-            parametrosInforme['fecha_final'] = fechaFinalInput.value;
             currentPageTable = 1;
             
             // Enviar los parámetros al servidor
             sendParametersToServer(parametrosInforme, currentPageTable, tipo_reporte);
-            changeSize(true);
-            resetFormulario();
-        });
-    }
-
-    if (btnMostrarFiltros){
-        btnMostrarFiltros.addEventListener('click', function(e) {
-            e.preventDefault();
-            changeSize(false)
         });
     }
 
     if (btnBorrarReporte){
         btnBorrarReporte.addEventListener('click', function(e) {
             e.preventDefault();
-            changeSize(false);
             resetTabla();
         });
     }
+
+    if (btnMostrarGrafico)
+        document.getElementById('btnMostrarGrafico').addEventListener('click', function() {
+            this.classList.toggle('btn-active-green');
+        });
+
 });
 
 function sendDataToServer(dataType, currentPage){
     const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPage}`;
+
+    // Mostrar el loader antes de enviar la solicitud
+    showLoaderModal();
 
     fetch(endpointURL, {
         method: "POST",
@@ -118,8 +105,12 @@ function sendDataToServer(dataType, currentPage){
         console.error("Error:", error);
     });
 }
+
 function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoReporte) {
     const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPageTable}`;
+
+    // Mostrar el loader antes de enviar la solicitud
+    showLoaderTabla();
 
     fetch(endpointURL, {
         method: "POST",
@@ -136,12 +127,12 @@ function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoR
         return response.json();
     })
     .then(data => {
-        console.log('Success:', data);
         // Llama a la función de renderizado con los datos recibidos
-        renderizarDatosEnTabla(data, 'datos', 'resultado');
+        renderizarDatosEnTabla(data, tipoReporte);
     })
     .catch((error) => {
         console.error("Error:", error);
+        mostrarError('Ocurrió un error al obtener los datos. Por favor, inténtelo de nuevo.');
     });
 }
 
@@ -192,6 +183,17 @@ function renderizarDatosEnTabla(data, dataType) {
         // Mostrar mensaje de "No hay datos disponibles"
         tabla.innerHTML = `<tr><td colspan="${data.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td></tr>`;
     }
+}
+
+function showLoaderTabla() {
+    const tabla = document.querySelector('.table tbody');
+
+    tabla.innerHTML = '<tr><td colspan="100%" class="text-center"><div class="lds-ellipsis">Cargando<div></div><div></div><div></div><div></div></div></td></tr>';
+}
+
+function showLoaderModal() {
+
+    modalContent.innerHTML = '<div class="lds-ring">Cargando<div></div><div></div><div></div><div></div></div>';
 }
 
 function formatNumber(value, isCurrency = false, key = '') {
@@ -504,6 +506,8 @@ function resetFormulario() {
     // Limpiar contenido y pie del modal
     modalContent.innerHTML = '';
     modalFooter.innerHTML = '';
+    parametrosSeleccionados = {};
+
 
 }
 
@@ -511,35 +515,6 @@ function resetFormulario() {
 String.prototype.capitalize = function() {
     return this.charAt(0).toUpperCase() + this.slice(1);
 };
-
-function changeSize(flag) {
-    let parametros = document.getElementById('parametros-reporte');
-    let resultados = document.getElementById('resultado-reporte');
-    
-    console.log('La bandera está en:', flag);
-
-    if (flag) {
-        // Ocultar el div de parámetros
-        parametros.style.width = '0%';
-        parametros.style.display = 'none';
-        parametros.style.transition = 'all 0.5s ease-in-out';
-        
-        // Expandir el div de resultados
-        resultados.style.width = '100%';
-        resultados.style.float = 'none'; // Asegúrate de que los divs no floten uno al lado del otro
-        resultados.style.transition = 'all 1s ease-in-out';
-    } else {
-        // Mostrar el div de parámetros
-        parametros.style.display = 'flex'; // Usar 'flex' para mostrar el div
-        parametros.style.width = '33.33333333%';
-        parametros.style.transition = 'all 1s ease-in-out';
-        
-        // Reducir el ancho del div de resultados
-        resultados.style.width = '66.66666667%'; // Asegúrate de que esto es correcto
-        resultados.style.float = 'left'; // Ajustar flotación según el diseño
-        resultados.style.transition = 'all 1s ease-in-out';
-    }
-}
 
 function getCookie(name) {
     let cookieValue = null;

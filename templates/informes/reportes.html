@@ -59,24 +59,24 @@
               class="mb-0 text-center font-weight-normal"
               style="font-size: 1.5rem; font-weight: bold"
             >
-              Categoría de Reporte:
-              <span style="font-weight: normal" id="categoria_reporte">{{ categoria_reporte }}</span>
-              Tipo de Reporte:
-              <span style="font-weight: normal" id="tipo_reporte"
-                >{{ tipo_reporte }}</span
-              >
+              Usuario: {{ user.username }} 
+              
             </h1>
           </div>
           <div class="d-flex align-items-center justify-content-center mt-3">
             {% if user.is_authenticated %}
+            <form method="post" action="{% url 'home' %}" class="d-inline">
+              {% csrf_token %}
+                <button type="submit" class="btn btn-danger custom-btn w-80 text-center me-2" style = "font-weight: 500;"> 
+                  Volver a home
+                </button>
+            </form>
+            
             <form method="post" action="{% url 'logout' %}" class="d-inline">
               {% csrf_token %}
-              <button
-                type="submit"
-                class="btn btn-danger custom-btn w-100 text-center"
-              >
-                Cerrar Sesión
-              </button>
+                <button type="submit" class="btn btn-danger custom-btn w-80 text-center"  style = "font-weight: 500;">
+                  Cerrar Sesión
+                </button>
             </form>
             {% endif %}
           </div>
@@ -84,9 +84,21 @@
       </div>
     </nav>
 
+      <h1
+      class="mb-0 text-center font-weight-normal"
+      style="font-size: 1.5rem; font-weight: bold"
+    >
+      Categoría de reporte:
+      <span style="font-weight: normal" id="categoria_reporte">{{ categoria_reporte }}</span>
+      Tipo de reporte:
+      <span style="font-weight: normal" id="tipo_reporte"
+        >{{ tipo_reporte }}</span
+      >
+    </h1>
+
     <div class="content-wrapper pb-auto p-3">
       <div class="row">
-        <div class="col-md-4 pb-auto pt-3" id = "parametros-reporte">
+        <div class="col-md-12 pb-auto pt-3" id = "parametros-reporte">
           <div class="card">
             <div class="card-header">
               <strong>Parámetros de reporte</strong>
@@ -95,9 +107,9 @@
               <form method="post">
                 {% csrf_token %}
 
-                <!--  fila de fechas -->
                 <div class="row">
-                  <div class="col-md-6">
+                  <!--  fila de fechas y clientes -->
+                  <div class="col-md-3 contenedor-div">
                     <div class="fecha_inicial parametro form-group mb-1">
                       <label for="fecha_inicial" style = "font-weight: 500;">Fecha inicial:</label>
                       <div class="date-container">
@@ -114,7 +126,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-6">
+                  <div class="col-md-3 contenedor-div">
                     <div class="fecha_final parametro form-group mb-1">
                       <label for="fecha_final" style = "font-weight: 500; margin-right:5px;">Fecha final:</label>
                       <div class="date-container">
@@ -131,12 +143,10 @@
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Primera fila -->
-                <div class="row">
-
-                  <div class="col-md-6">
+                  
+                  <!-- Primera fila -->
+                  
+                  <div class="col-md-3 contenedor-div">
                     <div class="cliente_inicial parametro form-group mb-1">
                       <label for="cliente_inicial" style = "font-weight: 500; margin-right:5px;">Cliente inicial:</label>
                       <div class="input-group rounded border border-dark">
@@ -144,8 +154,8 @@
                       </div>
                     </div>
                   </div>
-
-                  <div class="col-md-6">
+                  
+                  <div class="col-md-3 contenedor-div">
                     <div class="cliente_final parametro form-group mb-1">
                       <label for="cliente_final" style = "font-weight: 500; margin-right:5px;">Cliente final:</label>
                       <div class="input-group rounded border border-dark">
@@ -153,11 +163,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Segunda fila -->
-                <div class="row">
-                  <div class="col-md-6">
+              
+                  <!-- Segunda fila productos y sucursales -->                
+                  <div class="col-md-3 contenedor-div">
                     <div class="producto_inicial parametro form-group mb-1">
                       <label for="producto_inicial" style ="font-weight: 500; margin-right:5px;">Producto inicial:</label>
                       <div class="input-group rounded border border-dark">
@@ -166,7 +174,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-6">
+                  <div class="col-md-3 contenedor-div">
                     <div class="producto_final parametro form-group mb-1">
                       <label for="producto_final" style = "font-weight: 500; margin-right:5px;">Producto final:</label>
                       <div class="input-group rounded border border-dark">
@@ -174,11 +182,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <!-- Tercera fila -->
-                <div class="row">
-                  <div class="col-md-6">
+                  <div class="col-md-3 contenedor-div">
                     <div class="sucursal_inicial parametro form-group mb-1">
                       <label for="sucursal_inicial" style = "font-weight: 500;">Sucursal inicial:</label>
                       <div class="input-group rounded border border-dark">
@@ -187,7 +192,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-6">
+                  <div class="col-md-3 contenedor-div">
                     <div class="sucursal_final parametro form-group mb-1">
                       <label for="sucursal_final" style = "font-weight: 500;">Sucursal final:</label>
                       <div class="input-group rounded border border-dark">
@@ -195,11 +200,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Cuarta fila -->
-                <div class="row">
-                  <div class="col-md-6">
+                          
+                  <!-- Cuarta fila  vendedores y lineas-->                
+                  <div class="col-md-3 contenedor-div">
                     <div class="vendedor_inicial parametro form-group mb-1">
                       <label for="vendedor_inicial" style = "font-weight: 500;">Vendedor inicial:</label>
                       <div class="input-group rounded border border-dark">
@@ -208,7 +211,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-6">
+                  <div class="col-md-3 contenedor-div">
                     <div class="vendedor_final parametro form-group mb-1">
                       <label for="vendedor_final" style = "font-weight: 500;">Vendedor final:</label>
                       <div class="input-group rounded border border-dark">
@@ -216,11 +219,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <!-- Quinta fila -->
-                <div class="row">
-                  <div class="col-md-6">
+                  <!-- Quinta fila -->
+                  <div class="col-md-3 contenedor-div">
                     <div class="linea_inicial parametro form-group mb-1">
                       <label for="linea_inicial" style = "font-weight: 500;">Línea inicial:</label>
                       <div class="input-group rounded border border-dark">
@@ -228,8 +229,8 @@
                       </div>
                     </div>
                   </div>
-
-                  <div class="col-md-6">
+  
+                  <div class="col-md-3 contenedor-div">
                     <div class="linea_final parametro form-group mb-1">
                       <label for="linea_final" style = "font-weight: 500;">Línea final:</label>
                       <div class="input-group rounded border border-dark">
@@ -237,11 +238,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Sexta fila -->
-                <div class="row">
-                  <div class="col-md-6">
+                                
+                  <!-- Sexta fila -->                
+                  <div class="col-md-3 contenedor-div">
                     <div class="familia_inicial parametro form-group mb-1">
                       <label for="familia_inicial" style = "font-weight: 500;">Familia inicial:</label>
                       <div class="input-group rounded border border-dark">
@@ -250,7 +249,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-6">
+                  <div class="col-md-3 contenedor-div">
                     <div class="familia_final parametro form-group mb-1">
                       <label for="familia_final" style = "font-weight: 500;">Familia final:</label>
                       <div class="input-group rounded border border-dark">
@@ -258,11 +257,8 @@
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Séptima fila -->
-                <div class="row">
-                  <div class="col-md-6">
+                  <!-- Séptima fila -->
+                  <div class="col-md-3 contenedor-div">
                     <div class="marca_inicial parametro form-group mb-1">
                       <label for="marca_inicial" style = "font-weight: 500;">Marca inicial:</label>
                       <div class="input-group rounded border border-dark">
@@ -271,7 +267,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-6">
+                  <div class="col-md-3 contenedor-div">
                     <div class="marca_final parametro form-group mb-1">
                       <label for="marca_final" style = "font-weight: 500;">Marca final:</label>
                       <div class="input-group rounded border border-dark">
@@ -279,11 +275,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Octava fila -->
-                <div class="row">
-                  <div class="col-md-6">
+                
+                  <!-- Octava fila -->                
+                  <div class="col-md-3 contenedor-div">
                     <div class="grupoCorporativo_inicial parametro form-group mb-1">
                       <label for="grupoCorporativo_inicial" style = "font-weight: 500;">Grupo corporativo inicial:</label>
                       <div class="input-group rounded border border-dark">
@@ -292,7 +286,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-6">
+                  <div class="col-md-3 contenedor-div">
                     <div class="grupoCorporativo_final parametro form-group mb-1">
                       <label for="grupoCorporativo_final" style = "font-weight: 500;">Grupo corporativo final:</label>
                       <div class="input-group rounded border border-dark">
@@ -300,11 +294,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <!-- Novena fila -->
-                <div class="row">
-                  <div class="col-md-6">
+                  <!-- Novena fila -->
+                  <div class="col-md-3 contenedor-div">
                     <div class="grupoCorporativo parametro form-group mb-1">
                       <label for="grupoCorporativo" style = "font-weight: 500;">Grupo corporativo:</label>
                       <div class="input-group rounded border border-dark">
@@ -312,20 +304,18 @@
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Onceava fila -->
-                <div class="row">
-                  <div class="col-md-6">
+              
+                  <!-- Onceava fila -->
+                  <div class="col-md-3 contenedor-div">
                     <div class="segmento_inicial parametro form-group mb-1">
-                      <label for="segmento_inicial" style = "font-weight: 500;">Segmento inicial:</label>
-                      <div class="input-group rounded border border-dark">
-                        <button style="width: 668px; height: 38px; font-size: 0.85rem; padding-left: 0;"class="btn form-select modal-trigger fixed-width-button" type="button" id="desplegar_SegmentosIniciales" data-type="segmento_inicial">Buscar segmento inicial</button>
-                      </div>
+                        <label for="segmento_inicial" style = "font-weight: 500;">Segmento inicial:</label>
+                        <div class="input-group rounded border border-dark">
+                          <button style="width: 668px; height: 38px; font-size: 0.85rem; padding-left: 0;"class="btn form-select modal-trigger fixed-width-button" type="button" id="desplegar_SegmentosIniciales" data-type="segmento_inicial">Buscar segmento inicial</button>
+                        </div>
                     </div>
                   </div>
-
-                  <div class="col-md-6">
+                
+                  <div class="col-md-3 contenedor-div">
                     <div class="segmento_final parametro form-group mb-1">
                       <label for="segmento_final" style = "font-weight: 500;">Segmento final:</label>
                       <div class="input-group rounded border border-dark">
@@ -333,11 +323,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Doceava fila -->
-                <div class="row">
-                  <div class="col-md-6">
+                
+                  <!-- Doceava fila -->                
+                  <div class="col-md-3 contenedor-div">
                     <div class="status parametro form-group mb-1">
                       <label for="status" style = "font-weight: 500;">Status:</label>
                       <div class="input-group rounded border border-dark">
@@ -346,7 +334,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-6">
+                  <div class="col-md-3 contenedor-div">
                     <div class="zona parametro form-group mb-1">
                       <label for="zona" style = "font-weight: 500;">Zona:</label>
                       <div class="input-group rounded border border-dark">
@@ -354,11 +342,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <!-- Decimotercera fila -->
-                <div class="row">
-                  <div class="col-md-6">
+                  <!-- Decimotercera fila -->
+                  <div class="col-md-3 contenedor-div">
                     <div class="sucursal parametro form-group mb-1">
                       <label for="sucursal" style = "font-weight: 500;">Sucursal:</label>
                       <div class="input-group rounded border border-dark">
@@ -366,8 +352,8 @@
                       </div>
                     </div>
                   </div>
-
-                  <div class="col-md-6">
+  
+                  <div class="col-md-3 contenedor-div">
                     <div class="grupo parametro form-group mb-1">
                       <label for="grupo" style = "font-weight: 500;">Grupo:</label>
                       <div class="input-group rounded border border-dark">
@@ -375,11 +361,9 @@
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <!-- Decimocuarta fila -->
-                <div class="row">
-                  <div class="col-md-6">
+                
+                  <!-- Decimocuarta fila -->                
+                  <div class="col-md-3 contenedor-div">
                     <div class="familia parametro form-group mb-1">
                       <label for="familia" style = "font-weight: 500;">Familia:</label>
                       <div class="input-group rounded border border-dark">
@@ -388,7 +372,7 @@
                     </div>
                   </div>
 
-                  <div class="col-md-6">
+                  <div class="col-md-3 contenedor-div">
                     <div class="region parametro form-group mb-1">
                       <label for="region" style = "font-weight: 500;">Región:</label>
                       <div class="input-group rounded border border-dark">
@@ -396,32 +380,39 @@
                       </div>
                     </div>
                   </div>
+
+                  <!-- Terminan los parameteros -->
                 </div>
 
-
-                <!-- Terminan los parameteros -->
-                 
                 <div class="row">
-
                   <div class="col-md-6">
-                    <div style = "width:100%;" class = "d-flex">
-                      <button type="reset" id ="btnLimpiar" class="btn btn-dark custom-btn max-content d-flex mt-3 p-3 fixed-width-button" style ="margin: 0 auto;">
-                        <svg xmlns="http://www.w3.org/2000/svg" style="margin-top: auto; margin-bottom: auto" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>
-                        <p style="padding: 0; font-weight: 500; text-align: center; display: flex; justify-content:center; font-size: 1em; margin-top: auto; margin-bottom: auto; margin-left:1.5rem;">Limpiar filtros</p>
+                    <div style="width: 100%;" class="d-flex">
+                      <button type="reset" id="btnLimpiar" class="btn btn-dark w-100 mb-2 mt-2" style="margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2">
+                          <path d="M3 6h18"/>
+                          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+                          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+                          <line x1="10" x2="10" y1="11" y2="17"/>
+                          <line x1="14" x2="14" y1="11" y2="17"/>
+                        </svg>
+                        <p style="padding: 2; font-weight: 500; text-align: center; margin: 0;">Limpiar filtros</p>
                       </button>
                     </div>
                   </div>
-
-                  <div class="col-md-6">  
+                
+                  <div class="col-md-6">
                     <div style="width: 100%;" class="d-flex">
-                      <button type="button" id="btnGenerarInforme" class="btn btn-dark custom-btn max-content d-flex mt-3 p-3 fixed-width-button" style="margin: 0 auto; " data-type="resultado">
-                        <svg xmlns="http://www.w3.org/2000/svg" style="margin-top: auto; margin-bottom: auto" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                        <p style="padding: 0; font-weight: 500; text-align: center; display: flex; justify-content:center; font-size: 1em; margin-top: auto; margin-bottom: auto; margin-left:1.5rem;">Generar info</p>
+                      <button type="button" id="btnGenerarInforme" class="btn btn-dark w-100 mt-2 mb-1" style="margin: 0 auto; display: flex; align-items: center; justify-content: center;" data-type="resultado">
+                        <svg xmlns="http://www.w3.org/2000/svg" style="margin-right: 0.5rem;" width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send">
+                          <path d="m22 2-7 20-4-9-9-4Z"/>
+                          <path d="M22 2 11 13"/>
+                        </svg>
+                        <p style="padding: 2; font-weight: 500; text-align: center; margin: 0;">Generar informacion</p>
                       </button>
-                    </div>                    
+                    </div>
                   </div>
                 </div>
-
+                
               </form>
             </div>
           </div>
@@ -430,78 +421,81 @@
         <!-- Incluir los modales -->
         {% include 'informes/modals.html' %}
       
-        <div class="col-md-8 pb-auto pt-3" id = "resultado-reporte">
-          <div class="card h-100">
-            <div class="card-header">
-              <strong>Resultados del reporte</strong>
-            </div>
-            <div class="card-body">
-              <!-- Aquí se mostrarán los resultados de los reportes -->
-              <!-- Esta tabla debe ser generada dinámicamente dependiendo de los datos recibidos de las consultas a la base de datos -->
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    {% for campo in campos_reporte %}
-                    <th scope="col">{{ campo }}</th>
-                    {% endfor %}
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for fila in datos %}
-                  <tr>
-                    <th scope="row">{{ forloop.counter }}</th>
-                    {% for valor in fila %}
-                    <td>{{ valor }}</td>
-                    {% endfor %}
-                  </tr>
-                  {% empty %}
-                  <tr>
-                    <td colspan="{{ campos_reporte | length }}" class="text-center">
-                      No hay datos disponibles
-                    </td>
-                  </tr>
-                  {% endfor %}
-                </tbody>
-              </table>
-            </div>
-
-            <div class="card-footer">
-              <!-- Paginación -->
-              <div class="tabla-footer" id="genericTablaPagination">
-                  <!-- Aquí se insertará dinámicamente la paginación -->
+            <div class="col-md-12 pb-auto pt-3" id="resultado-reporte">
+              <div class="card h-100">
+                  <div class="card-header">
+                      <strong>Resultados del reporte</strong>
+                  </div>
+                  <div class="card-body" id="tablaReportes">
+                      <!-- Aquí se mostrarán los resultados de los reportes -->
+                      <table class="table">
+                          <thead>
+                              <tr>
+                                  <th scope="col">#</th>
+                                  {% for campo in campos_reporte %}
+                                  <th scope="col">{{ campo }}</th>
+                                  {% endfor %}
+                              </tr>
+                          </thead>
+                          <tbody>
+                              {% for fila in datos %}
+                              <tr>
+                                  <th scope="row">{{ forloop.counter }}</th>
+                                  {% for valor in fila %}
+                                  <td>{{ valor }}</td>
+                                  {% endfor %}
+                              </tr>
+                              {% empty %}
+                              <tr>
+                                  <td colspan="{{ campos_reporte | length }}" class="text-center">
+                                      No hay datos disponibles
+                                  </td>
+                              </tr>
+                              {% endfor %}
+                          </tbody>
+                      </table>
+                  </div>
+                  <div class="card-footer">
+                      <!-- Paginación -->
+                      <div class="tabla-footer me-2" id="genericTablaPagination">
+                          <!-- Aquí se insertará dinámicamente la paginación -->
+                      </div>
+                      <!-- Botones de exportar, imprimir y activar/desactivar gráficos -->
+                      <div class="row">
+                          <div class="col-12 col-sm mb-2">
+                              <button type="button" class="btn btn-dark w-100" style="font-weight: 500;">
+                                  Exportar a excel
+                              </button>
+                          </div>
+                          <div class="col-12 col-sm mb-2">
+                              <button type="button" class="btn btn-dark w-100" style="font-weight: 500;">
+                                  Exportar a CSV
+                              </button>
+                          </div>
+                          <div class="col-12 col-sm mb-2">
+                              <button type="button" id="btnBorrarReporte" class="btn btn-dark w-100" style="font-weight: 500;">
+                                  Limpiar reporte
+                              </button>
+                          </div>
+                          <div class="col-12 col-sm mb-2">
+                              <button type="button" class="btn btn-dark w-100" style="font-weight: 500;">
+                                  Imprimir
+                              </button>
+                          </div>
+                          <div class="col-12 col-sm mb-2">
+                              <button type="button" id="btnMostrarGrafico" class="btn btn-outline-dark w-100" style="font-weight: 500;">
+                                  Mostrar gráficos
+                              </button>
+                          </div>
+                      </div>
+                  </div>
               </div>
-              <!-- También se incluirán los botones de exportar, imprimir y activar/desactivar gráficos -->
-              <div class="btn-group" role="group" aria-label="Basic example">
-                <button type="button" class="btn btn-dark " style = "font-weight: 500;">
-                  Exportar a excel
-                </button>
-                <button type="button" class="btn btn-dark " style = "font-weight: 500;">
-                  Exportar a CSV
-                </button>
-                <button type="button" class="btn btn-dark " style = "font-weight: 500;">
-                  Imprimir
-                </button>
-                <button type="button" id="btnMostrarFiltros" class="btn btn-dark " style = "font-weight: 500;">
-                  Mostrar filtros
-                </button>
-                <button type="button" id="btnBorrarReporte" class="btn btn-dark " style = "font-weight: 500;">
-                  Borrar reporte
-                </button>
-              </div>
-              <div class="form-check form-switch float-end">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  id="flexSwitchCheckDefault"
-                />
-                <label class="form-check-label" for="flexSwitchCheckDefault"
-                  >Mostrar gráficos</label
-                >
-              </div>
-            </div>
           </div>
-        </div>
+      
+          </div>
+        </div>  
+        
+        
       </div>
     </div>
 

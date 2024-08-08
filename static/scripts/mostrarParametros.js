@@ -283,39 +283,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function actualizarFormato() {
     const tipo_reporte = document.getElementById("tipo_reporte");
-    const reporteElegido = tipo_reporte.textContent.trim();
-    const familia = REPORTE_FAMILIA[reporteElegido];
-    const parametros = FAMILIA[familia] || [];
-    
     if (!tipo_reporte) {
       console.error("No se encontró el elemento con ID 'tipo_reporte'");
       return;
     }
-
+  
+    const reporteElegido = tipo_reporte.textContent.trim();
+    const familia = REPORTE_FAMILIA[reporteElegido];
     if (familia === undefined) {
-      console.error(
-        "No se encontró familia para el reporte seleccionado:",
-        reporteElegido
-      );
+      console.error("No se encontró familia para el reporte seleccionado:", reporteElegido);
       return;
     }
-
-
-    // Ocultar todos los campos primero
-    document.querySelectorAll(".parametro").forEach((field) => {
-      field.style.display = "none";
+  
+    const parametros = FAMILIA[familia] || [];
+    const camposParaMostrar = new Set(parametros);
+    
+    // Obtener todos los contenedores relevantes
+    const todosLosContenedores = document.querySelectorAll(".contenedor-div");
+  
+    // Eliminar los contenedores que no contienen parámetros a mostrar
+    todosLosContenedores.forEach((contenedor) => {
+      // Buscar dentro del contenedor si hay un parámetro que debe ser mostrado
+      const parametroEncontrado = Array.from(contenedor.querySelectorAll(".parametro"))
+        .some(param => camposParaMostrar.has(param.classList[0]));
+  
+      if (!parametroEncontrado) {
+        contenedor.remove();
+      } else {
+        contenedor.style.display = "flow-root";
+      }
     });
-
+  
     // Mostrar solo los campos correspondientes a los parámetros disponibles
     parametros.forEach((paramName) => {
       const field = document.querySelector(`.${paramName}`);
       if (field) {
-        field.style.display = "block";
+        field.style.display = "inline";
       }
     });
   }
-
+  
   window.onload = function () {
-    actualizarFormato(); // Llamar inicialmente para establecer el estado inicial
+    actualizarFormato();
   };
 });
