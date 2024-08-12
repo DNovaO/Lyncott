@@ -257,6 +257,7 @@ def handle_resultado(request, data_type, parametrosSeleccionados, tipo_reporte):
     response_data = {
         'status': 'success',
         'data_type': data_type,
+        'datos_completos': queryset_resultados,
         'campos_reporte': campos_reporte,
         'parametros': parametrosSeleccionados,
         'resultadoPaginado': queryset_resultados_paginados

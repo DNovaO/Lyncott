@@ -83,65 +83,85 @@ document.addEventListener("DOMContentLoaded", function(){
 
 });
 
-function sendDataToServer(dataType, currentPage){
-    const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPage}`;
-
-    // Mostrar el loader antes de enviar la solicitud
-    showLoaderModal();
-
-    fetch(endpointURL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-        },
-        body: JSON.stringify({ data_type: dataType, page: currentPage})
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Llama a la función para manipular la data y mostrar el modal
-        handleResponseData(data);
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    });
-}
-
-async function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoReporte) {
-    if (cache[currentPageTable]) {
-
-        renderizarDatosEnTabla(cache[currentPageTable], tipoReporte);
-        return;
-        
+async function fetchData(endpoint, body, cacheKey, prefetch = false) {
+    if (cache[cacheKey]) {
+        return cache[cacheKey];
     }
 
-    const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipoReporte)}&page=${currentPageTable}`;
-
-    showLoaderTabla();
-
     try {
-
-        const response = await fetch(endpointURL, {
+        const response = await fetch(endpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": getCookie("csrftoken"),
             },
-            body: JSON.stringify({ parametros_seleccionados: parametrosSeleccionados, page: currentPageTable, tipo_reporte: tipoReporte })
+            body: JSON.stringify(body)
         });
 
         if (!response.ok) throw new Error('Network response was not ok');
 
         const data = await response.json();
-        cache[currentPageTable] = data;
+        cache[cacheKey] = data;
 
-        renderizarDatosEnTabla(data, tipoReporte);
+        // Si es un prefetch, no necesitamos devolver los datos inmediatamente
+        if (!prefetch) {
+            return data;
+        }
+
     } catch (error) {
-
         console.error("Error:", error);
-        mostrarError('Ocurrió un error al obtener los datos. Por favor, inténtelo de nuevo.');
+        if (!prefetch) {
+            mostrarError('Ocurrió un error al obtener los datos. Por favor, inténtelo de nuevo.');
+            throw error;
+        }
     }
 }
+
+function sendDataToServer(dataType, currentPage) {
+    const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPage}`;
+    const body = { data_type: dataType, page: currentPage };
+    const cacheKey = `${dataType}_${currentPage}`;
+
+    showLoaderModal();
+
+    fetchData(endpointURL, body, cacheKey)
+        .then(data => {
+            handleResponseData(data);
+            
+            if(data.resultadoPaginado.pagination_info.has_next){
+                // Prefetch de la siguiente página
+                const nextPage = currentPage + 1;
+                const nextCacheKey = `${dataType}_${nextPage}`;
+                const nextEndpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${nextPage}`;
+                fetchData(nextEndpointURL, { data_type: dataType, page: nextPage }, nextCacheKey, true);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+}
+
+function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoReporte) {
+    const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipoReporte)}&page=${currentPageTable}`;
+    const body = { parametros_seleccionados: parametrosSeleccionados, page: currentPageTable, tipo_reporte: tipoReporte };
+    const cacheKey = `${tipoReporte}_${currentPageTable}`;
+
+    showLoaderTabla();
+
+    fetchData(endpointURL, body, cacheKey)
+    .then(data => {
+        renderizarDatosEnTabla(data, tipoReporte);
+
+        if(data.resultadoPaginado.pagination_info.has_next){
+            // Prefetch de la siguiente página
+            const nextPage = currentPageTable + 1;
+            const nextCacheKey = `${tipoReporte}_${nextPage}`;
+            const nextEndpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipoReporte)}&page=${nextPage}`;
+            fetchData(nextEndpointURL, { parametros_seleccionados: parametrosSeleccionados, page: nextPage, tipo_reporte: tipoReporte }, nextCacheKey, true);
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+
+
 
 function transformHeader(header) {
     return header.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
@@ -386,13 +406,12 @@ function handleItemSelected(dataType, selectedItem) {
     return parametrosSeleccionados;
 }
 
-
-function renderPagination(paginationInfo, currentPage, dataType) {
+function renderPagination(paginationInfo, currentPage, dataType, isTable = false) {
     let html = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
 
     html += '<li class="page-item">';
     if (paginationInfo && paginationInfo.has_previous) {
-        html += `<a class="page-link" onclick="changePage(1, '${dataType}')">&laquo;</a>`;
+        html += `<a class="page-link" onclick="changePage(1, '${dataType}', ${isTable})">&laquo;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&laquo;</span>';
     }
@@ -400,7 +419,7 @@ function renderPagination(paginationInfo, currentPage, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo && paginationInfo.has_previous) {
-        html += `<a class="page-link" onclick="changePage(${paginationInfo.previous_page_number}, '${dataType}')">&lt;</a>`;
+        html += `<a class="page-link" onclick="changePage(${paginationInfo.previous_page_number}, '${dataType}', ${isTable})">&lt;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&lt;</span>';
     }
@@ -410,7 +429,7 @@ function renderPagination(paginationInfo, currentPage, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo && paginationInfo.has_next) {
-        html += `<a class="page-link" onclick="changePage(${paginationInfo.next_page_number}, '${dataType}')">&gt;</a>`;
+        html += `<a class="page-link" onclick="changePage(${paginationInfo.next_page_number}, '${dataType}', ${isTable})">&gt;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&gt;</span>';
     }
@@ -418,7 +437,7 @@ function renderPagination(paginationInfo, currentPage, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo && paginationInfo.has_next) {
-        html += `<a class="page-link" onclick="changePage(${paginationInfo.num_pages}, '${dataType}')">&raquo;</a>`;
+        html += `<a class="page-link" onclick="changePage(${paginationInfo.num_pages}, '${dataType}', ${isTable})">&raquo;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&raquo;</span>';
     }
@@ -429,59 +448,19 @@ function renderPagination(paginationInfo, currentPage, dataType) {
     return html;
 }
 
-// Función para cambiar de página
-function changePage(pageNumber, dataType) {
-    // Actualizar la página actual
-    currentPage = pageNumber;
-
-    // Llamar a la función para cargar los datos de la página específica
-    sendDataToServer(dataType, pageNumber);
+function changePage(pageNumber, dataType, isTable = false) {
+    if (isTable) {
+        currentPageTable = pageNumber;
+        sendParametersToServer(parametrosSeleccionados, currentPageTable, tipo_reporte);
+    } else {
+        currentPage = pageNumber;
+        sendDataToServer(dataType, currentPage);
+    }
 }
+
 
 function renderPaginationTabla(paginationInfo, currentPageTable, dataType) {
-    if (!paginationInfo) {
-        return '<p>No pagination data available.</p>';
-    }
-
-    let html = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
-
-    html += '<li class="page-item">';
-    if (paginationInfo.has_previous) {
-        html += `<a class="page-link" onclick="changePageTabla(1, '${dataType}')">&laquo;</a>`;
-    } else {
-        html += '<span class="page-link disabled" aria-disabled="true">&laquo;</span>';
-    }
-    html += '</li>';
-
-    html += '<li class="page-item">';
-    if (paginationInfo.has_previous) {
-        html += `<a class="page-link" onclick="changePageTabla(${paginationInfo.previous_page_number}, '${dataType}')">&lt;</a>`;
-    } else {
-        html += '<span class="page-link disabled" aria-disabled="true">&lt;</span>';
-    }
-    html += '</li>';
-
-    html += `<li class="page-item disabled"><span class="page-link">Page ${currentPageTable} of ${paginationInfo.num_pages}</span></li>`;
-
-    html += '<li class="page-item">';
-    if (paginationInfo.has_next) {
-        html += `<a class="page-link" onclick="changePageTabla(${paginationInfo.next_page_number}, '${dataType}')">&gt;</a>`;
-    } else {
-        html += '<span class="page-link disabled" aria-disabled="true">&gt;</span>';
-    }
-    html += '</li>';
-
-    html += '<li class="page-item">';
-    if (paginationInfo.has_next) {
-        html += `<a class="page-link" onclick="changePageTabla(${paginationInfo.num_pages}, '${dataType}')">&raquo;</a>`;
-    } else {
-        html += '<span class="page-link disabled" aria-disabled="true">&raquo;</span>';
-    } 
-    html += '</li>';
-
-    html += '</ul></nav>';
-
-    return html;
+    return renderPagination(paginationInfo, currentPageTable, dataType, true);
 }
 
 // Función para cambiar de página

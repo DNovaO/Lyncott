@@ -29,9 +29,28 @@ def ejecutarConsulta(filtros, tipo_reporte):
     cliente_final = filtros.get('cliente_final')
     producto_inicial = filtros.get('producto_inicial')
     producto_final = filtros.get('producto_final')
+    sucursal = filtros.get('sucursal')
     sucursal_inicial = filtros.get('sucursal_inicial')
     sucursal_final = filtros.get('sucursal_final')
-    
+    vendedor_inicial = filtros.get('vendedor_inicial')
+    vendedor_final = filtros.get('vendedor_final')
+    linea_inicial = filtros.get('linea_inicial')
+    linea_final = filtros.get('linea_final')
+    familia = filtros.get('familia')
+    familia_inicial = filtros.get('familia_inicial')
+    familia_final = filtros.get('familia_final')
+    marca_inicial = filtros.get('marca_inicial')
+    marca_final = filtros.get('marca_final')
+    grupoCorporativo = filtros.get('grupoCorporativo')
+    grupoCorporativo_inicial = filtros.get('grupoCorporativo_inicial')
+    grupoCorporativo_final = filtros.get('grupoCorporativo_final')
+    segmento_inicial = filtros.get('segmento_inicial')
+    segmento_final = filtros.get('segmento_final')
+    status = filtros.get('status')
+    zona = filtros.get('zona')
+    grupo = filtros.get('grupo')
+    region = filtros.get('region')
+
     fecha_inicial = parse_date(fecha_inicial_str)
     fecha_final = parse_date(fecha_final_str)
     
@@ -39,6 +58,11 @@ def ejecutarConsulta(filtros, tipo_reporte):
                         
     if tipo_reporte == "Por Producto (con Refacturación)":
         resultados.extend(consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
+    elif tipo_reporte == "Por Tipo de Cliente (con Refacturación)":
+        resultados.extend(consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
+    elif tipo_reporte == "Por Familia en Kilos (con Refacturación)":
+        resultados.extend(consultaVentarPorFamiliaEnKilos(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final))
+    
     
     return resultados
     
@@ -114,3 +138,10 @@ def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, clien
     )
 
     return list(queryVentaPorProducto)
+
+def consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final):
+    print(f"Consulta de ventas por cliente desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}")
+
+def consultaVentarPorFamiliaEnKilos(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final):
+    print(f"Consulta de ventas por familia en kilos desde {fecha_inicial} hasta {fecha_final}, producto inicial: {producto_inicial} y producto final: {producto_final}, sucursal inicial: {sucursal_inicial} y sucursal final: {sucursal_final}, familia inicial: {familia_inicial} y familia final: {familia_final}")
+    

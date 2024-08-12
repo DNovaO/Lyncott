@@ -206,6 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
     15: [
       "sucursal_inicial",
+  
       "sucursal_final",
       "fecha_inicial",
       "fecha_final",
