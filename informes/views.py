@@ -3,7 +3,10 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 import json
 from .models import *
-from .queries import printAllSelectedItems
+from .queries import clasificarParametros
+import logging
+
+logger = logging.getLogger(__name__)
 
 def report_view(request):
     categoria_reporte = request.GET.get('categoria_reporte', 'default_categoria')
@@ -11,12 +14,9 @@ def report_view(request):
 
     if request.method == 'POST':
         try:
-            # Parsea el cuerpo JSON de la solicitud
             data = json.loads(request.body)
             data_type = data.get('data_type')
             parametrosSeleccionados = data.get('parametros_seleccionados', {})
-
-            print("Received data_type:", data_type)
 
             if data_type:
                 return handle_data(request, data_type)
@@ -24,9 +24,14 @@ def report_view(request):
                 return handle_resultado(request, 'resultado', parametrosSeleccionados, tipo_reporte)
 
         except json.JSONDecodeError as e:
-            return JsonResponse({'error': 'Invalid JSON format: ' + str(e)}, status=400)
+            logger.error(f"JSON decode error: {e}")
+            return JsonResponse({'error': f'Invalid JSON format: {e}'}, status=400)
+        except KeyError as e:
+            logger.error(f"Missing key in request data: {e}")
+            return JsonResponse({'error': f'Missing key: {e}'}, status=400)
         except Exception as e:
-            return JsonResponse({'error': 'Server error: ' + str(e)}, status=500)
+            logger.error(f"Unexpected server error: {e}")
+            return JsonResponse({'error': f'Server error: {e}'}, status=500)
 
     else:
         context = {
@@ -51,7 +56,6 @@ def handle_cliente(request,data_type):
     
     response_data = {
         'data_type': data_type,
-        'clientes' : list(clientes),
         'clientesPaginados': clientes_paginados ,
     }
     
@@ -63,7 +67,6 @@ def handle_producto(request, data_type):
     
     response_data = {
         'data_type': data_type,
-        'productos' : list(productos),
         'productosPaginados': productos_paginados ,
     }
     
@@ -75,7 +78,6 @@ def handle_sucursal(request, data_type):
     
     response_data = {
         'data_type': data_type,
-        'sucursales' : list(sucursales),
         'sucursalesPaginados': sucursales_paginados ,
     }
     
@@ -87,7 +89,6 @@ def handle_vendedor(request, data_type):
     
     response_data = {
         'data_type': data_type,
-        'vendedores' : list(vendedores),
         'vendedoresPaginados': vendedores_paginados,
     }
     
@@ -99,7 +100,6 @@ def handle_linea(request, data_type):
     
     response_data = {
         'data_type': data_type,
-        'lineas' : list(lineas),
         'lineasPaginados': lineas_paginados,
     }
     
@@ -122,7 +122,6 @@ def handle_familia(request, data_type):
     
     response_data = {
         'data_type': data_type,
-        'familias' : list(familias),
         'familiasPaginados': familias_paginados,
     }
     
@@ -134,7 +133,6 @@ def handle_grupo_corporativo(request, data_type):
     
     response_data = {
         'data_type': data_type,
-        'gruposCorporativos' : list(gruposCorporativos),
         'gruposCorporativosPaginados': gruposCorporativos_paginados,
     }
     
@@ -147,7 +145,6 @@ def handle_segmento(request, data_type):
     
     response_data = {
         'data_type': data_type,
-        'segmentos' : list(segmentos),
         'segmentosPaginados': segmentos_paginados,
     }
     
@@ -170,7 +167,7 @@ def handle_status(request, data_type):
     
     response_data = {
         'data_type': data_type,
-        'estatus': estatus_transformed,
+        #'estatus': estatus_transformed,
         'estatusPaginados': estatus_paginados,
     }
     
@@ -227,7 +224,7 @@ def handle_zona(request, data_type):
     
     response_data = {
         'data_type': data_type,
-        'zonas': zonas_transformed,
+        #'zonas': zonas_transformed,
         'zonasPaginados': zonas_paginados,
     }
     
@@ -240,39 +237,39 @@ def handle_region(request, data_type):
     
     response_data = {
         'data_type': data_type,
-        'regiones' : list(regiones),
         'regionesPaginados': regiones_paginados,
     }
     
     return JsonResponse(response_data)
 
 def handle_resultado(request, data_type, parametrosSeleccionados, tipo_reporte):
-    resultados = printAllSelectedItems(parametrosSeleccionados, tipo_reporte)
-
+    queryset_resultados = clasificarParametros(parametrosSeleccionados, tipo_reporte)
+    queryset_resultados_paginados = objPaginator(request, queryset_resultados, data_type)
+    
     campos_reporte = [] 
     campos_set = set(campos_reporte)
-    for resultado in resultados:
+    for resultado in queryset_resultados:
         nuevos_campos = [campo for campo in resultado.keys() if campo not in campos_set]
         campos_reporte.extend(nuevos_campos)
         campos_set.update(nuevos_campos)
 
-    resultados_paginados = objPaginator(request, resultados, data_type)
-    
+
     response_data = {
         'status': 'success',
         'data_type': data_type,
-        'datos': list(resultados),
         'campos_reporte': campos_reporte,
         'parametros': parametrosSeleccionados,
-        'resultadoPaginado': resultados_paginados,
+        'resultadoPaginado': queryset_resultados_paginados
     }
 
     return JsonResponse(response_data)
 
+
 def objPaginator(request, obj_to_paginate, data_type):
+    
     if data_type == 'resultado':
         paginator = Paginator(obj_to_paginate, 8)
-    else:
+    else:  
         paginator = Paginator(obj_to_paginate, 10)
         
     page_number = request.GET.get('page')

@@ -87,16 +87,19 @@ def home_view(request):
     }
     
     if request.method == 'POST':
-        categoria_reporte = request.POST.get('categoria_reporte')
-        tipo_reporte = request.POST.get('tipo_reporte')
-        clients_page = 0
-        # Obtener la URL inversa de 'report' y pasar los parámetros como argumentos de consulta
-        report_url = reverse('report')
-        report_url += '?categoria_reporte={}&tipo_reporte={}&page={}'.format(categoria_reporte, tipo_reporte,clients_page)
-        return redirect(report_url)
+        if 'categoria_reporte' in request.POST and 'tipo_reporte' in request.POST:
+            categoria_reporte = request.POST.get('categoria_reporte')
+            tipo_reporte = request.POST.get('tipo_reporte')
+            clients_page = 0
+            report_url = reverse('report')
+            report_url += '?categoria_reporte={}&tipo_reporte={}&page={}'.format(categoria_reporte, tipo_reporte, clients_page)
+            return redirect(report_url)
+        else:
+            return redirect('home')  # Esto maneja el POST que no contiene esos datos
 
     context = {
         'categorias_reporte': categorias_reporte,
         'dbname': dbname,
     }
     return render(request, 'portal/home.html', context)
+

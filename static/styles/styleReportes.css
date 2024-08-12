@@ -167,16 +167,26 @@ footer {
   }
 }
 
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 55.5vh; /* Ocupa toda la altura del modal */
+  flex-direction: column; /* Para colocar el texto debajo del spinner */
+}
+
 .lds-ring,
 .lds-ring div {
   box-sizing: border-box;
 }
+
 .lds-ring {
   display: inline-block;
   position: relative;
   width: 80px;
   height: 80px;
 }
+
 .lds-ring div {
   box-sizing: border-box;
   display: block;
@@ -189,15 +199,19 @@ footer {
   animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
   border-color: currentColor transparent transparent transparent;
 }
+
 .lds-ring div:nth-child(1) {
   animation-delay: -0.45s;
 }
+
 .lds-ring div:nth-child(2) {
   animation-delay: -0.3s;
 }
+
 .lds-ring div:nth-child(3) {
   animation-delay: -0.15s;
 }
+
 @keyframes lds-ring {
   0% {
     transform: rotate(0deg);
@@ -205,4 +219,10 @@ footer {
   100% {
     transform: rotate(360deg);
   }
+}
+
+p {
+  margin-top: 10px;
+  font-size: 16px;
+  color: currentColor;
 }

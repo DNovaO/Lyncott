@@ -12,6 +12,7 @@ const btnMostrarFiltros = document.getElementById('btnMostrarFiltros');
 const btnBorrarReporte = document.getElementById('btnBorrarReporte');
 const fechaInicialInput = document.getElementById('fecha_inicial');
 const fechaFinalInput = document.getElementById('fecha_final');
+const cache = {};
 let debouncedBuscador;
 let parametrosSeleccionados = {};
 let currentPage = 1;
@@ -106,34 +107,40 @@ function sendDataToServer(dataType, currentPage){
     });
 }
 
-function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoReporte) {
-    const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPageTable}`;
+async function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoReporte) {
+    if (cache[currentPageTable]) {
 
-    // Mostrar el loader antes de enviar la solicitud
+        renderizarDatosEnTabla(cache[currentPageTable], tipoReporte);
+        return;
+        
+    }
+
+    const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipoReporte)}&page=${currentPageTable}`;
+
     showLoaderTabla();
 
-    fetch(endpointURL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-        },
-        body: JSON.stringify({ parametros_seleccionados: parametrosSeleccionados, page: currentPageTable, tipo_reporte: tipoReporte })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Llama a la función de renderizado con los datos recibidos
+    try {
+
+        const response = await fetch(endpointURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body: JSON.stringify({ parametros_seleccionados: parametrosSeleccionados, page: currentPageTable, tipo_reporte: tipoReporte })
+        });
+
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const data = await response.json();
+        cache[currentPageTable] = data;
+
         renderizarDatosEnTabla(data, tipoReporte);
-    })
-    .catch((error) => {
+    } catch (error) {
+
         console.error("Error:", error);
         mostrarError('Ocurrió un error al obtener los datos. Por favor, inténtelo de nuevo.');
-    });
+    }
 }
 
 function transformHeader(header) {
@@ -185,17 +192,6 @@ function renderizarDatosEnTabla(data, dataType) {
     }
 }
 
-function showLoaderTabla() {
-    const tabla = document.querySelector('.table tbody');
-
-    tabla.innerHTML = '<tr><td colspan="100%" class="text-center"><div class="lds-ellipsis">Cargando<div></div><div></div><div></div><div></div></div></td></tr>';
-}
-
-function showLoaderModal() {
-
-    modalContent.innerHTML = '<div class="lds-ring">Cargando<div></div><div></div><div></div><div></div></div>';
-}
-
 function formatNumber(value, isCurrency = false, key = '') {
     // Lista de claves que no deben ser formateadas
     const keysToExcludeFromFormatting = ['clave_producto'];
@@ -231,6 +227,27 @@ function formatNumber(value, isCurrency = false, key = '') {
 
     return isCurrency ? `$${formattedValue}` : formattedValue;
 }
+
+function showLoaderTabla() {
+    const tabla = document.querySelector('.table tbody');
+
+    tabla.innerHTML = '<tr><td colspan="100%" class="text-center"><div class="lds-ellipsis">Cargando<div></div><div></div><div></div><div></div></div></td></tr>';
+}
+
+function showLoaderModal() {
+    modalContent.innerHTML = `
+        <div class="spinner-container">
+            <div class="lds-ring">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <p>Cargando...</p>
+        </div>
+    `;
+}
+
 
 function handleResponseData(data) {
     const dataType = data.data_type;
@@ -375,7 +392,7 @@ function renderPagination(paginationInfo, currentPage, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo && paginationInfo.has_previous) {
-        html += `<a href="#" class="page-link" onclick="changePage(1, '${dataType}')">&laquo;</a>`;
+        html += `<a class="page-link" onclick="changePage(1, '${dataType}')">&laquo;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&laquo;</span>';
     }
@@ -383,7 +400,7 @@ function renderPagination(paginationInfo, currentPage, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo && paginationInfo.has_previous) {
-        html += `<a href="#" class="page-link" onclick="changePage(${paginationInfo.previous_page_number}, '${dataType}')">&lt;</a>`;
+        html += `<a class="page-link" onclick="changePage(${paginationInfo.previous_page_number}, '${dataType}')">&lt;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&lt;</span>';
     }
@@ -393,7 +410,7 @@ function renderPagination(paginationInfo, currentPage, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo && paginationInfo.has_next) {
-        html += `<a href="#" class="page-link" onclick="changePage(${paginationInfo.next_page_number}, '${dataType}')">&gt;</a>`;
+        html += `<a class="page-link" onclick="changePage(${paginationInfo.next_page_number}, '${dataType}')">&gt;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&gt;</span>';
     }
@@ -401,7 +418,7 @@ function renderPagination(paginationInfo, currentPage, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo && paginationInfo.has_next) {
-        html += `<a href="#" class="page-link" onclick="changePage(${paginationInfo.num_pages}, '${dataType}')">&raquo;</a>`;
+        html += `<a class="page-link" onclick="changePage(${paginationInfo.num_pages}, '${dataType}')">&raquo;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&raquo;</span>';
     }
@@ -430,7 +447,7 @@ function renderPaginationTabla(paginationInfo, currentPageTable, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo.has_previous) {
-        html += `<a href="#" class="page-link" onclick="changePageTabla(1, '${dataType}')">&laquo;</a>`;
+        html += `<a class="page-link" onclick="changePageTabla(1, '${dataType}')">&laquo;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&laquo;</span>';
     }
@@ -438,7 +455,7 @@ function renderPaginationTabla(paginationInfo, currentPageTable, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo.has_previous) {
-        html += `<a href="#" class="page-link" onclick="changePageTabla(${paginationInfo.previous_page_number}, '${dataType}')">&lt;</a>`;
+        html += `<a class="page-link" onclick="changePageTabla(${paginationInfo.previous_page_number}, '${dataType}')">&lt;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&lt;</span>';
     }
@@ -448,7 +465,7 @@ function renderPaginationTabla(paginationInfo, currentPageTable, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo.has_next) {
-        html += `<a href="#" class="page-link" onclick="changePageTabla(${paginationInfo.next_page_number}, '${dataType}')">&gt;</a>`;
+        html += `<a class="page-link" onclick="changePageTabla(${paginationInfo.next_page_number}, '${dataType}')">&gt;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&gt;</span>';
     }
@@ -456,7 +473,7 @@ function renderPaginationTabla(paginationInfo, currentPageTable, dataType) {
 
     html += '<li class="page-item">';
     if (paginationInfo.has_next) {
-        html += `<a href="#" class="page-link" onclick="changePageTabla(${paginationInfo.num_pages}, '${dataType}')">&raquo;</a>`;
+        html += `<a class="page-link" onclick="changePageTabla(${paginationInfo.num_pages}, '${dataType}')">&raquo;</a>`;
     } else {
         html += '<span class="page-link disabled" aria-disabled="true">&raquo;</span>';
     } 

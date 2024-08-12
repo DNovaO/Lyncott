@@ -3,7 +3,7 @@ from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatFiel
 from django.db.models.functions import Coalesce, Cast, Concat, Round
 from .models import *
 
-def printAllSelectedItems(parametrosSeleccionados, tipo_reporte):
+def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
     
     for key, value in parametrosSeleccionados.items():
@@ -37,13 +37,9 @@ def ejecutarConsulta(filtros, tipo_reporte):
     
     resultados = []
                         
-    # if all([fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final]):
-    #     resultados.extend(consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
-
     if tipo_reporte == "Por Producto (con Refacturación)":
         resultados.extend(consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
-
-
+    
     return resultados
     
 def parse_date(date_str):
