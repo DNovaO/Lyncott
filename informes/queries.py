@@ -1,6 +1,6 @@
 from datetime import datetime
-from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, DecimalField
-from django.db.models.functions import Coalesce, Cast, Concat, Round
+from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When
+from django.db.models.functions import Concat, Round
 from .models import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
@@ -62,7 +62,8 @@ def ejecutarConsulta(filtros, tipo_reporte):
         resultados.extend(consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
     elif tipo_reporte == "Por Familia en Kilos (con Refacturación)":
         resultados.extend(consultaVentarPorFamiliaEnKilos(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final))
-    
+    elif tipo_reporte == "Credito Contable (con Refacturación)":
+        resultados.extend(consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final))
     
     return resultados
     
@@ -122,7 +123,17 @@ def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, clien
         kgslts=ExpressionWrapper(
             Round(F('cantidad') * F('factor_conversion'), 2),
             output_field=FloatField()
-        )
+        ),
+        
+        venta_sobre_Kg = ExpressionWrapper(
+            F('venta_sumatoria') / F('kgslts'),
+            output_field=FloatField()
+        ),
+        
+        venta_sobre_UV = ExpressionWrapper(
+            Round(F('venta_sumatoria') / F('cantidad'), 2),
+            output_field=FloatField()
+        ),   
     )
 
     queryVentaPorProducto = subqueryVentaPorProducto.values(
@@ -132,16 +143,115 @@ def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, clien
         'unidad_medida',
         'kgslts',
         'unidad_alternativa',
-        'venta'
+        'venta_sobre_Kg',
+        'venta_sobre_UV',
+        'venta',
     ).order_by(
         'clave_producto'
     )
 
     return list(queryVentaPorProducto)
 
+def consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final):
+    print(f"Consulta de ventas por crédito contable desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial}, cliente final: {cliente_final}")
+
+  # Consulta principal con agregaciones
+    queryVentaPorCreditoContable = Kdm1.objects.filter(
+        clave_cliente__gte=cliente_inicial,
+        clave_cliente__lte=cliente_final,
+        fecha__gte=fecha_inicial,
+        fecha__lte=fecha_final,
+        genero='U',
+        naturaleza='D',
+        grupo_movimiento__in=['5', '45'],
+        numero_tipo_documento__in=['2', '4', '6', '19', '22', '26', '1', '3', '5', '18', '21', '25']
+    ).values(
+        'sucursal'
+    ).annotate(
+        contado=Sum(Case(
+            When(numero_tipo_documento__in=['2', '4', '6', '19', '22', '26'], then=F('importe') - F('ieps_retencion_isr')),
+            default=0,
+            output_field=FloatField()
+        )),
+        credito=Sum(Case(
+            When(numero_tipo_documento__in=['1', '3', '5', '18', '21', '25'], then=F('importe') - F('ieps_retencion_isr')),
+            default=0,
+            output_field=FloatField()
+        )),
+        
+        total=ExpressionWrapper(F('contado') + F('credito'), output_field=FloatField()),
+        
+        porcentaje_contado=ExpressionWrapper(
+            F('contado') / Case(
+                When(total=0, then=Value(1)),
+                default=F('total'),
+                output_field=FloatField()
+            ) * 100,
+            output_field=FloatField()
+        ),
+        
+        porcentaje_credito=ExpressionWrapper(
+            F('credito') / Case(
+                When(total=0, then=Value(1)),
+                default=F('total'),
+                output_field=FloatField()
+            ) * 100,
+            output_field=FloatField()
+        )
+    ).values(
+        'sucursal',
+        'contado',
+        'porcentaje_contado',
+        'credito',
+        'porcentaje_credito',
+        'total',
+    )
+
+
+    # queryVentaPorCreditoContable = subquery_kdm1.annotate(
+
+    #     sucursal_nombre=Case(
+    #         When(sucursal_anotada='1', then=Value('1&nbsp;-&nbsp;Autoservicio')),
+    #         When(sucursal_anotada='2', then=Value('2&nbsp;-&nbsp;Norte')),
+    #         When(sucursal_anotada='3', then=Value('3&nbsp;-&nbsp;Sur')),
+    #         When(sucursal_anotada='4', then=Value('4&nbsp;-&nbsp;Vent. Especiales')),
+    #         When(sucursal_anotada='5', then=Value('5&nbsp;-&nbsp;Cadenas')),
+    #         When(sucursal_anotada='6', then=Value('6&nbsp;-&nbsp;Centro')),
+    #         output_field=CharField()
+    #     ),
+
+    #     total=F('contado') + F('credito'),
+        
+    #     porcentaje_contado=ExpressionWrapper(
+    #         F('contado') / Case(
+    #             When(total=0, then=Value(1)),
+    #             default=F('total'),
+    #             output_field=FloatField()
+    #         ) * 100,
+    #         output_field=FloatField()
+    #     ),
+        
+    #     porcentaje_credito=ExpressionWrapper(
+    #         F('credito') / Case(
+    #             When(total=0, then=Value(1)),
+    #             default=F('total'),
+    #             output_field=FloatField()
+    #         ) * 100,
+    #         output_field=FloatField()
+    #     ),
+    # ).values(
+    #     'sucursal_nombre',
+    #     'contado',
+    #     'porcentaje_contado',
+    #     'credito',
+    #     'porcentaje_credito',
+    #     'total' 
+    # )
+    
+    return list(queryVentaPorCreditoContable)
+
 def consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final):
     print(f"Consulta de ventas por cliente desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}")
 
 def consultaVentarPorFamiliaEnKilos(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final):
     print(f"Consulta de ventas por familia en kilos desde {fecha_inicial} hasta {fecha_final}, producto inicial: {producto_inicial} y producto final: {producto_final}, sucursal inicial: {sucursal_inicial} y sucursal final: {sucursal_final}, familia inicial: {familia_inicial} y familia final: {familia_final}")
-    

@@ -4,13 +4,13 @@ class Kdm1(models.Model):
     sucursal = models.CharField(db_column='C1', primary_key=True, max_length=7, db_collation='Traditional_Spanish_CI_AS')
     genero = models.CharField(db_column='C2', max_length=1, db_collation='Traditional_Spanish_CI_AS')
     naturaleza = models.CharField(db_column='C3', max_length=1, db_collation='Traditional_Spanish_CI_AS')
-    numero_grupo_documento = models.DecimalField(db_column='C4', max_digits=2, decimal_places=0)
+    grupo_movimiento = models.DecimalField(db_column='C4', max_digits=2, decimal_places=0)
     numero_tipo_documento = models.DecimalField(db_column='C5', max_digits=2, decimal_places=0)
     folio_documento = models.CharField(db_column='C6', max_length=7, db_collation='Traditional_Spanish_CI_AS')
     moneda = models.CharField(db_column='C7', max_length=5, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     almacen = models.DecimalField(db_column='C8', max_digits=4, decimal_places=0, blank=True, null=True)
     fecha = models.DateTimeField(db_column='C9', blank=True, null=True)
-    cliente_proveedor = models.CharField(db_column='C10', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
+    clave_cliente = models.CharField(db_column='C10', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     referencia = models.CharField(db_column='C11', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     vendedor_comprador = models.CharField(db_column='C12', max_length=5, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     descuento = models.DecimalField(db_column='C13', max_digits=15, decimal_places=2, blank=True, null=True)
@@ -378,7 +378,7 @@ class Kdiq(models.Model):
         db_table = 'KDIQ'
 
 class Kduv(models.Model):
-    clave_sucursal = models.CharField(db_column='C1', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
+    sucursal = models.CharField(db_column='C1', max_length=7, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     clave_vendedor = models.CharField(db_column='C2', primary_key=True, max_length=5, db_collation='Traditional_Spanish_CI_AS')
     nombre_vendedor = models.CharField(db_column='C3', max_length=30, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     comision_venta = models.FloatField(db_column='C4', max_length=7, blank=True, null=True)

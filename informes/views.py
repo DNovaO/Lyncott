@@ -16,7 +16,10 @@ def report_view(request):
         try:
             data = json.loads(request.body)
             data_type = data.get('data_type')
+            parametrosSeleccionados = {}
+            print('Los parametros seleccionados estan asi:',parametrosSeleccionados)
             parametrosSeleccionados = data.get('parametros_seleccionados', {})
+            print('Los parametros seleccionados estan despues de añadir los parametros:',parametrosSeleccionados)
 
             if data_type:
                 return handle_data(request, data_type)

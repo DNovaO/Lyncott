@@ -1,4 +1,5 @@
 //mostrarModals.js
+const parametrosReporte = document.getElementById("parametros-reporte");
 const modal = document.getElementById("genericModal");
 const modalLabel = modal.querySelector(".modal-title");
 const modalContent = modal.querySelector("#genericModalContent");
@@ -43,15 +44,11 @@ document.addEventListener("DOMContentLoaded", function(){
             e.preventDefault();
             resetFormulario();
         });
-    } else {
-        console.error("Elemento con ID 'btnReset' no encontrado.");
-    }
-
+    } 
     // Evento cuando se presiona el botón de generar informe
     if (btnGenerarInforme) {
         btnGenerarInforme.addEventListener('click', function(e) {
             e.preventDefault();
-
             // Crear un nuevo objeto para almacenar todos los parámetros seleccionados
             let parametrosInforme = {};
 
@@ -62,10 +59,18 @@ document.addEventListener("DOMContentLoaded", function(){
                 }
             }
 
-            currentPageTable = 1;
-            
-            // Enviar los parámetros al servidor
-            sendParametersToServer(parametrosInforme, currentPageTable, tipo_reporte);
+            // Verificar si el número de parámetros seleccionados es menor que el requerido
+            if (Object.keys(parametrosInforme).length >= numeroParametro) {
+                errorParametros(false);
+                currentPageTable = 1;
+                console.log('Parámetros del informe:', parametrosInforme);
+                console.log('Parametros seleccionados:', parametrosSeleccionados);
+                sendParametersToServer(parametrosInforme, currentPageTable, tipo_reporte);
+
+            } else {
+                errorParametros(true);
+            }
+
         });
     }
 
@@ -128,18 +133,17 @@ function sendDataToServer(dataType, currentPage) {
         .then(data => {
             handleResponseData(data);
             
-            if(data.resultadoPaginado.pagination_info.has_next){
-                // Prefetch de la siguiente página
-                const nextPage = currentPage + 1;
-                const nextCacheKey = `${dataType}_${nextPage}`;
-                const nextEndpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${nextPage}`;
-                fetchData(nextEndpointURL, { data_type: dataType, page: nextPage }, nextCacheKey, true);
-            }
+            const nextPage = currentPage + 1;
+            const nextCacheKey = `${dataType}_${nextPage}`;
+            const nextEndpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${nextPage}`;
+            fetchData(nextEndpointURL, { data_type: dataType, page: nextPage }, nextCacheKey, true);
+        
         })
         .catch(error => console.error("Error:", error));
 }
 
 function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoReporte) {
+    console.log(parametrosSeleccionados);
     const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipoReporte)}&page=${currentPageTable}`;
     const body = { parametros_seleccionados: parametrosSeleccionados, page: currentPageTable, tipo_reporte: tipoReporte };
     const cacheKey = `${tipoReporte}_${currentPageTable}`;
@@ -149,7 +153,7 @@ function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoR
     fetchData(endpointURL, body, cacheKey)
     .then(data => {
         renderizarDatosEnTabla(data, tipoReporte);
-
+        console.log('Los datos son:', data);
         if(data.resultadoPaginado.pagination_info.has_next){
             // Prefetch de la siguiente página
             const nextPage = currentPageTable + 1;
@@ -160,8 +164,6 @@ function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoR
     })
     .catch(error => console.error("Error:", error));
 }
-
-
 
 function transformHeader(header) {
     return header.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
@@ -214,7 +216,7 @@ function renderizarDatosEnTabla(data, dataType) {
 
 function formatNumber(value, isCurrency = false, key = '') {
     // Lista de claves que no deben ser formateadas
-    const keysToExcludeFromFormatting = ['clave_producto'];
+    const keysToExcludeFromFormatting = ['clave_producto', 'sucursal'];
 
     // Si la clave está en la lista de exclusión, devolver el valor sin cambios
     if (keysToExcludeFromFormatting.includes(key)) {
@@ -370,6 +372,7 @@ function buscador(dataType) {
     
 }
 
+// Función para manejar la selección de un ítem
 function handleItemSelected(dataType, selectedItem) {
     // Obtener el texto del elemento seleccionado
     const buttonText = selectedItem.innerText.trim();
@@ -385,14 +388,10 @@ function handleItemSelected(dataType, selectedItem) {
         button.textContent = buttonText;
     }
     
-    // Inicializar el arreglo si no existe
-    if (!parametrosSeleccionados[dataType]) {
-        parametrosSeleccionados[dataType] = [];
-    }
-    
-    // Agregar el elemento seleccionado al arreglo
-    parametrosSeleccionados[dataType].push(parsedItem);
+    // Reemplazar los parámetros seleccionados para el dataType
+    parametrosSeleccionados[dataType] = [parsedItem];
 
+    // Actualizar las fechas
     parametrosSeleccionados['fecha_inicial'] = fechaInicialInput.value;
     parametrosSeleccionados['fecha_final'] = fechaFinalInput.value;
 
@@ -402,9 +401,26 @@ function handleItemSelected(dataType, selectedItem) {
     // Imprimir para verificar
     console.log('Parámetros seleccionados:', parametrosSeleccionados);
 
-    // Devolver el objeto actualizado
     return parametrosSeleccionados;
 }
+
+function errorParametros(estado) {
+    if (estado) {
+        // Limpiar alertas anteriores
+        parametrosReporte.querySelectorAll('.alert').forEach(alert => alert.remove());
+        
+        // Agregar nueva alerta
+        parametrosReporte.insertAdjacentHTML('beforeend', `
+            <div class="alert alert-danger fade show text-center" role="alert">
+                <strong>¡Oops!</strong> ¡Verifica que los parámetros estén completos!
+            </div> 
+        `);
+    } else {
+        // Limpiar alertas cuando estado es false
+        parametrosReporte.querySelectorAll('.alert').forEach(alert => alert.remove());
+    }
+}
+
 
 function renderPagination(paginationInfo, currentPage, dataType, isTable = false) {
     let html = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
@@ -487,7 +503,7 @@ function resetTabla() {
     `;
 
     thead.innerHTML = theadHTML;
-    tabla.innerHTML = `<tr><td class="text-center">No hay datos disponibles</td></tr>`;        
+    tabla.innerHTML = `<tr class="alert alert-success" role="alert"><td class="text-center" >¡Reporte eliminado con éxito!</td></tr>`;        
     tablaFooter.innerHTML = ''
 }
 
@@ -496,14 +512,14 @@ function resetFormulario() {
     // Restablecer texto de botones que activan los modales
     const modalButtons = document.querySelectorAll('.modal-trigger');
     modalButtons.forEach(button => {
-        button.textContent = `Buscar ${button.getAttribute('data-type').replace('_', ' ').capitalize()}`; // Restablecer el texto del botón
+        button.textContent = `Buscar ${button.getAttribute('data-type').replace('_', ' ')}`; // Restablecer el texto del botón
     });
     
     // Limpiar contenido y pie del modal
     modalContent.innerHTML = '';
     modalFooter.innerHTML = '';
     parametrosSeleccionados = {};
-
+    parametrosInforme = {};
 
 }
 

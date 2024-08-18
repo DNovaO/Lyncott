@@ -1,4 +1,6 @@
 // Script que ayuda a mostrar/ocultar los parametros segun el tipo de reporte.
+let numeroParametro = 0;
+
 document.addEventListener("DOMContentLoaded", function () {
   const REPORTE_FAMILIA = {
     // Familia 1
@@ -282,7 +284,10 @@ document.addEventListener("DOMContentLoaded", function () {
     25: ["fecha_inicial", "fecha_final", "grupoCorporativo"],
   };
 
+
   function actualizarFormato() {
+    numeroParametro = 0
+    
     const tipo_reporte = document.getElementById("tipo_reporte");
     if (!tipo_reporte) {
       console.error("No se encontró el elemento con ID 'tipo_reporte'");
@@ -311,6 +316,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!parametroEncontrado) {
         contenedor.remove();
       } else {
+        numeroParametro++;
         contenedor.style.display = "flow-root";
       }
     });
@@ -322,6 +328,8 @@ document.addEventListener("DOMContentLoaded", function () {
         field.style.display = "inline";
       }
     });
+
+    return numeroParametro;
   }
   
   window.onload = function () {
