@@ -13,7 +13,8 @@ const btnMostrarFiltros = document.getElementById('btnMostrarFiltros');
 const btnBorrarReporte = document.getElementById('btnBorrarReporte');
 const fechaInicialInput = document.getElementById('fecha_inicial');
 const fechaFinalInput = document.getElementById('fecha_final');
-const cache = {};
+let cache = {};
+let dataType;
 let debouncedBuscador;
 let parametrosSeleccionados = {};
 let currentPage = 1;
@@ -26,8 +27,10 @@ document.addEventListener("DOMContentLoaded", function(){
     modalButtons.forEach(button => {
         
         button.addEventListener("click", function(){
-            const dataType = this.getAttribute("data-type");
+            dataType = this.getAttribute("data-type");
             
+            console.log('El tipo de dato que vamos a enviar es:', dataType);
+
             debouncedBuscador = debounce(() => {
                 console.log("dataType recibido:", dataType);
                 buscador(dataType);
@@ -38,39 +41,41 @@ document.addEventListener("DOMContentLoaded", function(){
         });
     });
     
-
     if (btnReset) {
         btnReset.addEventListener('click', function(e) {
             e.preventDefault();
             resetFormulario();
         });
     } 
+
     // Evento cuando se presiona el botón de generar informe
     if (btnGenerarInforme) {
         btnGenerarInforme.addEventListener('click', function(e) {
+            cache = {};
+            console.log('boton activado, y cache vacio', cache);
             e.preventDefault();
-            // Crear un nuevo objeto para almacenar todos los parámetros seleccionados
             let parametrosInforme = {};
-
-            // Iterar sobre parametrosSeleccionados para copiar sus valores
-            for (const dataType in parametrosSeleccionados) {
-                if (Object.hasOwnProperty.call(parametrosSeleccionados, dataType)) {
-                    parametrosInforme[dataType] = parametrosSeleccionados[dataType];
-                }
+            
+            // Actualizar dataType al inicio
+            dataType = this.getAttribute("data-type");
+            parametrosSeleccionados =  handleItemSelected(dataType, this);
+            
+            // Copiar valores seleccionados en parametrosInforme
+            for (const parametro in parametrosSeleccionados) {
+                parametrosInforme[parametro] = parametrosSeleccionados[parametro];
             }
-
+            
             // Verificar si el número de parámetros seleccionados es menor que el requerido
             if (Object.keys(parametrosInforme).length >= numeroParametro) {
+                console.log('boton activado mandando informacion');
                 errorParametros(false);
                 currentPageTable = 1;
-                console.log('Parámetros del informe:', parametrosInforme);
-                console.log('Parametros seleccionados:', parametrosSeleccionados);
-                sendParametersToServer(parametrosInforme, currentPageTable, tipo_reporte);
 
+                console.log('dataType en sendParametersToServer:', dataType);
+                sendParametersToServer(parametrosInforme, currentPageTable, tipo_reporte, dataType);
             } else {
                 errorParametros(true);
             }
-
         });
     }
 
@@ -89,7 +94,10 @@ document.addEventListener("DOMContentLoaded", function(){
 });
 
 async function fetchData(endpoint, body, cacheKey, prefetch = false) {
+    console.log('Datos enviados a fetchData:', body); // Agrega esta línea
+
     if (cache[cacheKey]) {
+        console.log(`Cache hit for key: ${cacheKey}`);
         return cache[cacheKey];
     }
 
@@ -108,11 +116,12 @@ async function fetchData(endpoint, body, cacheKey, prefetch = false) {
         const data = await response.json();
         cache[cacheKey] = data;
 
-        // Si es un prefetch, no necesitamos devolver los datos inmediatamente
         if (!prefetch) {
             return data;
         }
 
+        // Prefetch adicional si es necesario
+        return data;
     } catch (error) {
         console.error("Error:", error);
         if (!prefetch) {
@@ -142,28 +151,38 @@ function sendDataToServer(dataType, currentPage) {
         .catch(error => console.error("Error:", error));
 }
 
-function sendParametersToServer(parametrosSeleccionados, currentPageTable, tipoReporte) {
-    console.log(parametrosSeleccionados);
+function sendParametersToServer(parametrosInforme, currentPageTable, tipoReporte) {
+    console.log('Parametros que fueron seleccionados y seran manipulados', parametrosInforme);
+
+    // Establece dataType como 'resultado' siempre
+    const dataType = 'resultado';
+
     const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipoReporte)}&page=${currentPageTable}`;
-    const body = { parametros_seleccionados: parametrosSeleccionados, page: currentPageTable, tipo_reporte: tipoReporte };
+    const body = { parametros_seleccionados: parametrosInforme, page: currentPageTable, tipo_reporte: tipoReporte, data_type: dataType };
+
+    // Usa tipoReporte y currentPageTable para el cacheKey
     const cacheKey = `${tipoReporte}_${currentPageTable}`;
 
     showLoaderTabla();
 
+    console.log('Datos enviados a fetchData:', body); // Verifica los datos enviados
+
     fetchData(endpointURL, body, cacheKey)
     .then(data => {
         renderizarDatosEnTabla(data, tipoReporte);
-        console.log('Los datos son:', data);
-        if(data.resultadoPaginado.pagination_info.has_next){
+        console.log('Los datos recibidos son:', data);
+        
+        if (data.resultadoPaginado.pagination_info.has_next) {
             // Prefetch de la siguiente página
             const nextPage = currentPageTable + 1;
             const nextCacheKey = `${tipoReporte}_${nextPage}`;
             const nextEndpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipoReporte)}&page=${nextPage}`;
-            fetchData(nextEndpointURL, { parametros_seleccionados: parametrosSeleccionados, page: nextPage, tipo_reporte: tipoReporte }, nextCacheKey, true);
+            fetchData(nextEndpointURL, { parametros_seleccionados: parametrosInforme, page: nextPage, tipo_reporte: tipoReporte, data_type: dataType }, nextCacheKey, true);
         }
     })
     .catch(error => console.error("Error:", error));
 }
+
 
 function transformHeader(header) {
     return header.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
@@ -216,7 +235,7 @@ function renderizarDatosEnTabla(data, dataType) {
 
 function formatNumber(value, isCurrency = false, key = '') {
     // Lista de claves que no deben ser formateadas
-    const keysToExcludeFromFormatting = ['clave_producto', 'sucursal'];
+    const keysToExcludeFromFormatting = ['clave_producto', 'sucursal', 'clave_cliente'];
 
     // Si la clave está en la lista de exclusión, devolver el valor sin cambios
     if (keysToExcludeFromFormatting.includes(key)) {
@@ -388,7 +407,12 @@ function handleItemSelected(dataType, selectedItem) {
         button.textContent = buttonText;
     }
     
-    // Reemplazar los parámetros seleccionados para el dataType
+    // Si ya hay elementos seleccionados para este dataType, agregarlos, si no, crear una nueva lista
+    if (!parametrosSeleccionados[dataType]) {
+        parametrosSeleccionados[dataType] = [];
+    }
+
+    // Agregar el nuevo elemento seleccionado al arreglo de parámetros
     parametrosSeleccionados[dataType] = [parsedItem];
 
     // Actualizar las fechas
@@ -400,7 +424,8 @@ function handleItemSelected(dataType, selectedItem) {
 
     // Imprimir para verificar
     console.log('Parámetros seleccionados:', parametrosSeleccionados);
-
+    
+    // Retornar los parámetros seleccionados para su uso posterior
     return parametrosSeleccionados;
 }
 
@@ -467,7 +492,7 @@ function renderPagination(paginationInfo, currentPage, dataType, isTable = false
 function changePage(pageNumber, dataType, isTable = false) {
     if (isTable) {
         currentPageTable = pageNumber;
-        sendParametersToServer(parametrosSeleccionados, currentPageTable, tipo_reporte);
+        sendParametersToServer(parametrosSeleccionados, currentPageTable, tipo_reporte, dataType);
     } else {
         currentPage = pageNumber;
         sendDataToServer(dataType, currentPage);

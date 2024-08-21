@@ -1,6 +1,7 @@
 from datetime import datetime
-from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When
-from django.db.models.functions import Concat, Round
+from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When, Window
+from django.db.models.functions import Concat, Round, RowNumber, LTrim, RTrim
+from django.db.models.expressions import CombinedExpression
 from .models import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
@@ -10,7 +11,7 @@ def clasificarParametros(parametrosSeleccionados, tipo_reporte):
         if isinstance(value, list) and len(value) > 0 and isinstance(value[0], dict):
             for item in value:
                 key_value = item[list(item.keys())[0]].strip()
-                if key in ('fecha_inicial', 'fecha_final', 'cliente_inicial', 'cliente_final', 'producto_inicial', 'producto_final', 'sucursal_inicial', 'sucursal_final'):
+                if key in ('fecha_inicial', 'fecha_final', 'cliente_inicial', 'cliente_final', 'producto_inicial', 'producto_final', 'sucursal', 'sucursal_inicial', 'sucursal_final', 'vendedor_inicial', 'vendedor_final', 'linea_inicial', 'linea_final', 'familia', 'familia_inicial', 'familia_final', 'marca_inicial', 'marca_final', 'grupoCorporativo', 'grupoCorporativo_inicial', 'grupoCorporativo_final', 'segmento_inicial', 'segmento_final', 'status', 'zona', 'grupo', 'region'):
                     filtros[key] = key_value
         else:
             if isinstance(value, list) and len(value) > 0:
@@ -58,12 +59,18 @@ def ejecutarConsulta(filtros, tipo_reporte):
                         
     if tipo_reporte == "Por Producto (con Refacturación)":
         resultados.extend(consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
+    
     elif tipo_reporte == "Por Tipo de Cliente (con Refacturación)":
         resultados.extend(consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
+    
     elif tipo_reporte == "Por Familia en Kilos (con Refacturación)":
         resultados.extend(consultaVentarPorFamiliaEnKilos(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final))
+   
     elif tipo_reporte == "Credito Contable (con Refacturación)":
         resultados.extend(consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final))
+        
+    elif tipo_reporte == "Clientes por Grupos":
+        resultados.extend(consultaClientesPorGrupo(grupoCorporativo_inicial, grupoCorporativo_final))
     
     return resultados
     
@@ -152,6 +159,38 @@ def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, clien
 
     return list(queryVentaPorProducto)
 
+def consultaClientesPorGrupo(grupoCorporativo_inicial, grupoCorporativo_final):
+    print(f"Consulta de clientes por grupo corporativo desde {grupoCorporativo_inicial} hasta {grupoCorporativo_final}")
+    # kdud.clave_cliente -> c2 que es igual kdm1.clave_cliente -> c10
+    # kdud.nombre_cliente -> c3
+    # kdud.clave_corporativo -> c66
+    
+    #kdcorpo.clave_corporativo -> c1 que es = a kdud.clave_corporativo -> c66
+    #kdcorpo.descripcion_corporativo -> c2
+
+    subquery_kdcorpo = Kdcorpo.objects.filter(
+        clave_corporativo=OuterRef('clave_corporativo')
+    ).values(
+        'descripcion_corporativo'
+    )
+    
+    queryClientesporGrupo = Kdud.objects.filter(
+        clave_corporativo__gte=grupoCorporativo_inicial,
+        clave_corporativo__lte=grupoCorporativo_final,
+    ).annotate(
+        id_grupo = Subquery(subquery_kdcorpo.values('clave_corporativo')),
+        grupo = Subquery(subquery_kdcorpo.values('descripcion_corporativo')),
+    ).values(
+        'id_grupo',
+        'grupo',
+        'clave_cliente',
+        'nombre_cliente',
+    ).order_by(
+        'clave_cliente'
+    )
+    
+    return list(queryClientesporGrupo)
+    
 def consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final):
     print(f"Consulta de ventas por crédito contable desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial}, cliente final: {cliente_final}")
 
@@ -255,3 +294,6 @@ def consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, client
 
 def consultaVentarPorFamiliaEnKilos(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final):
     print(f"Consulta de ventas por familia en kilos desde {fecha_inicial} hasta {fecha_final}, producto inicial: {producto_inicial} y producto final: {producto_final}, sucursal inicial: {sucursal_inicial} y sucursal final: {sucursal_final}, familia inicial: {familia_inicial} y familia final: {familia_final}")
+    
+    
+    

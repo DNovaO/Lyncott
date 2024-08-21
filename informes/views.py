@@ -9,6 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def report_view(request):
+    print("------ Report View -----")
     categoria_reporte = request.GET.get('categoria_reporte', 'default_categoria')
     tipo_reporte = request.GET.get('tipo_reporte', 'default_tipo')
 
@@ -16,15 +17,11 @@ def report_view(request):
         try:
             data = json.loads(request.body)
             data_type = data.get('data_type')
-            parametrosSeleccionados = {}
-            print('Los parametros seleccionados estan asi:',parametrosSeleccionados)
-            parametrosSeleccionados = data.get('parametros_seleccionados', {})
-            print('Los parametros seleccionados estan despues de añadir los parametros:',parametrosSeleccionados)
+            print(f"Data received: {data}")
+            print(f"Data type: {data_type}")
 
             if data_type:
                 return handle_data(request, data_type)
-            else:
-                return handle_resultado(request, 'resultado', parametrosSeleccionados, tipo_reporte)
 
         except json.JSONDecodeError as e:
             logger.error(f"JSON decode error: {e}")
@@ -43,8 +40,10 @@ def report_view(request):
         }
         return render(request, 'informes/reportes.html', context)
 
+
 # Función para manejar datos según el tipo recibido
 def handle_data(request, data_type):
+    print(f"Tipo de dato recibido en handle_data: {data_type}") 
     # Verifica si el tipo de dato está en el diccionario data_type_handlers
     if data_type in data_type_handlers:
         # Llama a la función de manejo correspondiente con los parámetros necesarios
@@ -53,13 +52,13 @@ def handle_data(request, data_type):
         # Manejo para tipo de dato no reconocido, por ejemplo, retornar un error
         return JsonResponse({'error': f'Tipo de dato no reconocido: {data_type}'}, status=400)
 
-def handle_cliente(request,data_type):
+def handle_cliente(request, data_type):
     clientes = Kdud.objects.values('clave_cliente', 'nombre_cliente').distinct().order_by('clave_cliente')
     clientes_paginados  = objPaginator(request, clientes, data_type);
     
     response_data = {
         'data_type': data_type,
-        'clientesPaginados': clientes_paginados ,
+        'clientesPaginados': clientes_paginados,
     }
     
     return JsonResponse(response_data) 
@@ -245,10 +244,17 @@ def handle_region(request, data_type):
     
     return JsonResponse(response_data)
 
-def handle_resultado(request, data_type, parametrosSeleccionados, tipo_reporte):
+def handle_resultado(request, data_type):
+    print('----- Manejando la funcion handle_resultado -----')
+    tipo_reporte = request.GET.get('tipo_reporte', 'default_tipo')
+    data = json.loads(request.body)
+    print('La data es la siguiente: ', data)
+    parametrosSeleccionados = data.get('parametros_seleccionados', {})
+    print('Los parametros seleccionados son: ', parametrosSeleccionados)
+    
     queryset_resultados = clasificarParametros(parametrosSeleccionados, tipo_reporte)
     queryset_resultados_paginados = objPaginator(request, queryset_resultados, data_type)
-    
+
     campos_reporte = [] 
     campos_set = set(campos_reporte)
     for resultado in queryset_resultados:
