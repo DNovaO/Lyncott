@@ -167,26 +167,34 @@ def consultaClientesPorGrupo(grupoCorporativo_inicial, grupoCorporativo_final):
     
     #kdcorpo.clave_corporativo -> c1 que es = a kdud.clave_corporativo -> c66
     #kdcorpo.descripcion_corporativo -> c2
-
-    subquery_kdcorpo = Kdcorpo.objects.filter(
-        clave_corporativo=OuterRef('clave_corporativo')
-    ).values(
-        'descripcion_corporativo'
-    )
     
+    # Query principal
     queryClientesporGrupo = Kdud.objects.filter(
         clave_corporativo__gte=grupoCorporativo_inicial,
         clave_corporativo__lte=grupoCorporativo_final,
     ).annotate(
-        id_grupo = Subquery(subquery_kdcorpo.values('clave_corporativo')),
-        grupo = Subquery(subquery_kdcorpo.values('descripcion_corporativo')),
+        id_grupo=Subquery(
+            Kdcorpo.objects.filter(
+                clave_corporativo=OuterRef('clave_corporativo')
+            ).values(
+                'clave_corporativo'
+            )[:1]
+        ),
+        grupo=Subquery(
+            Kdcorpo.objects.filter(
+                clave_corporativo=OuterRef('clave_corporativo')
+            ).values(
+                'descripcion_corporativo'
+            )[:1]
+        ),
     ).values(
-        'id_grupo',
-        'grupo',
-        'clave_cliente',
-        'nombre_cliente',
+        id_grupo=F('id_grupo'),
+        grupo=F('grupo'),
+        clave=LTrim(RTrim('clave_cliente')),
+        cliente=LTrim(RTrim('nombre_cliente')),
     ).order_by(
-        'clave_cliente'
+        'id_grupo',
+        'clave',
     )
     
     return list(queryClientesporGrupo)

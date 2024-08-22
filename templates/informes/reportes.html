@@ -1072,7 +1072,8 @@
     <!-- Scripts personalizados -->
     <script src="{% static 'scripts/formatoFecha.js' %}"></script>
     <script src="{% static 'scripts/mostrarParametros.js' %}"></script>
-    <script src="{% static 'scripts/mostrarModals.js' %}"></script>
+    {% comment %} <script src="{% static 'scripts/mostrarModals.js' %}"></script> {% endcomment %}
+    <script  type="module" src="{% static 'scripts/modulos/main.js' %}"></script>
     <script src="{% static 'scripts/obtenerDataType.js' %}"></script>
   </body>
 </html>
