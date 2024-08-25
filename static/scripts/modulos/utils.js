@@ -1,16 +1,6 @@
 //utils.js
-import { sendDataToServer, sendParametersToServer } from './apiHandler.js';
-import { fullItemsArray } from './main.js'
-import { parametrosReporte, tipo_reporte } from './config.js';
-import { currentPage, currentPageTable } from './main.js';
+import { parametrosReporte } from './config.js';
 
-export function debounce(func, wait) {
-    let timeout;
-    return function(...args) {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-}
 
 export function getCookie(name) {
     let cookieValue = null;
@@ -84,71 +74,3 @@ export function errorParametros(estado) {
     }
 }
 
-// Filtra los elementos según el texto de búsqueda
-export function buscador(dataType) {
-    console.log(dataType);
-    let input = document.getElementById("inputBusqueda");
-    if (!input) {
-        console.error("No se encontró el elemento de input");
-        return;
-    }
-
-    let filter = input.value.trim().toLowerCase();
-    
-    if (filter === "") {
-        sendDataToServer(dataType); // Vuelve a cargar los datos originales si el filtro está vacío
-        return;
-    }
-
-    let filteredItems = fullItemsArray.filter(item => {
-        for (const key in item) {
-            if (Object.hasOwnProperty.call(item, key)) {
-                if (typeof item[key] === 'string' && item[key].toLowerCase().includes(filter)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    });
-
-    let resultList = document.getElementById("genericModalContent");
-    if (resultList) {
-        resultList.innerHTML = renderGeneral(filteredItems);
-
-        // Remplazar eventos después de actualizar la lista
-        resultList.querySelectorAll('.selectable-item').forEach(item => {
-            item.addEventListener('click', function() {
-                handleItemSelected(dataType, this);
-                input.value = "";
-            });
-        });
-
-    } else {
-        console.error("No se encontró el elemento de lista de resultados");
-    }   
-}
-
-export function resetFormulario() {
-    // Restablecer texto de botones que activan los modales
-    const modalButtons = document.querySelectorAll('.modal-trigger');
-    modalButtons.forEach(button => {
-        button.textContent = `Buscar ${button.getAttribute('data-type').replace('_', ' ')}`; // Restablecer el texto del botón
-    });
-    
-    // Limpiar contenido y pie del modal
-    modalContent.innerHTML = '';
-    modalFooter.innerHTML = '';
-    parametrosSeleccionados = {};
-    parametrosInforme = {};
-
-}
-
-export function changePage(pageNumber, dataType, isTable = false) {
-    if (isTable) {
-        currentPageTable = pageNumber;
-        sendParametersToServer(parametrosSeleccionados, currentPageTable, tipo_reporte, dataType);
-    } else {
-        currentPage = pageNumber;
-        sendDataToServer(dataType, currentPage);
-    }
-}

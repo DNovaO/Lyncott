@@ -48,6 +48,7 @@ export function sendDataToServer(dataType, currentPage) {
         .then(data => {
             handleResponseData(data);
             
+            console.log('Los datos recibidos son:', data);
             const nextPage = currentPage + 1;
             const nextCacheKey = `${dataType}_${nextPage}`;
             const nextEndpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${nextPage}`;

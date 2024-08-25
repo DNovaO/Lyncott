@@ -1,8 +1,7 @@
 // renderModal.js
 import { modalContent, modalFooter, fechaInicialInput, fechaFinalInput } from './config.js';
-import { renderPagination } from './main.js';
 import { handlers } from './itemHandler.js';
-import { parametrosSeleccionados, currentPage } from './main.js';
+import { parametrosSeleccionados, currentPage, renderPagination} from './main.js';
 
 // Muestra un loader en el modal
 export function showLoaderModal() {
