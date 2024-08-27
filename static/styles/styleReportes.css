@@ -226,3 +226,10 @@ p {
   font-size: 16px;
   color: currentColor;
 }
+
+
+.pagination .page-item.active .page-link {
+  background-color: #ed1c24;
+  color: #ffffff;
+  border-color: #ed1c24;
+}

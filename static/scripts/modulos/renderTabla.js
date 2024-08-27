@@ -1,6 +1,6 @@
 // renderTabla.js
 import { formatNumber, transformHeader } from './utils.js';
-import { currentPageTable, renderPaginationTabla } from './main.js';
+let dataGlobal;
 
 export function showLoaderTabla() {
     const tabla = document.querySelector('.table tbody');
@@ -16,7 +16,10 @@ export function showLoaderTabla() {
     `;
 }
 
-export function renderizarDatosEnTabla(data, dataType) {
+export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize = 10) {
+    // Almacenar los datos globalmente
+    dataGlobal = data;
+
     const tabla = document.querySelector('.table tbody');
     const thead = document.querySelector('.table thead');
     const tablaFooter = document.getElementById('genericTablaPagination');
@@ -29,7 +32,7 @@ export function renderizarDatosEnTabla(data, dataType) {
     const theadHTML = `
         <tr>
             <th scope="col">#</th>
-            ${data.campos_reporte.map(campo => {
+            ${dataGlobal.campos_reporte.map(campo => {
                 const transformedHeader = transformHeader(campo);
                 return `<th scope="col">${transformedHeader}</th>`;
             }).join('')}
@@ -37,13 +40,16 @@ export function renderizarDatosEnTabla(data, dataType) {
     `;
     thead.innerHTML = theadHTML;
 
+    // Paginar los datos completos
+    const paginatedData = paginarDatos(dataGlobal.datos_completos, pageSize, currentPage);
+
     // Renderizar datos en el cuerpo de la tabla (tbody)
-    if (data.resultadoPaginado.objList.length > 0) {
-        const tbodyHTML = data.resultadoPaginado.objList.map((fila, index) => {
+    if (paginatedData.length > 0) {
+        const tbodyHTML = paginatedData.map((fila, index) => {
             const filaHTML = `
                 <tr>
-                    <th scope="row">${index + 1}</th>
-                    ${data.campos_reporte.map(campo => {
+                    <th scope="row">${(currentPage - 1) * pageSize + index + 1}</th>
+                    ${dataGlobal.campos_reporte.map(campo => {
                         const value = fila[campo];
                         return `<td>${formatNumber(value, false, campo)}</td>`;
                     }).join('')}
@@ -54,12 +60,202 @@ export function renderizarDatosEnTabla(data, dataType) {
         tabla.innerHTML = tbodyHTML;
 
         // Renderizar paginación
-        tablaFooter.innerHTML = renderPaginationTabla(data.resultadoPaginado.pagination_info, currentPageTable, dataType);
+        tablaFooter.innerHTML = renderPaginadoTabla({
+            totalPages: Math.ceil(dataGlobal.datos_completos.length / pageSize),
+            currentPage: currentPage
+        }, currentPage, dataType);
+
     } else {
         // Mostrar mensaje de "No hay datos disponibles"
-        tabla.innerHTML = `<tr><td colspan="${data.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td></tr>`;
+        tabla.innerHTML = `<tr><td colspan="${dataGlobal.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td></tr>`;
     }
 }
+
+// Función para paginar los datos
+function paginarDatos(data, pageSize, pageNumber) {
+    const startIndex = (pageNumber - 1) * pageSize;
+    return data.slice(startIndex, startIndex + pageSize);
+}
+
+function renderPaginadoTabla(paginationInfo, currentPage, dataType) {
+    const { totalPages } = paginationInfo;
+    const startPages = 1; // Primeras páginas a mostrar
+    const endPages = 3;   // Últimas páginas a mostrar
+    const maxVisiblePages = startPages + endPages; // Total visible páginas (incluye "..." y los botones de navegación)
+
+    let paginationHTML = `
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center flex-wrap">
+    `;
+
+    // Botón "Primera página"
+    if (currentPage > 1) {
+        paginationHTML += `
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0);" aria-label="First" onclick="cambiarPagina(1, '${dataType}', event)">
+                    <span aria-hidden="true">&laquo;&laquo;</span>
+                </a>
+            </li>
+        `;
+    } else {
+        paginationHTML += `
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;&laquo;</span>
+            </li>
+        `;
+    }
+
+    // Botón "Anterior"
+    if (currentPage > 1) {
+        paginationHTML += `
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0);" aria-label="Previous" onclick="cambiarPagina(${currentPage - 1}, '${dataType}', event)">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        `;
+    } else {
+        paginationHTML += `
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&laquo;</span>
+            </li>
+        `;
+    }
+
+    // Determinar el rango de páginas a mostrar
+    let startPage, endPage;
+
+    if (totalPages <= maxVisiblePages) {
+        // Mostrar todas las páginas si el total es menor que el máximo visible
+        startPage = 1;
+        endPage = totalPages;
+    } else {
+        // Determinar el rango de páginas a mostrar
+        if (currentPage <= startPages) {
+            // Página actual está en el inicio
+            startPage = 1;
+            endPage = maxVisiblePages - 1;
+        } else if (currentPage + endPages - 1 >= totalPages) {
+            // Página actual está en el final
+            startPage = totalPages - maxVisiblePages + 2;
+            endPage = totalPages;
+        } else {
+            // Página actual está en el medio
+            startPage = currentPage - Math.floor(startPages / 2);
+            endPage = currentPage + Math.floor(endPages / 2);
+        }
+    }
+
+    // Mostrar las primeras páginas
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+            paginationHTML += `
+                <li class="page-item active">
+                    <span class="page-link">${i}</span>
+                </li>
+            `;
+        } else {
+            paginationHTML += `
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0);" onclick="cambiarPagina(${i}, '${dataType}', event)">${i}</a>
+                </li>
+            `;
+        }
+    }
+
+    // Mostrar "..." si hay más páginas que las visibles
+    if (endPage < totalPages - endPages) {
+        paginationHTML += `
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+        `;
+        // Mostrar las últimas páginas
+        for (let i = totalPages - endPages + 1; i <= totalPages; i++) {
+            if (i === currentPage) {
+                paginationHTML += `
+                    <li class="page-item active">
+                        <span class="page-link">${i}</span>
+                    </li>
+                `;
+            } else {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0);" onclick="cambiarPagina(${i}, '${dataType}', event)">${i}</a>
+                    </li>
+                `;
+            }
+        }
+    } else {
+        // Si no hay "..." para mostrar, solo las páginas desde endPage+1 hasta totalPages
+        for (let i = endPage + 1; i <= totalPages; i++) {
+            if (i === currentPage) {
+                paginationHTML += `
+                    <li class="page-item active">
+                        <span class="page-link">${i}</span>
+                    </li>
+                `;
+            } else {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0);" onclick="cambiarPagina(${i}, '${dataType}', event)">${i}</a>
+                    </li>
+                `;
+            }
+        }
+    }
+
+    // Botón "Siguiente"
+    if (currentPage < totalPages) {
+        paginationHTML += `
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0);" aria-label="Next" onclick="cambiarPagina(${currentPage + 1}, '${dataType}', event)">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        `;
+    } else {
+        paginationHTML += `
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&raquo;</span>
+            </li>
+        `;
+    }
+
+    // Botón "Última página"
+    if (currentPage < totalPages) {
+        paginationHTML += `
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0);" aria-label="Last" onclick="cambiarPagina(${totalPages}, '${dataType}', event)">
+                    <span aria-hidden="true">&raquo;&raquo;</span>
+                </a>
+            </li>
+        `;
+    } else {
+        paginationHTML += `
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">&raquo;&raquo;</span>
+            </li>
+        `;
+    }
+
+    paginationHTML += `
+            </ul>
+        </nav>
+    `;
+
+    return paginationHTML;
+}
+
+
+function cambiarPagina(pageNumber, dataType, event) {
+    if (event) {
+        event.preventDefault(); // Prevenir que la página se desplace hacia arriba
+    }
+    renderizarDatosEnTabla(dataGlobal, dataType, pageNumber);
+}
+
+window.cambiarPagina = cambiarPagina;
 
 export function resetTabla() {
     const tabla = document.querySelector('.table tbody');

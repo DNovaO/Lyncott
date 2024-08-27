@@ -63,12 +63,12 @@ document.addEventListener("DOMContentLoaded", function(){
             }
 
 
-            console.log(Object.keys(parametrosInforme).length);
+            console.log('Parametros longitud:', Object.keys(parametrosInforme).length - 2);
 
-            console.log(numeroParametro);
+            console.log('numero parametro', numeroParametro - 3);
             
             // Verificar si el número de parámetros seleccionados es menor que el requerido
-            if (Object.keys(parametrosInforme).length >= numeroParametro) {
+            if (Object.keys(parametrosInforme).length - 2 >= numeroParametro - 3) {
                 console.log('boton activado mandando informacion');
                 errorParametros(false);
 
@@ -95,66 +95,6 @@ document.addEventListener("DOMContentLoaded", function(){
         });
 
 });
-
-
-export function renderPagination(paginationInfo, currentPage, dataType, isTable = false) {
-    let html = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center">';
-
-    html += '<li class="page-item">';
-    if (paginationInfo && paginationInfo.has_previous) {
-        html += `<a class="page-link" onclick="changePage(1, '${dataType}', ${isTable})">&laquo;</a>`;
-    } else {
-        html += '<span class="page-link disabled" aria-disabled="true">&laquo;</span>';
-    }
-    html += '</li>';
-
-    html += '<li class="page-item">';
-    if (paginationInfo && paginationInfo.has_previous) {
-        html += `<a class="page-link" onclick="changePage(${paginationInfo.previous_page_number}, '${dataType}', ${isTable})">&lt;</a>`;
-    } else {
-        html += '<span class="page-link disabled" aria-disabled="true">&lt;</span>';
-    }
-    html += '</li>';
-
-    html += `<li class="page-item disabled"><span class="page-link">Page ${currentPage} of ${paginationInfo.num_pages}</span></li>`;
-
-    html += '<li class="page-item">';
-    if (paginationInfo && paginationInfo.has_next) {
-        html += `<a class="page-link" onclick="changePage(${paginationInfo.next_page_number}, '${dataType}', ${isTable})">&gt;</a>`;
-    } else {
-        html += '<span class="page-link disabled" aria-disabled="true">&gt;</span>';
-    }
-    html += '</li>';
-
-    html += '<li class="page-item">';
-    if (paginationInfo && paginationInfo.has_next) {
-        html += `<a class="page-link" onclick="changePage(${paginationInfo.num_pages}, '${dataType}', ${isTable})">&raquo;</a>`;
-    } else {
-        html += '<span class="page-link disabled" aria-disabled="true">&raquo;</span>';
-    }
-    html += '</li>';
-
-    html += '</ul></nav>';
-
-    return html;
-}
-
-function changePage(pageNumber, dataType, isTable = false) {
-    if (isTable) {
-        currentPageTable = pageNumber;
-        sendParametersToServer(parametrosSeleccionados, currentPageTable, tipo_reporte, dataType);
-    } else {
-        currentPage = pageNumber;
-        sendDataToServer(dataType, currentPage);
-    }
-}
-
-// Exponer changePage globalmente
-window.changePage = changePage;
-
-export function renderPaginationTabla(paginationInfo, currentPageTable, dataType) {
-    return renderPagination(paginationInfo, currentPageTable, dataType, true);
-}
 
 export function debounce(func, wait) {
     let timeout;

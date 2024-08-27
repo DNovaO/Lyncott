@@ -7,7 +7,6 @@ import { getCookie } from './utils.js';
 
 // Función para manejar llamadas a la API con cacheo
 export async function fetchData(endpoint, body, cacheKey, prefetch = false) {
-    console.log('Datos enviados a fetchData:', body);
 
     if (cache[cacheKey]) {
         console.log(`Cache hit for key: ${cacheKey}`);
@@ -47,13 +46,7 @@ export function sendDataToServer(dataType, currentPage) {
     fetchData(endpointURL, body, cacheKey)
         .then(data => {
             handleResponseData(data);
-            
             console.log('Los datos recibidos son:', data);
-            const nextPage = currentPage + 1;
-            const nextCacheKey = `${dataType}_${nextPage}`;
-            const nextEndpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${nextPage}`;
-            fetchData(nextEndpointURL, { data_type: dataType, page: nextPage }, nextCacheKey, true);
-        
         })
         .catch(error => console.error("Error:", error));
 }
@@ -69,19 +62,10 @@ export function sendParametersToServer(parametrosInforme, currentPageTable, tipo
 
     showLoaderTabla();
 
-    console.log('Datos enviados a fetchData:', body);
-
     fetchData(endpointURL, body, cacheKey)
         .then(data => {
             renderizarDatosEnTabla(data, tipoReporte);
             console.log('Los datos recibidos son:', data);
-            
-            if (data.resultadoPaginado.pagination_info.has_next) {
-                const nextPage = currentPageTable + 1;
-                const nextCacheKey = `${tipoReporte}_${nextPage}`;
-                const nextEndpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipoReporte)}&page=${nextPage}`;
-                fetchData(nextEndpointURL, { parametros_seleccionados: parametrosInforme, page: nextPage, tipo_reporte: tipoReporte, data_type: dataType }, nextCacheKey, true);
-            }
         })
         .catch(error => console.error("Error:", error));
 }

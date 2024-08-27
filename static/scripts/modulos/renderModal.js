@@ -1,7 +1,10 @@
-// renderModal.js
 import { modalContent, modalFooter, fechaInicialInput, fechaFinalInput } from './config.js';
 import { handlers } from './itemHandler.js';
-import { parametrosSeleccionados, currentPage, renderPagination} from './main.js';
+import { fullItemsArray, parametrosSeleccionados } from './main.js';
+
+// Variable global para manejar la página actual del modal
+let currentModalPage = 1;
+const modalPageSize = 10; // Tamaño de página para el modal
 
 // Muestra un loader en el modal
 export function showLoaderModal() {
@@ -32,22 +35,45 @@ export function handleResponseData(data) {
     // Mostrar el modal
     $("#genericModal").modal("show");
 
+    // Establecer la página actual en el modal
+    setCurrentModalPage(1); // O cualquier otra lógica para establecer la página que deseas
+
     // Manejar la selección de un elemento de la lista
     modalContent.querySelectorAll('.selectable-item').forEach(item => {
         item.addEventListener('click', function() {
+            console.log('Seleccionando...', dataType);
             handleItemSelected(dataType, this);
         });
     });
 }
 
 // Carga los datos en el modal
+export function cargarData(data, key, dataType) {
+    if (data[key] && data[key].length > 0) {
+        if (fullItemsArray.length === 0) {
+            fullItemsArray.push(...data[key]);
+        }
 
-export function cargarData(data, key, dataType){
-    modalContent.innerHTML = renderGeneral(data[key].objList, key, dataType); // Asegúrate de pasar 'key' y 'dataType'
-    modalFooter.innerHTML = renderPagination(data[key].pagination_info, currentPage, dataType);
+        const paginatedItems = paginarDatos(fullItemsArray, modalPageSize, currentModalPage);
+
+        modalContent.innerHTML = renderGeneral(paginatedItems);
+        modalFooter.innerHTML = renderPaginadoModal({
+            totalPages: Math.ceil(fullItemsArray.length / modalPageSize),
+            currentPage: currentModalPage
+        }, dataType);
+
+        // Volver a agregar manejadores de eventos
+        modalContent.querySelectorAll('.selectable-item').forEach(item => {
+            item.addEventListener('click', function() {
+                console.log('Seleccionando...', dataType);
+                handleItemSelected(dataType, this);
+            });
+        });
+    } else {
+        console.error('Datos inválidos para paginar:', data[key]);
+    }
 }
 
-// Renderiza la lista de elementos
 export function renderGeneral(paginatedItems) {
     let html = '<ul class="list-group mt-3">';
     
@@ -66,6 +92,12 @@ export function renderGeneral(paginatedItems) {
 
     html += '</ul>';
     return html;
+}
+
+// Función para paginar datos
+function paginarDatos(data, pageSize, pageNumber) {
+    const startIndex = (pageNumber - 1) * pageSize;
+    return data.slice(startIndex, startIndex + pageSize);
 }
 
 // Maneja la selección de un ítem
@@ -98,6 +130,7 @@ export function handleItemSelected(dataType, selectedItem) {
 
     // Cerrar el modal
     $("#genericModal").modal("hide");
+    setCurrentModalPage(1);
 
     // Imprimir para verificar
     console.log('Parámetros seleccionados:', parametrosSeleccionados);
@@ -105,3 +138,165 @@ export function handleItemSelected(dataType, selectedItem) {
     // Retornar los parámetros seleccionados para su uso posterior
     return parametrosSeleccionados;
 }
+
+export function renderPaginadoModal(paginationInfo, dataType) {
+    const { totalPages } = paginationInfo;
+    const startPages = 3; // Primeras páginas a mostrar
+    const endPages = 2;   // Últimas páginas a mostrar
+    const currentModalPage = paginationInfo.currentPage;
+
+    const maxVisiblePages = startPages + endPages; // Total visible páginas (incluye "..." y los botones de navegación)
+    
+    let paginationHTML = '<nav aria-label="Page navigation"><ul class="pagination justify-content-center flex-wrap">';
+
+    // Botón "Primera página"
+    if (currentModalPage > 1) {
+        paginationHTML += `
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0);" onclick="cambiarPaginaModal(1, '${dataType}', event)">&laquo;&laquo;</a>
+            </li>`;
+    } else {
+        paginationHTML += `
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;&laquo;</span>
+            </li>`;
+    }
+
+    // Botón "Anterior"
+    if (currentModalPage > 1) {
+        paginationHTML += `
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0);" onclick="cambiarPaginaModal(${currentModalPage - 1}, '${dataType}', event)">&laquo;</a>
+            </li>`;
+    } else {
+        paginationHTML += `
+            <li class="page-item disabled">
+                <span class="page-link">&laquo;</span>
+            </li>`;
+    }
+
+    // Determinar el rango de páginas a mostrar
+    let startPage, endPage;
+
+    if (totalPages <= maxVisiblePages) {
+        // Mostrar todas las páginas si el total es menor que el máximo visible
+        startPage = 1;
+        endPage = totalPages;
+    } else {
+        // Determinar el rango de páginas a mostrar
+        if (currentModalPage <= startPages) {
+            // Página actual está en el inicio
+            startPage = 1;
+            endPage = maxVisiblePages - 1;
+        } else if (currentModalPage + endPages - 1 >= totalPages) {
+            // Página actual está en el final
+            startPage = totalPages - maxVisiblePages + 2;
+            endPage = totalPages;
+        } else {
+            // Página actual está en el medio
+            startPage = currentModalPage - Math.floor(startPages / 2);
+            endPage = currentModalPage + Math.floor(endPages / 2);
+        }
+    }
+
+    // Mostrar las páginas dentro del rango determinado
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === currentModalPage) {
+            paginationHTML += `
+                <li class="page-item active">
+                    <span class="page-link">${i}</span>
+                </li>`;
+        } else {
+            paginationHTML += `
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0);" onclick="cambiarPaginaModal(${i}, '${dataType}', event)">${i}</a>
+                </li>`;
+        }
+    }
+
+    // Mostrar "..." si hay más páginas que las visibles
+    if (endPage < totalPages - endPages) {
+        paginationHTML += `
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>`;
+        
+        // Mostrar las últimas páginas
+        for (let i = totalPages - endPages + 1; i <= totalPages; i++) {
+            if (i === currentModalPage) {
+                paginationHTML += `
+                    <li class="page-item active">
+                        <span class="page-link">${i}</span>
+                    </li>`;
+            } else {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0);" onclick="cambiarPaginaModal(${i}, '${dataType}', event)">${i}</a>
+                    </li>`;
+            }
+        }
+    } else {
+        // Si no hay "..." para mostrar, solo las páginas desde endPage+1 hasta totalPages
+        for (let i = endPage + 1; i <= totalPages; i++) {
+            if (i === currentModalPage) {
+                paginationHTML += `
+                    <li class="page-item active">
+                        <span class="page-link">${i}</span>
+                    </li>`;
+            } else {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="javascript:void(0);" onclick="cambiarPaginaModal(${i}, '${dataType}', event)">${i}</a>
+                    </li>`;
+            }
+        }
+    }
+
+    // Botón "Siguiente"
+    if (currentModalPage < totalPages) {
+        paginationHTML += `
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0);" onclick="cambiarPaginaModal(${currentModalPage + 1}, '${dataType}', event)">&raquo;</a>
+            </li>`;
+    } else {
+        paginationHTML += `
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;</span>
+            </li>`;
+    }
+
+    // Botón "Última página"
+    if (currentModalPage < totalPages) {
+        paginationHTML += `
+            <li class="page-item">
+                <a class="page-link" href="javascript:void(0);" onclick="cambiarPaginaModal(${totalPages}, '${dataType}', event)">&raquo;&raquo;</a>
+            </li>`;
+    } else {
+        paginationHTML += `
+            <li class="page-item disabled">
+                <span class="page-link">&raquo;&raquo;</span>
+            </li>`;
+    }
+
+    paginationHTML += '</ul></nav>';
+
+    return paginationHTML;
+}
+
+// Función para cambiar la página
+function cambiarPaginaModal(pageNumber, dataType, event) {
+    if (event) {
+        event.preventDefault(); // Prevenir que la página se desplace hacia arriba
+    }
+    console.log('Cambiando a la página:', pageNumber, 'dataType:', dataType); // Agrega esto para depuración
+    setCurrentModalPage(pageNumber);
+    // Usa `fullItemsArray` para obtener los datos completos
+    cargarData({[dataType]: fullItemsArray}, dataType, dataType); // Cargar la página seleccionada
+}
+
+// Función para establecer la página actual en el modal
+function setCurrentModalPage(page) {
+    currentModalPage = page;
+}
+
+window.cambiarPaginaModal = cambiarPaginaModal; // Hacer disponible para los enlaces

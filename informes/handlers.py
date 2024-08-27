@@ -22,7 +22,7 @@ def handle_cliente(request, data_type):
     response_data = {
         'data_type': data_type,
         'clientes' : list(clientes),
-        'clientesPaginados': clientes_paginados,
+        # 'clientesPaginados': clientes_paginados,
     }
     
     return JsonResponse(response_data) 
@@ -34,7 +34,7 @@ def handle_producto(request, data_type):
     response_data = {
         'data_type': data_type,
         'productos': list(productos),
-        'productosPaginados': productos_paginados ,
+        # 'productosPaginados': productos_paginados ,
     }
     
     return JsonResponse(response_data) 
@@ -46,7 +46,7 @@ def handle_sucursal(request, data_type):
     response_data = {
         'data_type': data_type,
         'sucursales': list(sucursales),
-        'sucursalesPaginados': sucursales_paginados ,
+        # 'sucursalesPaginados': sucursales_paginados ,
     }
     
     return JsonResponse(response_data) 
@@ -58,7 +58,7 @@ def handle_vendedor(request, data_type):
     response_data = {
         'data_type': data_type,
         'vendedores': list(vendedores),
-        'vendedoresPaginados': vendedores_paginados,
+        # 'vendedoresPaginados': vendedores_paginados,
     }
     
     return JsonResponse(response_data)
@@ -70,7 +70,7 @@ def handle_linea(request, data_type):
     response_data = {
         'data_type': data_type,
         'lineas': list(lineas),
-        'lineasPaginados': lineas_paginados,
+        # 'lineasPaginados': lineas_paginados,
     }
     
     return JsonResponse(response_data)
@@ -93,7 +93,7 @@ def handle_familia(request, data_type):
     response_data = {
         'data_type': data_type,
         'familias': list(familias),
-        'familiasPaginados': familias_paginados,
+        # 'familiasPaginados': familias_paginados,
     }
     
     return JsonResponse(response_data)
@@ -105,7 +105,7 @@ def handle_grupo_corporativo(request, data_type):
     response_data = {
         'data_type': data_type,
         'gruposCorporativos': list(gruposCorporativos),
-        'gruposCorporativosPaginados': gruposCorporativos_paginados,
+        # 'gruposCorporativosPaginados': gruposCorporativos_paginados,
     }
     
     return JsonResponse(response_data)
@@ -118,7 +118,7 @@ def handle_segmento(request, data_type):
     response_data = {
         'data_type': data_type,
         'segmentos': list(segmentos),
-        'segmentosPaginados': segmentos_paginados,
+        # 'segmentosPaginados': segmentos_paginados,
     }
     
     return JsonResponse(response_data)
@@ -141,7 +141,7 @@ def handle_status(request, data_type):
     response_data = {
         'data_type': data_type,
         'estatus': estatus_transformed,
-        'estatusPaginados': estatus_paginados,
+        # 'estatusPaginados': estatus_paginados,
     }
     
     return JsonResponse(response_data)
@@ -198,7 +198,7 @@ def handle_zona(request, data_type):
     response_data = {
         'data_type': data_type,
         'zonas': zonas_transformed,
-        'zonasPaginados': zonas_paginados,
+        # 'zonasPaginados': zonas_paginados,
     }
     
     return JsonResponse(response_data)
@@ -211,7 +211,7 @@ def handle_region(request, data_type):
     response_data = {
         'data_type': data_type,
         'regiones':list(regiones),
-        'regionesPaginados': regiones_paginados,
+        # 'regionesPaginados': regiones_paginados,
     }
     
     return JsonResponse(response_data)
@@ -222,7 +222,7 @@ def handle_resultado(request, data_type):
     parametrosSeleccionados = data.get('parametros_seleccionados', {})
 
     queryset_resultados = clasificarParametros(parametrosSeleccionados, tipo_reporte)
-    queryset_resultados_paginados = objPaginator(request, queryset_resultados, data_type)
+    # queryset_resultados_paginados = objPaginator(request, queryset_resultados, data_type)
 
     campos_reporte = [] 
     campos_set = set(campos_reporte)
@@ -238,8 +238,8 @@ def handle_resultado(request, data_type):
         'tipo_reporte': tipo_reporte,
         'datos_completos': queryset_resultados,
         'campos_reporte': campos_reporte,
-        'parametros': parametrosSeleccionados,
-        'resultadoPaginado': queryset_resultados_paginados
+        # 'parametros': parametrosSeleccionados,
+        # 'resultadoPaginado': queryset_resultados_paginados
     }
 
     return JsonResponse(response_data)
