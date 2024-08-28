@@ -61,7 +61,7 @@ body {
   left: 0;
   right: 0;
   height: 100%;
-  background: linear-gradient(to bottom, #ed1c24, #ffffff);
+  background: linear-gradient(to bottom, #00aae9, #ffffff);
   z-index: -1;
 }
 
@@ -72,7 +72,7 @@ body {
   top: 0;
   bottom: 0;
   width: 100%;
-  background: linear-gradient(to right, #ed1c24, #ffffff);
+  background: linear-gradient(to right, #00aae9, #ffffff);
   z-index: -1;
 }
 
@@ -83,7 +83,7 @@ body {
   top: 0;
   bottom: 0;
   width: 100%;
-  background: linear-gradient(to right, #ed1c24, #ffffff);
+  background: linear-gradient(to right, #00aae9, #ffffff);
   z-index: -1;
 }
 

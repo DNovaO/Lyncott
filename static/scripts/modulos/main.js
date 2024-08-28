@@ -8,7 +8,7 @@ export let currentPage = 1;
 export let currentPageTable = 1;
 export let parametrosInforme = {};
 
-import { tipo_reporte, btnMostrarGrafico, btnReset, btnGenerarInforme, btnBorrarReporte, modalContent, modalFooter} from "./config.js"; 
+import { tipo_reporte, btnMostrarGrafico, btnReset, btnGenerarInforme, btnBorrarReporte, modalContent, modalFooter, btnExportarCSV, btnExportarExcel} from "./config.js"; 
 import { sendDataToServer, sendParametersToServer } from './apiHandler.js';
 import { handleItemSelected, renderGeneral } from './renderModal.js';
 import { errorParametros} from './utils.js'; // Asegúrate de importar las funciones necesarias
@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", function(){
             e.preventDefault();
             resetFormulario();
         });
+
     } 
 
     // Evento cuando se presiona el botón de generar informe
@@ -92,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function(){
     if (btnMostrarGrafico)
         document.getElementById('btnMostrarGrafico').addEventListener('click', function() {
             this.classList.toggle('btn-active-green');
-        });
+    });
 
 });
 

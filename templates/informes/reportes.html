@@ -12,6 +12,10 @@
       alt="LyncottIcon"
     />
 
+    <!-- Handlebars.js -->
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"></script>
+
+
     <!-- Estilos locales -->
     <link rel="stylesheet" href="{% static 'styles/styleReportes.css' %}" />
 
@@ -907,7 +911,7 @@
         <div class="col-md-12 pb-auto pt-3" id="resultado-reporte">
           <div class="card h-100">
             <div class="card-header">
-              <strong>Resultados del reporte</strong>
+              <strong>Resultados del reporte {{ tipo_reporte }}</strong>
             </div>
 
             <div class="card-body" id="tablaReportes">
@@ -954,6 +958,7 @@
                 <div class="col-12 col-sm mb-2">
                   <button
                     type="button"
+                    id = "btnExportarExcel"
                     class="btn btn-dark w-100 h-100"
                     style="font-weight: 500"
                   >
@@ -963,6 +968,7 @@
                 <div class="col-12 col-sm mb-2">
                   <button
                     type="button"
+                    id = "btnExportarCSV"
                     class="btn btn-dark w-100 h-100"
                     style="font-weight: 500"
                   >
@@ -1024,8 +1030,7 @@
                 <div class="contact-info">
                   <p class="mb-1">Contáctanos</p>
                   <p class="mb-1">
-                    Circuito El Marqués Sur #9, Parque Industrial El Marqués El
-                    Colorado, El Marqués. Querétaro, Querétaro México
+                    Circuito El Marqués Sur #9, Parque Industrial El Marqués. Querétaro,México
                   </p>
                   <p class="mb-1">
                     Email:
@@ -1068,6 +1073,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 
     <!-- Scripts personalizados -->
     <script src="{% static 'scripts/formatoFecha.js' %}"></script>

@@ -1,6 +1,25 @@
 // renderTabla.js
 import { formatNumber, transformHeader } from './utils.js';
+import { exportToCSV, exportToExcel } from "./exportaciones.js";
+import { btnExportarCSV , btnExportarExcel} from "./config.js"
+
 let dataGlobal;
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    if (btnExportarCSV){
+        btnExportarCSV.addEventListener('click', function(e) {
+            exportToCSV(datos, 'data.csv');    
+        });
+    }
+
+    if (btnExportarExcel){
+        btnExportarExcel.addEventListener('click', function(e) {
+            exportToExcel(datos, 'data.xlsx');    
+        });
+    }
+
+});
 
 export function showLoaderTabla() {
     const tabla = document.querySelector('.table tbody');
@@ -19,6 +38,9 @@ export function showLoaderTabla() {
 export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize = 10) {
     // Almacenar los datos globalmente
     dataGlobal = data;
+
+    window.datos = dataGlobal;
+
 
     const tabla = document.querySelector('.table tbody');
     const thead = document.querySelector('.table thead');
@@ -69,6 +91,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         // Mostrar mensaje de "No hay datos disponibles"
         tabla.innerHTML = `<tr><td colspan="${dataGlobal.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td></tr>`;
     }
+
 }
 
 // Función para paginar los datos
@@ -80,7 +103,7 @@ function paginarDatos(data, pageSize, pageNumber) {
 function renderPaginadoTabla(paginationInfo, currentPage, dataType) {
     const { totalPages } = paginationInfo;
     const startPages = 1; // Primeras páginas a mostrar
-    const endPages = 3;   // Últimas páginas a mostrar
+    const endPages = 2;   // Últimas páginas a mostrar
     const maxVisiblePages = startPages + endPages; // Total visible páginas (incluye "..." y los botones de navegación)
 
     let paginationHTML = `

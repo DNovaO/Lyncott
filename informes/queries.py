@@ -161,13 +161,7 @@ def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, clien
 
 def consultaClientesPorGrupo(grupoCorporativo_inicial, grupoCorporativo_final):
     print(f"Consulta de clientes por grupo corporativo desde {grupoCorporativo_inicial} hasta {grupoCorporativo_final}")
-    # kdud.clave_cliente -> c2 que es igual kdm1.clave_cliente -> c10
-    # kdud.nombre_cliente -> c3
-    # kdud.clave_corporativo -> c66
-    
-    #kdcorpo.clave_corporativo -> c1 que es = a kdud.clave_corporativo -> c66
-    #kdcorpo.descripcion_corporativo -> c2
-    
+
     # Query principal
     queryClientesporGrupo = Kdud.objects.filter(
         clave_corporativo__gte=grupoCorporativo_inicial,

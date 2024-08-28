@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from .models import *
 from django.core.paginator import Paginator
 import json
+import gzip
+from django.http import HttpResponse
 
 # Función para manejar datos según el tipo recibido
 def handle_data(request, data_type):
@@ -17,15 +19,16 @@ def handle_data(request, data_type):
 
 def handle_cliente(request, data_type):
     clientes = Kdud.objects.values('clave_cliente', 'nombre_cliente').distinct().order_by('clave_cliente')
-    clientes_paginados  = objPaginator(request, clientes, data_type);
-    
+
+
     response_data = {
         'data_type': data_type,
         'clientes' : list(clientes),
-        # 'clientesPaginados': clientes_paginados,
     }
     
-    return JsonResponse(response_data) 
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
 
 def handle_producto(request, data_type):
     productos = Kdii.objects.values('clave_producto', 'descripcion_producto', 'linea_producto').filter(clave_producto__range = ('0101', '9999')).distinct().order_by('clave_producto')
@@ -37,7 +40,9 @@ def handle_producto(request, data_type):
         # 'productosPaginados': productos_paginados ,
     }
     
-    return JsonResponse(response_data) 
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
 
 def handle_sucursal(request, data_type):
     sucursales = Kdms.objects.values('clave_sucursal', 'descripcion').distinct().order_by('clave_sucursal')
@@ -49,7 +54,9 @@ def handle_sucursal(request, data_type):
         # 'sucursalesPaginados': sucursales_paginados ,
     }
     
-    return JsonResponse(response_data) 
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response 
     
 def handle_vendedor(request, data_type):
     vendedores = Kduv.objects.values('clave_vendedor','nombre_vendedor').distinct().order_by('clave_vendedor')
@@ -61,8 +68,9 @@ def handle_vendedor(request, data_type):
         # 'vendedoresPaginados': vendedores_paginados,
     }
     
-    return JsonResponse(response_data)
-
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
 def handle_linea(request, data_type):
     lineas = Kdig.objects.values('clave_linea','descripcion_linea').distinct().order_by('clave_linea')
     lineas_paginados = objPaginator(request, lineas, data_type)
@@ -73,8 +81,10 @@ def handle_linea(request, data_type):
         # 'lineasPaginados': lineas_paginados,
     }
     
-    return JsonResponse(response_data)
-    
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
+
 def handle_familia(request, data_type):
     
     valores_especificos = [ 
@@ -96,7 +106,9 @@ def handle_familia(request, data_type):
         # 'familiasPaginados': familias_paginados,
     }
     
-    return JsonResponse(response_data)
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
 
 def handle_grupo_corporativo(request, data_type):
     gruposCorporativos = Kdcorpo.objects.values('clave_corporativo', 'descripcion_corporativo').distinct().order_by('clave_corporativo')
@@ -108,8 +120,9 @@ def handle_grupo_corporativo(request, data_type):
         # 'gruposCorporativosPaginados': gruposCorporativos_paginados,
     }
     
-    return JsonResponse(response_data)
-
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
 
 def handle_segmento(request, data_type):
     segmentos = Kdsegmentacion.objects.values('clave_segmentacion', 'descripcion_segmentacion').distinct().order_by('clave_segmentacion')
@@ -121,8 +134,9 @@ def handle_segmento(request, data_type):
         # 'segmentosPaginados': segmentos_paginados,
     }
     
-    return JsonResponse(response_data)
-
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
 
 def handle_status(request, data_type):
     estatus = Kdpord.objects.values('estatus').distinct().order_by('estatus')
@@ -144,7 +158,9 @@ def handle_status(request, data_type):
         # 'estatusPaginados': estatus_paginados,
     }
     
-    return JsonResponse(response_data)
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
 
 def handle_zona(request, data_type):
 
@@ -201,7 +217,9 @@ def handle_zona(request, data_type):
         # 'zonasPaginados': zonas_paginados,
     }
     
-    return JsonResponse(response_data)
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
 
     
 def handle_region(request, data_type):
@@ -214,7 +232,9 @@ def handle_region(request, data_type):
         # 'regionesPaginados': regiones_paginados,
     }
     
-    return JsonResponse(response_data)
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
 
 def handle_resultado(request, data_type):
     tipo_reporte = request.GET.get('tipo_reporte', 'default_tipo')
@@ -222,8 +242,7 @@ def handle_resultado(request, data_type):
     parametrosSeleccionados = data.get('parametros_seleccionados', {})
 
     queryset_resultados = clasificarParametros(parametrosSeleccionados, tipo_reporte)
-    # queryset_resultados_paginados = objPaginator(request, queryset_resultados, data_type)
-
+    
     campos_reporte = [] 
     campos_set = set(campos_reporte)
     for resultado in queryset_resultados:
@@ -231,19 +250,21 @@ def handle_resultado(request, data_type):
         campos_reporte.extend(nuevos_campos)
         campos_set.update(nuevos_campos)
 
-
     response_data = {
         'status': 'success',
         'data_type': data_type,
         'tipo_reporte': tipo_reporte,
         'datos_completos': queryset_resultados,
         'campos_reporte': campos_reporte,
-        # 'parametros': parametrosSeleccionados,
-        # 'resultadoPaginado': queryset_resultados_paginados
     }
+    
+    # Serializar a JSON y comprimir
+    json_data = json.dumps(response_data)
+    compressed_data = gzip.compress(json_data.encode('utf-8'))
 
-    return JsonResponse(response_data)
-
+    response = HttpResponse(compressed_data, content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
 
 def objPaginator(request, obj_to_paginate, data_type):
     
