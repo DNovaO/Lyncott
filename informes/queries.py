@@ -1,8 +1,9 @@
 from datetime import datetime
-from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When, Window
+from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When, Window, DecimalField
 from django.db.models.functions import Concat, Round, RowNumber, LTrim, RTrim
 from django.db.models.expressions import CombinedExpression
 from .models import *
+from decimal import Decimal
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -71,6 +72,9 @@ def ejecutarConsulta(filtros, tipo_reporte):
         
     elif tipo_reporte == "Clientes por Grupos":
         resultados.extend(consultaClientesPorGrupo(grupoCorporativo_inicial, grupoCorporativo_final))
+    
+    elif tipo_reporte == "Cierre de Mes":
+        resultados.extend(consultaCierreDeMes(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal, vendedor_inicial, vendedor_final))
     
     return resultados
     
@@ -207,7 +211,7 @@ def consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial,
         grupo_movimiento__in=['5', '45'],
         numero_tipo_documento__in=['2', '4', '6', '19', '22', '26', '1', '3', '5', '18', '21', '25']
     ).values(
-        'sucursal'
+        'clave_sucursal'
     ).annotate(
         contado=Sum(Case(
             When(numero_tipo_documento__in=['2', '4', '6', '19', '22', '26'], then=F('importe') - F('ieps_retencion_isr')),
@@ -240,7 +244,7 @@ def consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial,
             output_field=FloatField()
         )
     ).values(
-        'sucursal',
+        'clave_sucursal',
         'contado',
         'porcentaje_contado',
         'credito',
@@ -297,5 +301,47 @@ def consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, client
 def consultaVentarPorFamiliaEnKilos(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final):
     print(f"Consulta de ventas por familia en kilos desde {fecha_inicial} hasta {fecha_final}, producto inicial: {producto_inicial} y producto final: {producto_final}, sucursal inicial: {sucursal_inicial} y sucursal final: {sucursal_final}, familia inicial: {familia_inicial} y familia final: {familia_final}")
     
+def consultaCierreDeMes(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal, vendedor_inicial, vendedor_final):
+    print(f"Consulta de cierre de mes desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, sucursal{sucursal}, vendedor inicial: {vendedor_inicial} y vendedor final: {vendedor_final}")
+
+    filtered_data = Kdm1.objects.filter(
+        vendedor_comprador__gte=vendedor_inicial,
+        vendedor_comprador__lte=vendedor_final,
+        fecha__gte=fecha_inicial,
+        fecha__lte=fecha_final,
+        clave_cliente__gte=cliente_inicial,
+        clave_cliente__lte=cliente_final,
+        clave_sucursal=sucursal,
+        genero='U',
+        naturaleza='D',
+        grupo_movimiento__in=['5', '45'],
+        numero_tipo_documento__in=['18', '19', '20', '23', '24', '25', '26', '3', '5','6'],
+    ).exclude(
+        vendedor_comprador__in=['902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924'],
+    ).annotate(
+        Documento=Case(
+            When(numero_tipo_documento__in=[18, 25], then=Value('CFD_CREDITO', output_field=CharField())),
+            When(numero_tipo_documento__in=[20, 23, 26], then=Value('CFD_CREDITO', output_field=CharField())),
+            When(numero_tipo_documento=19, then=Value('CFD_CREDITO', output_field=CharField())),
+            When(numero_tipo_documento__in=[3, 5, 6], then=Value('CFD_CREDITO', output_field=CharField())),
+            default=Value('UNKNOWN', output_field=CharField()),
+        ),
+        Monto=F('importe') - F('ieps_retencion_isr')
+    )
+
+    queryCierreDeMes = filtered_data.values('clave_sucursal', 'numero_tipo_documento').annotate(
+        CFD_CREDITO=Sum(Case(When(Documento='CFD_CREDITO', then=F('Monto')), default=Value(0, output_field=DecimalField()))),
+        CFD_CONTADO=Sum(Case(When(Documento='CFD_CONTADO', then=F('Monto')), default=Value(0, output_field=DecimalField()))),
+        REM_CREDITO=Sum(Case(When(Documento='REM_CREDITO', then=F('Monto')), default=Value(0, output_field=DecimalField()))),
+        REM_CONTADO=Sum(Case(When(Documento='REM_CONTADO', then=F('Monto')), default=Value(0, output_field=DecimalField()))),
+    ).order_by('clave_sucursal', 'numero_tipo_documento')
+
+    # Convert Decimal fields to float for JSON serialization
+    result = list(queryCierreDeMes)
+    for item in result:
+        for key in item:
+            if isinstance(item[key], Decimal):
+                item[key] = float(item[key])
     
+    return result
     

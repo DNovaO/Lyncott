@@ -23,7 +23,7 @@ export function transformHeader(header) {
 
 export function formatNumber(value, isCurrency = false, key = '') {
     // Lista de claves que no deben ser formateadas
-    const keysToExcludeFromFormatting = ['clave_producto', 'descripcion_producto', 'sucursal', 'clave'];
+    const keysToExcludeFromFormatting = ['clave_producto', 'descripcion_producto', 'sucursal', 'clave', 'clave_sucursal', 'numero_tipo_documento'];
 
     // Si la clave está en la lista de exclusión, devolver el valor sin cambios
     if (keysToExcludeFromFormatting.includes(key)) {
@@ -31,7 +31,7 @@ export function formatNumber(value, isCurrency = false, key = '') {
     }
 
     if (value == null || value === '') {
-        return '';
+        return ' - ';
     }
 
     // Convertir el valor a una cadena si no lo es

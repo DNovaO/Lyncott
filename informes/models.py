@@ -1,7 +1,7 @@
 from django.db import models
 
 class Kdm1(models.Model):
-    sucursal = models.CharField(db_column='C1', primary_key=True, max_length=7, db_collation='Traditional_Spanish_CI_AS')
+    clave_sucursal = models.CharField(db_column='C1', primary_key=True, max_length=7, db_collation='Traditional_Spanish_CI_AS')
     genero = models.CharField(db_column='C2', max_length=1, db_collation='Traditional_Spanish_CI_AS')
     naturaleza = models.CharField(db_column='C3', max_length=1, db_collation='Traditional_Spanish_CI_AS')
     grupo_movimiento = models.DecimalField(db_column='C4', max_digits=2, decimal_places=0)

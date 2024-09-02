@@ -118,8 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "producto_final",
     ],
     2: [
-      "sucursal_inicial",
-      "sucursal_final",
+      "sucursal",
       "fecha_inicial",
       "fecha_final",
       "cliente_inicial",
