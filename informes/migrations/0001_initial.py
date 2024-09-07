@@ -454,8 +454,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('genero', models.CharField(db_collation='Traditional_Spanish_CI_AS', db_column='C1', max_length=1, primary_key=True, serialize=False)),
                 ('naturaleza', models.CharField(db_collation='Traditional_Spanish_CI_AS', db_column='C2', max_length=1)),
-                ('num_grupo_movimientos', models.DecimalField(db_column='C3', decimal_places=0, max_digits=2)),
-                ('tipo_movimiento', models.DecimalField(db_column='C4', decimal_places=0, max_digits=2)),
+                ('grupo_movimiento', models.DecimalField(db_column='C3', decimal_places=0, max_digits=2)),
+                ('numero_tipo_documento', models.DecimalField(db_column='C4', decimal_places=0, max_digits=2)),
                 ('descripcion_movimiento', models.CharField(blank=True, db_collation='Traditional_Spanish_CI_AS', db_column='C5', max_length=40, null=True)),
                 ('afecta_contabilidad_general', models.CharField(blank=True, db_collation='Traditional_Spanish_CI_AS', db_column='C6', max_length=1, null=True)),
                 ('afecta_ctas_cobrar_pagar', models.CharField(blank=True, db_collation='Traditional_Spanish_CI_AS', db_column='C7', max_length=1, null=True)),

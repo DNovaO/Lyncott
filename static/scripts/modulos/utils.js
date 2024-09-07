@@ -23,7 +23,9 @@ export function transformHeader(header) {
 
 export function formatNumber(value, isCurrency = false, key = '') {
     // Lista de claves que no deben ser formateadas
-    const keysToExcludeFromFormatting = ['clave_producto', 'descripcion_producto', 'sucursal', 'clave', 'clave_sucursal', 'numero_tipo_documento'];
+    const keysToExcludeFromFormatting = ['clave_producto', 'descripcion_producto', 'sucursal', 
+                                            'clave', 'clave_sucursal', 'numero_tipo_documento', 'grupo_movimiento',
+                                            'detalles_tipo_documento'];
 
     // Si la clave está en la lista de exclusión, devolver el valor sin cambios
     if (keysToExcludeFromFormatting.includes(key)) {
@@ -50,6 +52,12 @@ export function formatNumber(value, isCurrency = false, key = '') {
     if (isNaN(numericValue)) {
         return value; // Devuelve el valor original si no es un número válido
     }
+
+    // Si el valor es 0, devolverlo en rojo y negrita
+    if (numericValue === 0) {
+        return '<span style="color: red; font-weight: bold;">0.00</span>';
+    }
+
 
     // Formatear el número con o sin símbolo de moneda
     const formattedValue = numericValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });

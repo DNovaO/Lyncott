@@ -409,8 +409,8 @@ class Kduv(models.Model):
 class Kdmm(models.Model):
     genero = models.CharField(db_column='C1', primary_key=True, max_length=1, db_collation='Traditional_Spanish_CI_AS')
     naturaleza = models.CharField(db_column='C2', max_length=1, db_collation='Traditional_Spanish_CI_AS')
-    num_grupo_movimientos = models.DecimalField(db_column='C3', max_digits=2, decimal_places=0)
-    tipo_movimiento = models.DecimalField(db_column='C4', max_digits=2, decimal_places=0)
+    grupo_movimiento = models.DecimalField(db_column='C3', max_digits=2, decimal_places=0)
+    numero_tipo_documento = models.DecimalField(db_column='C4', max_digits=2, decimal_places=0)
     descripcion_movimiento = models.CharField(db_column='C5', max_length=40, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     afecta_contabilidad_general = models.CharField(db_column='C6', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)
     afecta_ctas_cobrar_pagar = models.CharField(db_column='C7', max_length=1, db_collation='Traditional_Spanish_CI_AS', blank=True, null=True)

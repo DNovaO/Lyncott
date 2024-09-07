@@ -104,6 +104,22 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mssql',
+#         'NAME': 'KL2020',
+#         'USER': '', 
+#         'PASSWORD': '',  
+#         'HOST': 'DESKTOP-0G4OS95', 
+#         'PORT': '',  
+#         'OPTIONS': {
+#             'driver': "ODBC Driver 17 for SQL Server",
+#             'trust_server_certificate': 'True',  # Confía en el certificado del servidor (SSL)
+#             'trusted_connection': 'yes',  # Utiliza una conexión de confianza (SSL)
+#             'encrypt': 'yes',  # Habilita el cifrado (SSL)
+#         },
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
