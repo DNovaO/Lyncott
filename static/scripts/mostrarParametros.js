@@ -171,8 +171,6 @@ document.addEventListener("DOMContentLoaded", function () {
       "sucursal_final",
       "fecha_inicial",
       "fecha_final",
-      "linea_inicial",
-      "linea_final",
       "cliente_inicial",
       "cliente_final",
       "producto_inicial",
@@ -203,15 +201,13 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
     15: [
       "sucursal_inicial",
-  
       "sucursal_final",
       "fecha_inicial",
       "fecha_final",
       "grupoCorporativo",
     ],
     16: [
-      "sucursal_inicial",
-      "sucursal_final",
+      "sucursal",
       "fecha_inicial",
       "fecha_final",
       "producto_inicial",

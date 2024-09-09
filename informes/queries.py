@@ -60,14 +60,11 @@ def ejecutarConsulta(filtros, tipo_reporte):
     resultados = []
                         
     if tipo_reporte == "Por Producto (con Refacturación)":
-        resultados.extend(consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
+        resultados.extend(consultaVentasPorProductoConRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
     
     elif tipo_reporte == "Por Tipo de Cliente (con Refacturación)":
         resultados.extend(consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
     
-    elif tipo_reporte == "Por Familia en Kilos (con Refacturación)":
-        resultados.extend(consultaVentarPorFamiliaEnKilos(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final))
-   
     elif tipo_reporte == "Credito Contable (con Refacturación)":
         resultados.extend(consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final))
         
@@ -76,6 +73,12 @@ def ejecutarConsulta(filtros, tipo_reporte):
     
     elif tipo_reporte == "Cierre de Mes":
         resultados.extend(consultaCierreDeMes(fecha_inicial, fecha_final, sucursal))
+        
+    elif tipo_reporte == "Por Producto":
+        resultados.extend(consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final))
+    
+    elif tipo_reporte == "Por Familia en Kilos (con Refacturación)":
+        resultados.extend(consultaVentasPorFamiliaKgConRefacturacion(fecha_inicial, fecha_final, producto_inicial, producto_final, familia_inicial, familia_final, sucursal))
     
     return resultados
     
@@ -87,7 +90,7 @@ def parse_date(date_str):
     except ValueError:
         return None
 
-def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final):
+def consultaVentasPorProductoConRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final):
     print(f"Consulta de ventas por productos desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}, sucursal inicial: {sucursal_inicial} y sucursal final: {sucursal_final}")
     
     kdii_subquery = Kdii.objects.filter(
@@ -201,166 +204,92 @@ def consultaClientesPorGrupo(grupoCorporativo_inicial, grupoCorporativo_final):
 def consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final):
     print(f"Consulta de ventas por crédito contable desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial}, cliente final: {cliente_final}")
 
-  # Consulta principal con agregaciones
-    queryVentaPorCreditoContable = Kdm1.objects.filter(
-        clave_cliente__gte=cliente_inicial,
-        clave_cliente__lte=cliente_final,
-        fecha__gte=fecha_inicial,
-        fecha__lte=fecha_final,
-        genero='U',
-        naturaleza='D',
-        grupo_movimiento__in=['5', '45'],
-        numero_tipo_documento__in=['2', '4', '6', '19', '22', '26', '1', '3', '5', '18', '21', '25']
-    ).values(
-        'clave_sucursal'
-    ).annotate(
-        contado=Sum(Case(
-            When(numero_tipo_documento__in=['2', '4', '6', '19', '22', '26'], then=F('importe') - F('ieps_retencion_isr')),
-            default=0,
-            output_field=FloatField()
-        )),
-        credito=Sum(Case(
-            When(numero_tipo_documento__in=['1', '3', '5', '18', '21', '25'], then=F('importe') - F('ieps_retencion_isr')),
-            default=0,
-            output_field=FloatField()
-        )),
-        
-        total=ExpressionWrapper(F('contado') + F('credito'), output_field=FloatField()),
-        
-        porcentaje_contado=ExpressionWrapper(
-            F('contado') / Case(
-                When(total=0, then=Value(1)),
-                default=F('total'),
-                output_field=FloatField()
-            ) * 100,
-            output_field=FloatField()
-        ),
-        
-        porcentaje_credito=ExpressionWrapper(
-            F('credito') / Case(
-                When(total=0, then=Value(1)),
-                default=F('total'),
-                output_field=FloatField()
-            ) * 100,
-            output_field=FloatField()
-        )
-    ).values(
-        'clave_sucursal',
-        'contado',
-        'porcentaje_contado',
-        'credito',
-        'porcentaje_credito',
-        'total',
-    )
-
-
-    # queryVentaPorCreditoContable = subquery_kdm1.annotate(
-
-    #     sucursal_nombre=Case(
-    #         When(sucursal_anotada='1', then=Value('1&nbsp;-&nbsp;Autoservicio')),
-    #         When(sucursal_anotada='2', then=Value('2&nbsp;-&nbsp;Norte')),
-    #         When(sucursal_anotada='3', then=Value('3&nbsp;-&nbsp;Sur')),
-    #         When(sucursal_anotada='4', then=Value('4&nbsp;-&nbsp;Vent. Especiales')),
-    #         When(sucursal_anotada='5', then=Value('5&nbsp;-&nbsp;Cadenas')),
-    #         When(sucursal_anotada='6', then=Value('6&nbsp;-&nbsp;Centro')),
-    #         output_field=CharField()
-    #     ),
-
-    #     total=F('contado') + F('credito'),
-        
-    #     porcentaje_contado=ExpressionWrapper(
-    #         F('contado') / Case(
-    #             When(total=0, then=Value(1)),
-    #             default=F('total'),
-    #             output_field=FloatField()
-    #         ) * 100,
-    #         output_field=FloatField()
-    #     ),
-        
-    #     porcentaje_credito=ExpressionWrapper(
-    #         F('credito') / Case(
-    #             When(total=0, then=Value(1)),
-    #             default=F('total'),
-    #             output_field=FloatField()
-    #         ) * 100,
-    #         output_field=FloatField()
-    #     ),
-    # ).values(
-    #     'sucursal_nombre',
-    #     'contado',
-    #     'porcentaje_contado',
-    #     'credito',
-    #     'porcentaje_credito',
-    #     'total' 
-    # )
-    
-    return list(queryVentaPorCreditoContable)
-
 def consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final):
     print(f"Consulta de ventas por cliente desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}")
-
-def consultaVentarPorFamiliaEnKilos(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final):
-    print(f"Consulta de ventas por familia en kilos desde {fecha_inicial} hasta {fecha_final}, producto inicial: {producto_inicial} y producto final: {producto_final}, sucursal inicial: {sucursal_inicial} y sucursal final: {sucursal_final}, familia inicial: {familia_inicial} y familia final: {familia_final}")
-    
+ 
 def consultaCierreDeMes(fecha_inicial, fecha_final, sucursal):
     print(f"Consulta de cierre de mes desde {fecha_inicial} hasta {fecha_final}, sucursal: {sucursal}")
 
     with connection.cursor() as cursor:
         query = """
+            -- Selección de columnas con alias para mejorar la legibilidad
             SELECT 
-                KDM1.C1 AS sucursal, 
-                KDM1.C2 AS genero, 
-                KDM1.C3 AS naturaleza, 
-                KDM1.C4 AS grupo_movimiento, 
-                KDM1.C5 AS numero_tipo_documento, 
-                KDMM.C5 AS detalles_tipo_documento,
+                KDM1.C1 AS sucursal,            -- Código de la sucursal
+                KDM1.C2 AS genero,              -- Género o categoría del movimiento
+                KDM1.C3 AS naturaleza,          -- Naturaleza del movimiento
+                KDM1.C4 AS grupo_movimiento,    -- Grupo al que pertenece el movimiento
+                KDM1.C5 AS numero_tipo_documento,  -- Número del tipo de documento
+                KDMM.C5 AS detalles_tipo_documento, -- Detalles relacionados con el tipo de documento desde la tabla KDMM
+
+                -- Suma de movimientos de crédito facturados, aplicando condiciones
                 ISNULL(SUM(CASE 
                     WHEN KDM1.C5 IN ('18', '20', '21', '23', '25')  
-                    THEN (KDM1.C16 - KDM1.C15) 
+                    THEN (KDM1.C16 - KDM1.C15) -- Diferencia entre C16 y C15 (ingresos - egresos)
                     ELSE 0 
                 END), 0) AS CREDITO_FAC,
+
+                -- Suma de movimientos de contado facturados
                 ISNULL(SUM(CASE 
                     WHEN KDM1.C5 IN ('19', '22', '24', '26')  
-                    THEN (KDM1.C16 - KDM1.C15) 
+                    THEN (KDM1.C16 - KDM1.C15) -- Diferencia entre C16 y C15 (ingresos - egresos)
                     ELSE 0 
                 END), 0) AS CONTADO_FAC,
+
+                -- Suma de movimientos de crédito remisionados
                 ISNULL(SUM(CASE 
                     WHEN KDM1.C5 IN ('1', '3', '5', '21', '25', '18')  
-                    THEN (KDM1.C16 - KDM1.C15) 
+                    THEN (KDM1.C16 - KDM1.C15) -- Diferencia entre C16 y C15 (ingresos - egresos)
                     ELSE 0 
                 END), 0) AS CREDITO_REM,
+
+                -- Suma de movimientos de contado remisionados
                 ISNULL(SUM(CASE 
                     WHEN KDM1.C5 IN ('2', '4', '6', '22', '26', '19')  
-                    THEN (KDM1.C16 - KDM1.C15) 
+                    THEN (KDM1.C16 - KDM1.C15) -- Diferencia entre C16 y C15 (ingresos - egresos)
                     ELSE 0 
                 END), 0) AS CONTADO_REM
+
+            -- Desde la tabla KDM1 (principal)    
             FROM dbo.KDM1
+
+            -- Unión completa (FULL JOIN) con KDUD usando C10 de KDM1 y C2 de KDUD
             FULL JOIN dbo.KDUD 
                 ON KDM1.C10 = KDUD.C2
+
+            -- Unión completa con KDMM, haciendo coincidir múltiples columnas de ambas tablas
             FULL JOIN dbo.KDMM 
-                ON KDM1.C2 = KDMM.C1 
-                AND KDM1.C3 = KDMM.C2 
-                AND KDM1.C4 = KDMM.C3 
-                AND KDM1.C5 = KDMM.C4
-            WHERE KDM1.C9 >= %s
-            AND KDM1.C9 <= %s
-            AND KDM1.C1 = %s
-            AND KDM1.C43 <> 'C'
-            AND KDM1.C12 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
-            AND KDM1.C2 = 'U' 
-            AND KDM1.C3 = 'D'
-            AND KDM1.C4 IN ('5','45')
-            AND KDM1.C5 IN ('1','2','3','4','5','6','18','19','20','21','22','23','24','25','26')
+                ON KDM1.C2 = KDMM.C1  -- Empareja C2 de KDM1 con C1 de KDMM
+                AND KDM1.C3 = KDMM.C2 -- Empareja C3 de KDM1 con C2 de KDMM
+                AND KDM1.C4 = KDMM.C3 -- Empareja C4 de KDM1 con C3 de KDMM
+                AND KDM1.C5 = KDMM.C4 -- Empareja C5 de KDM1 con C4 de KDMM
+
+            -- Condiciones de filtrado para restringir los resultados
+            WHERE 
+                KDM1.C9 >= %s   -- Rango de fechas (inicio)
+                AND KDM1.C9 <= %s   -- Rango de fechas (fin)
+                AND KDM1.C1 = %s    -- Filtro por sucursal (pasada como parámetro)
+                AND KDM1.C43 <> 'C' -- Excluye registros donde C43 tiene el valor 'C'
+                AND KDM1.C12 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913',
+                                    '914','915','916','917','918','919','920','921','922','923','924') -- Excluye ciertos códigos de C12
+                AND KDM1.C2 = 'U'   -- Filtra por género 'U'
+                AND KDM1.C3 = 'D'   -- Filtra por naturaleza 'D'
+                AND KDM1.C4 IN ('5', '45')  -- Filtra por grupo de movimiento en un conjunto dado
+                AND KDM1.C5 IN ('1','2','3','4','5','6','18','19','20','21','22','23','24','25','26') -- Filtra por tipos de documento específicos
+
+            -- Agrupa los resultados por estas columnas
             GROUP BY 
-                KDM1.C1, 
-                KDM1.C2, 
-                KDM1.C3, 
-                KDM1.C4, 
-                KDM1.C5, 
-                KDMM.C5
+                KDM1.C1,  -- Sucursal
+                KDM1.C2,  -- Género
+                KDM1.C3,  -- Naturaleza
+                KDM1.C4,  -- Grupo de movimiento
+                KDM1.C5,  -- Número de tipo de documento
+                KDMM.C5   -- Detalles del tipo de documento
+
+            -- Ordena el resultado final por grupo de movimiento y número de tipo de documento
             ORDER BY 
-                KDM1.C4, 
-                KDM1.C5;
+                KDM1.C4,  -- Grupo de movimiento
+                KDM1.C5;  -- Número de tipo de documento
+
         """
 
         # Ejecutamos la consulta
@@ -378,4 +307,134 @@ def consultaCierreDeMes(fecha_inicial, fecha_final, sucursal):
                 if isinstance(value, Decimal):
                     row[key] = float(value)
 
+    return result
+
+def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final):
+    print(f"Consulta de ventas por producto desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}, sucursal inicial: {sucursal_inicial} y sucursal final: {sucursal_final}, familia inicial: {familia_inicial} y familia final: {familia_final}")
+
+    with connection.cursor() as cursor:
+        # Construcción dinámica de la consulta SQL
+        query = """
+            SELECT 
+                dbo.KDII.C1 AS clave_producto,
+                dbo.KDII.C2 AS producto,
+                SUM(dbo.KDIJ.C11) AS cantidad,
+                dbo.KDII.C11 AS tipo_unidad,
+                SUM(dbo.KDIJ.C11 * dbo.KDII.C13) AS kgslts,
+                dbo.KDII.C12 AS unidad_medida,
+                SUM(dbo.KDIJ.C14) AS VENTA,
+                SUM(dbo.KDIJ.C14) / SUM(dbo.KDIJ.C11 * dbo.KDII.C13) AS KG,
+                SUM(dbo.KDIJ.C14) / SUM(dbo.KDIJ.C11) AS unidad_vendida
+            FROM dbo.KDIJ
+            INNER JOIN dbo.KDII ON dbo.KDIJ.C3 = dbo.KDII.C1
+            INNER JOIN dbo.KDIF ON dbo.KDII.C5 = dbo.KDIF.C1
+            INNER JOIN dbo.KDUD ON dbo.KDIJ.C15 = dbo.KDUD.C2
+        """
+        
+        # Condicional para la tabla KDUV
+        if sucursal_inicial == '02' and sucursal_final == '02':
+            query += "INNER JOIN dbo.KDUV ON dbo.KDIJ.C16 = dbo.KDUV.C2 "
+
+        query += """
+            WHERE dbo.KDIF.C1 >= %s -- Familia Inicial
+            AND dbo.KDIF.C1 <= %s -- Familia Final
+            AND dbo.KDII.C1 >= %s -- Producto Inicial
+            AND dbo.KDII.C1 <= %s -- Producto Final
+            AND dbo.KDIJ.C1 >= %s -- Sucursal Inicial
+            AND dbo.KDIJ.C1 <= %s -- Sucursal Final
+            AND dbo.KDIJ.C10 >= %s -- Fecha Inicial
+            AND dbo.KDIJ.C10 <= %s -- Fecha Final
+            AND dbo.KDUD.C2 >= %s -- Cliente Inicial
+            AND dbo.KDUD.C2 <= %s -- Cliente Final
+            AND dbo.KDIJ.C16 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
+            AND dbo.KDIJ.C4 = 'U'
+            AND dbo.KDIJ.C5 = 'D'
+            AND dbo.KDIJ.C6 IN ('5','45')
+            AND dbo.KDIJ.C7 IN ('1','2','3','4','5','6','18','19','21','22','25','26','71','72','73','74','75','76','77','78','79','80','81','82','83','84','85','86','87','88','89','90','91','92','93','94','95','96','97')
+        """
+
+        # Condicional para la zona si aplica
+        if sucursal_inicial == '02' and sucursal_final == '02':
+            query += "AND dbo.KDUV.C22 IN (%s) "
+
+        query += """
+            GROUP BY dbo.KDII.C1, dbo.KDII.C2, dbo.KDII.C11, dbo.KDII.C12
+            ORDER BY dbo.KDII.C1;
+        """
+
+        # Parámetros para la consulta
+        params = [
+            familia_inicial, familia_final, producto_inicial, producto_final, 
+            sucursal_inicial, sucursal_final, fecha_inicial, fecha_final, 
+            cliente_inicial, cliente_final
+        ]
+
+        # Ejecutar la consulta
+        cursor.execute(query, params)
+
+        # Obtener los resultados
+        columns = [col[0] for col in cursor.description]
+        result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        
+        for row in result:
+            for key, value in row.items():
+                if isinstance(value, Decimal):
+                    row[key] = float(value)
+    
+    return result
+
+def consultaVentasPorFamiliaKgConRefacturacion(fecha_inicial, fecha_final, producto_inicial, producto_final, familia_inicial, familia_final, sucursal):
+    print(f"Consulta de ventas por familia en kilos con refacturación desde {fecha_inicial} hasta {fecha_final}, producto inicial: {producto_inicial} y producto final: {producto_final}, familia inicial: {familia_inicial} y familia final: {familia_final}, sucursal: {sucursal}")
+    
+    # Si la sucursal es 'ALL', ajustamos el rango de sucursal
+    if sucursal == "ALL":
+        sucursal_inicial = '01'
+        sucursal_final = '20'
+    else:
+        sucursal_inicial = sucursal
+        sucursal_final = sucursal
+
+    with connection.cursor() as cursor:
+        query = """ 
+            SELECT 
+                dbo.KDIF.C1 AS familia, 
+                dbo.KDIF.C2 AS descripcion_familia,  
+                SUM(dbo.KDIJ.C11) AS unidad, 
+                SUM(dbo.KDIJ.C11 * dbo.KDII.C13) AS kg, 
+                SUM(dbo.KDIJ.C14) AS ventas
+            FROM dbo.KDIJ
+            INNER JOIN dbo.KDII ON dbo.KDIJ.C3 = dbo.KDII.C1
+            INNER JOIN dbo.KDIF ON dbo.KDII.C5 = dbo.KDIF.C1
+            INNER JOIN dbo.KDUV ON dbo.KDIJ.C16 = dbo.KDUV.C2
+            WHERE dbo.KDIF.C1 >= %s -- Familia inicial
+            AND dbo.KDIF.C1 <= %s -- Familia final
+            AND dbo.KDII.C1 >= %s -- Producto inicial
+            AND dbo.KDII.C1 <= %s -- Producto final
+            AND dbo.KDIJ.C1 >= %s -- Sucursal inicial
+            AND dbo.KDIJ.C1 <= %s -- Sucursal final
+            AND dbo.KDIJ.C10 >= %s -- Fecha inicial
+            AND dbo.KDIJ.C10 <= %s -- Fecha final
+            AND dbo.KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
+            AND dbo.KDIJ.C4 = 'U'
+            AND dbo.KDIJ.C5 = 'D'
+            AND dbo.KDIJ.C6 IN ('5', '45')
+            AND dbo.KDIJ.C7 IN ('1','2','3','4','5','6','18','19','21','22','25','26','71','72','73','74','75','76','77','78','79','80','81','82','83','84','85','86','87','88','89','90','91','92','93','94','95','96','97')
+            GROUP BY dbo.KDIF.C1, dbo.KDIF.C2
+            ORDER BY dbo.KDIF.C1
+        """
+        
+        params = [
+            familia_inicial, familia_final, producto_inicial, producto_final,
+            sucursal_inicial, sucursal_final, fecha_inicial, fecha_final
+        ]
+
+        cursor.execute(query, params)
+        columns = [col[0] for col in cursor.description]
+        result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        
+        for row in result:
+            for key, value in row.items():
+                if isinstance(value, Decimal):
+                    row[key] = float(value)
+    
     return result

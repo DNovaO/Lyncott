@@ -46,17 +46,25 @@ def handle_producto(request, data_type):
 
 def handle_sucursal(request, data_type):
     sucursales = Kdms.objects.values('clave_sucursal', 'descripcion').distinct().order_by('clave_sucursal')
-    sucursales_paginados = objPaginator(request, sucursales, data_type)
+    
+    # Convertimos el queryset en una lista y añadimos la opción 'Todas'
+    sucursales_list = list(sucursales)
+    sucursales_list.insert(0, {'clave_sucursal': 'ALL', 'descripcion': 'Todas'})  # Insertar en el índice 0
+
+    # Paginación si es necesario
+    sucursales_paginados = objPaginator(request, sucursales_list, data_type)
     
     response_data = {
         'data_type': data_type,
-        'sucursales': list(sucursales),
-        # 'sucursalesPaginados': sucursales_paginados ,
+        'sucursales': sucursales_list,  # Enviamos la lista con la opción 'Todas'
+        # 'sucursalesPaginados': sucursales_paginados,
     }
-    
+
     response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
     response['Content-Encoding'] = 'gzip'
-    return response 
+    
+    return response
+
     
 def handle_vendedor(request, data_type):
     vendedores = Kduv.objects.values('clave_vendedor','nombre_vendedor').distinct().order_by('clave_vendedor')
@@ -165,6 +173,9 @@ def handle_status(request, data_type):
 def handle_zona(request, data_type):
 
     zonas = [
+        {
+            'zona': 'Autoservicio',
+        },
         {
             'zona': 'CENTRO',
             'sucursales': [
