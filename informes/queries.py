@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When, Window, DecimalField, Q
 from django.db.models.functions import Concat, Round, RowNumber, LTrim, RTrim, Coalesce
 from django.db.models.expressions import CombinedExpression
@@ -13,7 +13,7 @@ def clasificarParametros(parametrosSeleccionados, tipo_reporte):
         if isinstance(value, list) and len(value) > 0 and isinstance(value[0], dict):
             for item in value:
                 key_value = item[list(item.keys())[0]].strip()
-                if key in ('fecha_inicial', 'fecha_final', 'cliente_inicial', 'cliente_final', 'producto_inicial', 'producto_final', 'sucursal', 'sucursal_inicial', 'sucursal_final', 'vendedor_inicial', 'vendedor_final', 'linea_inicial', 'linea_final', 'familia', 'familia_inicial', 'familia_final', 'marca_inicial', 'marca_final', 'grupoCorporativo', 'grupoCorporativo_inicial', 'grupoCorporativo_final', 'segmento_inicial', 'segmento_final', 'status', 'zona', 'grupo', 'region'):
+                if key in ('fecha_inicial', 'fecha_final', 'cliente_inicial', 'cliente_final', 'producto_inicial', 'producto_final', 'sucursal', 'sucursal_inicial', 'sucursal_final', 'vendedor_inicial', 'vendedor_final', 'linea_inicial', 'linea_final', 'familia', 'familia_inicial', 'familia_final', 'marca_inicial', 'marca_final', 'grupoCorporativo', 'grupoCorporativo_inicial', 'grupoCorporativo_final', 'segmento_inicial', 'segmento_final', 'status', 'zona', 'grupo', 'region', 'year'):
                     filtros[key] = key_value
         else:
             if isinstance(value, list) and len(value) > 0:
@@ -53,6 +53,7 @@ def ejecutarConsulta(filtros, tipo_reporte):
     zona = filtros.get('zona')
     grupo = filtros.get('grupo')
     region = filtros.get('region')
+    year = filtros.get('year')
 
     fecha_inicial = parse_date(fecha_inicial_str)
     fecha_final = parse_date(fecha_final_str)
@@ -63,7 +64,7 @@ def ejecutarConsulta(filtros, tipo_reporte):
         resultados.extend(consultaVentasPorProductoConRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
     
     elif tipo_reporte == "Por Tipo de Cliente (con Refacturación)":
-        resultados.extend(consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
+        resultados.extend(consultaVentaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
     
     elif tipo_reporte == "Credito Contable (con Refacturación)":
         resultados.extend(consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final))
@@ -79,6 +80,16 @@ def ejecutarConsulta(filtros, tipo_reporte):
     
     elif tipo_reporte == "Por Familia en Kilos (con Refacturación)":
         resultados.extend(consultaVentasPorFamiliaKgConRefacturacion(fecha_inicial, fecha_final, producto_inicial, producto_final, familia_inicial, familia_final, sucursal))
+    
+    elif tipo_reporte == "Comparativa de Ventas y Presupuesto por Zonas en Pesos":
+        resultados.extend(consultaPresupuestoVsVentas(sucursal, year))
+        
+    elif tipo_reporte == "Trazabilidad por Producto":
+        resultados.extend(consultaTrazabilidadPorProducto(fecha_inicial, fecha_final, producto_inicial, producto_final, status, sucursal))
+        
+    elif tipo_reporte == "Ventas en General (Pesos Sin Refacturación)":
+        resultados.extend(consultaVentasEnGeneral(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
+
     
     return resultados
     
@@ -200,13 +211,7 @@ def consultaClientesPorGrupo(grupoCorporativo_inicial, grupoCorporativo_final):
     )
     
     return list(queryClientesporGrupo)
-    
-def consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final):
-    print(f"Consulta de ventas por crédito contable desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial}, cliente final: {cliente_final}")
 
-def consultaVentarPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final):
-    print(f"Consulta de ventas por cliente desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}")
- 
 def consultaCierreDeMes(fecha_inicial, fecha_final, sucursal):
     print(f"Consulta de cierre de mes desde {fecha_inicial} hasta {fecha_final}, sucursal: {sucursal}")
 
@@ -403,22 +408,22 @@ def consultaVentasPorFamiliaKgConRefacturacion(fecha_inicial, fecha_final, produ
                 SUM(dbo.KDIJ.C11 * dbo.KDII.C13) AS kg, 
                 SUM(dbo.KDIJ.C14) AS ventas
             FROM dbo.KDIJ
-            INNER JOIN dbo.KDII ON dbo.KDIJ.C3 = dbo.KDII.C1
-            INNER JOIN dbo.KDIF ON dbo.KDII.C5 = dbo.KDIF.C1
-            INNER JOIN dbo.KDUV ON dbo.KDIJ.C16 = dbo.KDUV.C2
+                INNER JOIN dbo.KDII ON dbo.KDIJ.C3 = dbo.KDII.C1
+                INNER JOIN dbo.KDIF ON dbo.KDII.C5 = dbo.KDIF.C1
+                INNER JOIN dbo.KDUV ON dbo.KDIJ.C16 = dbo.KDUV.C2
             WHERE dbo.KDIF.C1 >= %s -- Familia inicial
-            AND dbo.KDIF.C1 <= %s -- Familia final
-            AND dbo.KDII.C1 >= %s -- Producto inicial
-            AND dbo.KDII.C1 <= %s -- Producto final
-            AND dbo.KDIJ.C1 >= %s -- Sucursal inicial
-            AND dbo.KDIJ.C1 <= %s -- Sucursal final
-            AND dbo.KDIJ.C10 >= %s -- Fecha inicial
-            AND dbo.KDIJ.C10 <= %s -- Fecha final
-            AND dbo.KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
-            AND dbo.KDIJ.C4 = 'U'
-            AND dbo.KDIJ.C5 = 'D'
-            AND dbo.KDIJ.C6 IN ('5', '45')
-            AND dbo.KDIJ.C7 IN ('1','2','3','4','5','6','18','19','21','22','25','26','71','72','73','74','75','76','77','78','79','80','81','82','83','84','85','86','87','88','89','90','91','92','93','94','95','96','97')
+                AND dbo.KDIF.C1 <= %s -- Familia final
+                AND dbo.KDII.C1 >= %s -- Producto inicial
+                AND dbo.KDII.C1 <= %s -- Producto final
+                AND dbo.KDIJ.C1 >= %s -- Sucursal inicial
+                AND dbo.KDIJ.C1 <= %s -- Sucursal final
+                AND dbo.KDIJ.C10 >= %s -- Fecha inicial
+                AND dbo.KDIJ.C10 <= %s -- Fecha final
+                AND dbo.KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
+                AND dbo.KDIJ.C4 = 'U'
+                AND dbo.KDIJ.C5 = 'D'
+                AND dbo.KDIJ.C6 IN ('5', '45')
+                AND dbo.KDIJ.C7 IN ('1','2','3','4','5','6','18','19','21','22','25','26','71','72','73','74','75','76','77','78','79','80','81','82','83','84','85','86','87','88','89','90','91','92','93','94','95','96','97')
             GROUP BY dbo.KDIF.C1, dbo.KDIF.C2
             ORDER BY dbo.KDIF.C1
         """
@@ -437,4 +442,305 @@ def consultaVentasPorFamiliaKgConRefacturacion(fecha_inicial, fecha_final, produ
                 if isinstance(value, Decimal):
                     row[key] = float(value)
     
+    return result
+
+    
+def consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final):
+    print(f"Consulta de ventas por crédito contable desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial}, cliente final: {cliente_final}")
+
+def consultaVentaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final):
+    print(f"Consulta de ventas por cliente desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}")
+
+def consultaPresupuestoVsVentas(sucursal, year):
+    print(f"Consulta de ventas por sucursal: {sucursal} y el año {year}")
+
+    with connection.cursor() as cursor:
+        query = """
+            SELECT
+                kdv.C1 AS "clave_sucursal",
+                kdms.C2 AS "sucursal",
+                kdv.C2 AS "moneda",
+                CASE
+                    WHEN kdv.C1 = '02' THEN 
+                        CASE
+                            WHEN kdv.C4 = 1 THEN 'Autoservicio'
+                            WHEN kdv.C4 = 2 THEN 'FoodService Norte'
+                            WHEN kdv.C4 = 3 THEN 'FoodService Sur'
+                            WHEN kdv.C4 = 4 THEN 'Ventas Especiales'
+                            WHEN kdv.C4 = 5 THEN 'Cadenas'
+                            WHEN kdv.C4 = 6 THEN 'Centro'
+                            ELSE 'Sin asignar a Vallejo'
+                        END
+                    WHEN kdv.C1 IN ('17', '04', '15', '16') THEN '2 - Norte'
+                    WHEN kdv.C1 IN ('05', '10', '19', '08') THEN '3 - Centro'
+                    WHEN kdv.C1 IN ('09', '14', '03', '12', '06', '20') THEN '4 - Pacifico'
+                    WHEN kdv.C1 IN ('13', '11', '18', '07') THEN '5 - Sureste'
+                    ELSE 'Sin zona'
+                END AS "zona",
+                FORMAT(
+                    COALESCE(kdv.C5, 0) +
+                    COALESCE(kdv.C6, 0) +
+                    COALESCE(kdv.C7, 0) +
+                    COALESCE(kdv.C8, 0) +
+                    COALESCE(kdv.C9, 0) +
+                    COALESCE(kdv.C10, 0) +
+                    COALESCE(kdv.C11, 0) +
+                    COALESCE(kdv.C12, 0) +
+                    COALESCE(kdv.C13, 0) +
+                    COALESCE(kdv.C14, 0) +
+                    COALESCE(kdv.C15, 0) +
+                    COALESCE(kdv.C16, 0), 'C', 'en_US') AS "presupuesto_total",
+                FORMAT(COALESCE(kdv.C5, 0), 'C', 'en_US') AS "presupuesto_enero",
+                FORMAT(COALESCE(kdv.C6, 0), 'C', 'en_US') AS "presupuesto_febrero",
+                FORMAT(COALESCE(kdv.C7, 0), 'C', 'en_US') AS "presupuesto_marzo",
+                FORMAT(COALESCE(kdv.C8, 0), 'C', 'en_US') AS "presupuesto_abril",
+                FORMAT(COALESCE(kdv.C9, 0), 'C', 'en_US') AS "presupuesto_mayo",
+                FORMAT(COALESCE(kdv.C10, 0), 'C', 'en_US') AS "presupuesto_junio",
+                FORMAT(COALESCE(kdv.C11, 0), 'C', 'en_US') AS "presupuesto_julio",
+                FORMAT(COALESCE(kdv.C12, 0), 'C', 'en_US') AS "presupuesto_agosto",
+                FORMAT(COALESCE(kdv.C13, 0), 'C', 'en_US') AS "presupuesto_septiembre",
+                FORMAT(COALESCE(kdv.C14, 0), 'C', 'en_US') AS "presupuesto_octubre",
+                FORMAT(COALESCE(kdv.C15, 0), 'C', 'en_US') AS "presupuesto_noviembre",
+                FORMAT(COALESCE(kdv.C16, 0), 'C', 'en_US') AS "presupuesto_diciembre"
+            FROM
+                KDVPRESXSUC kdv
+            JOIN
+                KDMS kdms ON kdv.C1 = kdms.C1
+            WHERE
+                kdv.C1 = %s -- CLAVE SUCURSAL 
+                AND kdv.C3 = %s; -- YEAR DE LOS DATOS
+        """
+
+        params = [sucursal, year]
+
+        cursor.execute(query, params)
+        columns = [col[0] for col in cursor.description]
+        result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        for row in result:
+            for key, value in row.items():
+                if isinstance(value, Decimal):
+                    row[key] = float(value)
+
+    return result
+
+#Tabla con formato especial
+def consultaTrazabilidadPorProducto(fecha_inicial, fecha_final, producto_inicial, producto_final, status, sucursal):
+    print(f"Consulta de trazabilidad por producto de: {fecha_inicial} a: {fecha_final}, del producto: {producto_inicial} al {producto_final}, con status {status} y de la sucursal {sucursal}")
+
+    # Si el status es "Todos", entonces buscamos tanto 'A' (Activo) como 'I' (Inactivo)
+    if status == 'Activo':
+        status_filter = "= 'A'"
+    elif status == 'Inactivo':
+        status_filter = "= 'I'"
+    elif status == 'Todos':
+        status_filter = "IN ('A', 'I')"
+        
+    with connection.cursor() as cursor:
+        # Construcción dinámica de la consulta SQL
+        query = f"""
+            SELECT
+                Orden.CLAVE AS clave_producto,
+                Orden.Producto AS producto,
+                CASE 
+                    WHEN Orden.OStatus = 'A' THEN 'Activo'
+                    WHEN Orden.OStatus = 'I' THEN 'Inactivo'
+                    ELSE '-'
+                END AS status,
+                Orden.OOrden AS orden,
+                Orden.OFecha AS orden_fecha,
+                Orden.OFolio AS numero_folio,
+                Orden.OCantidad AS cantidad,
+                Orden.PFecha AS partes_fecha,
+                Parte.Folio AS partes_folio,
+                Termina.Folio AS termina_folio,
+                Termina.Cantidad AS termina_cantidad,
+                Orden.DiferenciaDias AS diferencia_de_dias,
+                Orden.OCantidad - Termina.Cantidad AS diferencia_de_cantidad
+            FROM (
+                SELECT 
+                    KDPORD.C3 AS CLAVE,
+                    KDII.C2 AS Producto,
+                    KDPORD.C2 AS OStatus,
+                    KDPORD.C1 AS OOrden,
+                    FORMAT(KDPORD.C6, 'd', 'en-gb') AS OFecha,
+                    KDPORD.C24 AS OFolio,
+                    KDPORD.C9 AS OCantidad,
+                    FORMAT(KDM1.C9, 'd', 'en-gb') AS PFecha,
+                    DATEDIFF(day, KDPORD.C6, KDM1.C9) AS DiferenciaDias
+                FROM KL2020.dbo.KDPORD 
+                INNER JOIN KL2020.dbo.KDII ON KDPORD.C3 = KDII.C1
+                INNER JOIN KL2020.dbo.KDM1 ON KDPORD.C1 = KDM1.C11
+                WHERE KDPORD.C19 = %s  /*Sucursal*/
+                AND KDPORD.C6 >= %s  /*Fecha inicial*/
+                AND KDPORD.C6 <= %s  /*Fecha final*/
+                AND KDPORD.C3 >= %s  /*Producto inicial*/
+                AND KDPORD.C3 <= %s  /*Producto final*/
+                AND KDPORD.C2 {status_filter}  /*Status (A, I, o ambos)*/
+            ) AS Orden
+            LEFT JOIN (
+                SELECT DISTINCT
+                    KDPORD3.C1 AS OORden,
+                    KDPORD3.C16 AS Folio
+                FROM KL2020.dbo.KDPORD3
+                WHERE C13 = 'D'
+            ) AS Parte ON Orden.OOrden = Parte.OORden
+            LEFT JOIN (
+                SELECT DISTINCT
+                    KDPORD3.C1 AS OORden,
+                    KDPORD3.C16 AS Folio,
+                    KDPORD3.C6 AS Cantidad
+                FROM KL2020.dbo.KDPORD3
+                WHERE C13 = 'A'
+            ) AS Termina ON Orden.OOrden = Termina.OORden
+            ORDER BY Orden.CLAVE
+        """
+
+        params = [sucursal, fecha_inicial, fecha_final, producto_inicial, producto_final]
+        cursor.execute(query, params)
+        columns = [col[0] for col in cursor.description]
+        result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        for row in result:
+            for key, value in row.items():
+                if isinstance(value, Decimal):
+                    row[key] = float(value)
+
+    return result
+
+def consultaVentasEnGeneral(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final):
+    print(f"Consulta de ventas en general desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}")
+    
+    with connection.cursor() as cursor:
+        query = """
+            -- SQL VENTA
+                SELECT 
+                    dbo.KDIJ.C1 AS SUC,
+                    CASE 
+                        WHEN dbo.KDUV.C22 = 1 THEN 'Autoservicio'
+                        WHEN dbo.KDUV.C22 = 2 THEN 'Norte'
+                        WHEN dbo.KDUV.C22 = 3 THEN 'Sur'
+                        WHEN dbo.KDUV.C22 = 4 THEN 'Vent. Especiales'
+                        WHEN dbo.KDUV.C22 = 5 THEN 'Cadenas'
+                        WHEN dbo.KDUV.C22 = 6 THEN 'Centro'
+                        ELSE 'sin asignar a Vallejo'
+                    END AS NOM,
+                    CONCAT('1 - ', dbo.KDMS.C2) AS ZONA,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_ENE,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_FEB,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_MAR,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_ABR,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_MAY,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_JUN,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_JUL,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_AGO,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_SEP,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_OCT,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_NOV,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_DIC
+                FROM 
+                    dbo.KDIJ
+                    INNER JOIN dbo.KDII ON dbo.KDIJ.C3 = dbo.KDII.C1
+                    INNER JOIN dbo.KDUD ON dbo.KDIJ.C15 = dbo.KDUD.C2
+                    INNER JOIN dbo.KDUV ON dbo.KDIJ.C16 = dbo.KDUV.C2
+                    INNER JOIN dbo.KDMS ON KDIJ.C1 = KDMS.C1
+                WHERE 
+                    dbo.KDII.C1 >= %s
+                    AND dbo.KDII.C1 <= %s
+                    AND dbo.KDIJ.C10 >= %s
+                    AND dbo.KDIJ.C10 <= %s
+                    AND dbo.KDIJ.C1 IN ('02')
+                    AND dbo.KDUV.C22 BETWEEN '1' AND '6'
+                    AND dbo.KDUD.C2 BETWEEN %s AND %s
+                    AND dbo.KDIJ.C16 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
+                    AND dbo.KDIJ.C4 = 'U'
+                    AND dbo.KDIJ.C5 = 'D'
+                    AND dbo.KDIJ.C6 IN ('5','45')
+                GROUP BY 
+                    dbo.KDIJ.C1,
+                    dbo.KDUV.C22,
+                    dbo.KDMS.C2
+
+                UNION
+
+                SELECT 
+                    dbo.KDIJ.C1 AS SUC, 
+                    dbo.KDMS.C2 AS NOM,
+                    CASE 
+                        WHEN dbo.KDIJ.C1 IN ('04','15','16','17') THEN '2 - Norte'
+                        WHEN dbo.KDIJ.C1 IN ('05','08','10','19') THEN '4 - Centro'
+                        WHEN dbo.KDIJ.C1 IN ('03','09','12','14','06','20') THEN '3 - Pacifico'
+                        WHEN dbo.KDIJ.C1 IN ('07','11','13','18') THEN '5 - Sureste'
+                        ELSE 'Sin zona'
+                    END AS ZONA,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_ENE,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_FEB,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_MAR,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_ABR,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_MAY,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_JUN,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_JUL,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_AGO,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_SEP,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_OCT,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_NOV,
+                    SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_DIC
+                FROM 
+                    dbo.KDIJ
+                    INNER JOIN dbo.KDII ON dbo.KDIJ.C3 = dbo.KDII.C1
+                    INNER JOIN dbo.KDUD ON dbo.KDIJ.C15 = dbo.KDUD.C2
+                    INNER JOIN dbo.KDMS ON KDIJ.C1 = KDMS.C1
+                WHERE 
+                    dbo.KDII.C1 >= %s
+                    AND dbo.KDII.C1 <= %s
+                    AND dbo.KDIJ.C10 >= %s
+                    AND dbo.KDIJ.C10 <= %s
+                    AND dbo.KDIJ.C1 IN ('03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20')
+                    AND dbo.KDUD.C2 BETWEEN %s AND %s
+                    AND dbo.KDIJ.C16 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
+                    AND dbo.KDIJ.C4 = 'U'
+                    AND dbo.KDIJ.C5 = 'D'
+                    AND dbo.KDIJ.C6 IN ('5','45')
+                GROUP BY 
+                    dbo.KDIJ.C1,
+                    dbo.KDMS.C2
+
+                ORDER BY 
+                    3, 1;
+        """
+
+        # Lista de parámetros para la consulta SQL
+        params = [
+            # Parámetros de fechas (12 pares para los meses y 6 pares adicionales para el UNION)
+            fecha_inicial.replace(day=1), fecha_inicial.replace(day=31),  # Enero
+            fecha_inicial.replace(day=1) + timedelta(days=31), fecha_inicial.replace(day=31) + timedelta(days=31),  # Febrero
+            fecha_inicial.replace(day=1) + timedelta(days=62), fecha_inicial.replace(day=31) + timedelta(days=62),  # Marzo
+            fecha_inicial.replace(day=1) + timedelta(days=93), fecha_inicial.replace(day=31) + timedelta(days=93),  # Abril
+            fecha_inicial.replace(day=1) + timedelta(days=124), fecha_inicial.replace(day=31) + timedelta(days=124),  # Mayo
+            fecha_inicial.replace(day=1) + timedelta(days=155), fecha_inicial.replace(day=31) + timedelta(days=155),  # Junio
+            fecha_inicial.replace(day=1) + timedelta(days=186), fecha_inicial.replace(day=31) + timedelta(days=186),  # Julio
+            fecha_inicial.replace(day=1) + timedelta(days=217), fecha_inicial.replace(day=31) + timedelta(days=217),  # Agosto
+            fecha_inicial.replace(day=1) + timedelta(days=248), fecha_inicial.replace(day=31) + timedelta(days=248),  # Septiembre
+            fecha_inicial.replace(day=1) + timedelta(days=279), fecha_inicial.replace(day=31) + timedelta(days=279),  # Octubre
+            fecha_inicial.replace(day=1) + timedelta(days=310), fecha_inicial.replace(day=31) + timedelta(days=310),  # Noviembre
+            fecha_inicial.replace(day=1) + timedelta(days=341), fecha_inicial.replace(day=31) + timedelta(days=341),  # Diciembre
+
+            # Parámetros de cliente, producto, y rango de fechas
+            cliente_inicial, cliente_final,
+            fecha_inicial, fecha_final,
+            producto_inicial, producto_final
+        ]
+
+        for param in params:
+            print('El parametro es: ', param, type(param))
+
+        cursor.execute(query, params)
+        columns = [col[0] for col in cursor.description]
+        result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        for row in result:
+            for key, value in row.items():
+                if isinstance(value, Decimal):
+                    row[key] = float(value)
+
     return result

@@ -35,4 +35,5 @@ export const handlers = {
     'status': (data, dataType) => handleData(data, 'estatus', dataType),
     'zona': (data, dataType) => handleData(data, 'zonas', dataType),
     'region': (data, dataType) => handleData(data, 'regiones', dataType),
+    'year':(data, dataType) => handleData(data, 'years', dataType),
 };

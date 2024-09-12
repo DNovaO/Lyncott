@@ -25,7 +25,9 @@ export function formatNumber(value, isCurrency = false, key = '') {
     // Lista de claves que no deben ser formateadas
     const keysToExcludeFromFormatting = ['clave_producto', 'descripcion_producto', 'producto','sucursal', 
                                             'clave', 'clave_sucursal', 'numero_tipo_documento', 'grupo_movimiento',
-                                            'detalles_tipo_documento'];
+                                            'detalles_tipo_documento', 'almacen_correspondiente', 'moneda','zona',
+                                            'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
+                                            'termina_folio'];
 
     // Si la clave está en la lista de exclusión, devolver el valor sin cambios
     if (keysToExcludeFromFormatting.includes(key)) {

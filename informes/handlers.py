@@ -79,6 +79,7 @@ def handle_vendedor(request, data_type):
     response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
     response['Content-Encoding'] = 'gzip'
     return response
+
 def handle_linea(request, data_type):
     lineas = Kdig.objects.values('clave_linea','descripcion_linea').distinct().order_by('clave_linea')
     lineas_paginados = objPaginator(request, lineas, data_type)
@@ -158,6 +159,9 @@ def handle_status(request, data_type):
     # Transformar los valores de estatus
     estatus_transformed = [{'estatus': status_map.get(item['estatus'], item['estatus'])} for item in estatus]
     
+    # Añadir el valor "Todos" al inicio de la lista
+    estatus_transformed.insert(0, {'estatus': 'Todos'})
+    
     estatus_paginados = objPaginator(request, estatus_transformed, data_type)
     
     response_data = {
@@ -169,6 +173,7 @@ def handle_status(request, data_type):
     response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
     response['Content-Encoding'] = 'gzip'
     return response
+
 
 def handle_zona(request, data_type):
 
@@ -277,6 +282,22 @@ def handle_resultado(request, data_type):
     response['Content-Encoding'] = 'gzip'
     return response
 
+def handle_year(request, data_type):
+    
+    year = Kdvpresxsuc.objects.values('year').distinct().order_by('year')
+
+    response_data = {
+        'data_type': data_type,
+        'years':list(year),
+        # 'regionesPaginados': regiones_paginados,
+    }
+    
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
+
+
+
 def objPaginator(request, obj_to_paginate, data_type):
     
     if data_type == 'resultado':
@@ -331,4 +352,5 @@ data_type_handlers = {
     'familia': handle_familia,
     'region': handle_region,
     'resultado': handle_resultado,
+    'year': handle_year,
 }

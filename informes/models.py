@@ -792,3 +792,25 @@ class Kdpord(models.Model):
     class Meta:
         managed = False
         db_table = 'KDPORD'
+
+class Kdvpresxsuc(models.Model):    
+    clave_sucursal = models.CharField(db_column='C1', primary_key=True, max_length=7, db_collation='Traditional_Spanish_CI_AS')  # Field name made lowercase. The composite primary key (C1, C2, C3, C4) found, that is not supported. The first column is selected.
+    moneda = models.CharField(db_column='C2', max_length=7, db_collation='Traditional_Spanish_CI_AS')  # Field name made lowercase.
+    year = models.CharField(db_column='C3', max_length=4, db_collation='Traditional_Spanish_CI_AS')  # Field name made lowercase.
+    zona = models.CharField(db_column='C4', max_length=7, db_collation='Traditional_Spanish_CI_AS')  # Field name made lowercase.
+    presupuesto_ventas1 = models.DecimalField(db_column='C5', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas2 = models.DecimalField(db_column='C6', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas3 = models.DecimalField(db_column='C7', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas4 = models.DecimalField(db_column='C8', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas5 = models.DecimalField(db_column='C9', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas6 = models.DecimalField(db_column='C10', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas7 = models.DecimalField(db_column='C11', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas8 = models.DecimalField(db_column='C12', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas9 = models.DecimalField(db_column='C13', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas10 = models.DecimalField(db_column='C14', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas11 = models.DecimalField(db_column='C15', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    presupuesto_ventas12 = models.DecimalField(db_column='C16', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'KDVPRESXSUC'
