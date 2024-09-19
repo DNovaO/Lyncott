@@ -621,99 +621,96 @@ def consultaVentasEnGeneral(fecha_inicial, fecha_final, cliente_inicial, cliente
 
     with connection.cursor() as cursor:
         query = """
-            SELECT 
-                dbo.KDIJ.C1 AS SUC,
+           SELECT 
+                KDIJ.C1 AS sucursal,
                 CASE 
-                    WHEN dbo.KDUV.C22 = 1 THEN 'Autoservicio'
-                    WHEN dbo.KDUV.C22 = 2 THEN 'Norte'
-                    WHEN dbo.KDUV.C22 = 3 THEN 'Sur'
-                    WHEN dbo.KDUV.C22 = 4 THEN 'Vent. Especiales'
-                    WHEN dbo.KDUV.C22 = 5 THEN 'Cadenas'
-                    WHEN dbo.KDUV.C22 = 6 THEN 'Centro'
+                    WHEN KDUV.C22 = 1 THEN 'Autoservicio'
+                    WHEN KDUV.C22 = 2 THEN 'Norte'
+                    WHEN KDUV.C22 = 3 THEN 'Sur'
+                    WHEN KDUV.C22 = 4 THEN 'Vent. Especiales'
+                    WHEN KDUV.C22 = 5 THEN 'Cadenas'
+                    WHEN KDUV.C22 = 6 THEN 'Centro'
                     ELSE 'sin asignar a Vallejo'
-                END AS NOM,
-                CONCAT('1 - ', dbo.KDMS.C2) AS ZONA,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_ENE,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_FEB,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_MAR,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_ABR,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_MAY,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_JUN,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_JUL,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_AGO,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_SEP,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_OCT,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_NOV,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_DIC
+                END AS nombre,
+                CONCAT('1 - ', KDMS.C2) AS zona,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_ENE,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_FEB,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_MAR,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_ABR,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_MAY,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_JUN,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_JUL,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_AGO,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_SEP,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_OCT,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_NOV,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_DIC
             FROM 
-                dbo.KDIJ
-                INNER JOIN dbo.KDII ON dbo.KDIJ.C3 = dbo.KDII.C1
-                INNER JOIN dbo.KDUD ON dbo.KDIJ.C15 = dbo.KDUD.C2
-                INNER JOIN dbo.KDUV ON dbo.KDIJ.C16 = dbo.KDUV.C2
-                INNER JOIN dbo.KDMS ON KDIJ.C1 = KDMS.C1
+                KDIJ
+                INNER JOIN KDII ON KDIJ.C3 = KDII.C1
+                INNER JOIN KDUD ON KDIJ.C15 = KDUD.C2
+                INNER JOIN KDUV ON KDIJ.C16 = KDUV.C2
+                INNER JOIN KDMS ON KDIJ.C1 = KDMS.C1
             WHERE 
-                dbo.KDII.C1 >= %s
-                AND dbo.KDII.C1 <= %s
-                AND dbo.KDIJ.C10 >= %s
-                AND dbo.KDIJ.C10 <= %s
-                AND dbo.KDIJ.C1 IN ('02')
-                AND dbo.KDUV.C22 BETWEEN '1' AND '6'
-                AND dbo.KDUD.C2 BETWEEN %s AND %s
-                AND dbo.KDIJ.C16 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
-                AND dbo.KDIJ.C4 = 'U'
-                AND dbo.KDIJ.C5 = 'D'
-                AND dbo.KDIJ.C6 IN ('5','45')
+                KDII.C1 BETWEEN %s AND %s
+                AND KDIJ.C10 BETWEEN %s AND %s
+                AND KDIJ.C1 = '02'
+                AND KDUV.C22 BETWEEN '1' AND '6'
+                AND KDUD.C2 BETWEEN %s AND %s
+                AND KDIJ.C16 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
+                AND KDIJ.C4 = 'U'
+                AND KDIJ.C5 = 'D'
+                AND KDIJ.C6 IN ('5','45')
             GROUP BY 
-                dbo.KDIJ.C1,
-                dbo.KDUV.C22,
-                dbo.KDMS.C2
+                KDIJ.C1,
+                KDUV.C22,
+                KDMS.C2
 
             UNION
 
             SELECT 
-                dbo.KDIJ.C1 AS SUC, 
-                dbo.KDMS.C2 AS NOM,
+                KDIJ.C1 AS sucursal, 
+                KDMS.C2 AS nombre,
                 CASE 
-                    WHEN dbo.KDIJ.C1 IN ('04','15','16','17') THEN '2 - Norte'
-                    WHEN dbo.KDIJ.C1 IN ('05','08','10','19') THEN '4 - Centro'
-                    WHEN dbo.KDIJ.C1 IN ('03','09','12','14','06','20') THEN '3 - Pacifico'
-                    WHEN dbo.KDIJ.C1 IN ('07','11','13','18') THEN '5 - Sureste'
+                    WHEN KDIJ.C1 IN ('04','15','16','17') THEN '2 - Norte'
+                    WHEN KDIJ.C1 IN ('05','08','10','19') THEN '4 - Centro'
+                    WHEN KDIJ.C1 IN ('03','09','12','14','06','20') THEN '3 - Pacifico'
+                    WHEN KDIJ.C1 IN ('07','11','13','18') THEN '5 - Sureste'
                     ELSE 'Sin zona'
-                END AS ZONA,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_ENE,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_FEB,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_MAR,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_ABR,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_MAY,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_JUN,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_JUL,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_AGO,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_SEP,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_OCT,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_NOV,
-                SUM(CASE WHEN dbo.KDIJ.C10 >= %s AND dbo.KDIJ.C10 <= %s THEN dbo.KDIJ.C14 END) AS VENTA_DIC
+                END AS zona,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_ENE,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_FEB,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_MAR,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_ABR,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_MAY,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_JUN,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_JUL,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_AGO,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_SEP,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_OCT,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_NOV,
+                    SUM(CASE WHEN KDIJ.C10 BETWEEN %s AND %s THEN KDIJ.C14 ELSE 0 END) AS VENTA_DIC
             FROM 
-                dbo.KDIJ
-                INNER JOIN dbo.KDII ON dbo.KDIJ.C3 = dbo.KDII.C1
-                INNER JOIN dbo.KDUD ON dbo.KDIJ.C15 = dbo.KDUD.C2
-                INNER JOIN dbo.KDMS ON KDIJ.C1 = KDMS.C1
+                KDIJ
+                INNER JOIN KDII ON KDIJ.C3 = KDII.C1
+                INNER JOIN KDUD ON KDIJ.C15 = KDUD.C2
+                INNER JOIN KDMS ON KDIJ.C1 = KDMS.C1
             WHERE 
-                dbo.KDII.C1 >= %s
-                AND dbo.KDII.C1 <= %s
-                AND dbo.KDIJ.C10 >= %s
-                AND dbo.KDIJ.C10 <= %s
-                AND dbo.KDIJ.C1 IN ('03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20')
-                AND dbo.KDUD.C2 BETWEEN %s AND %s
-                AND dbo.KDIJ.C16 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
-                AND dbo.KDIJ.C4 = 'U'
-                AND dbo.KDIJ.C5 = 'D'
-                AND dbo.KDIJ.C6 IN ('5','45')
+                KDII.C1 BETWEEN %s AND %s
+                AND KDIJ.C10 BETWEEN %s AND %s
+                AND KDIJ.C1 IN ('03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20')
+                AND KDUD.C2 BETWEEN %s AND %s
+                AND KDIJ.C16 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
+                AND KDIJ.C4 = 'U'
+                AND KDIJ.C5 = 'D'
+                AND KDIJ.C6 IN ('5','45')
             GROUP BY 
-                dbo.KDIJ.C1,
-                dbo.KDMS.C2
+                KDIJ.C1,
+                KDMS.C2
 
             ORDER BY 
                 3, 1;
+
         """
 
         # Lista de parámetros con los rangos de fechas mensuales
@@ -730,9 +727,9 @@ def consultaVentasEnGeneral(fecha_inicial, fecha_final, cliente_inicial, cliente
             rangos_fechas['october_inicial'], rangos_fechas['october_final'],
             rangos_fechas['november_inicial'], rangos_fechas['november_final'],
             rangos_fechas['december_inicial'], rangos_fechas['december_final'],
-            cliente_inicial, cliente_final,
-            fecha_inicial, fecha_final,
             producto_inicial, producto_final,
+            fecha_inicial, fecha_final,
+            cliente_inicial, cliente_final,
 
             rangos_fechas['january_inicial'], rangos_fechas['january_final'],
             rangos_fechas['february_inicial'], rangos_fechas['february_final'],
@@ -746,27 +743,19 @@ def consultaVentasEnGeneral(fecha_inicial, fecha_final, cliente_inicial, cliente
             rangos_fechas['october_inicial'], rangos_fechas['october_final'],
             rangos_fechas['november_inicial'], rangos_fechas['november_final'],
             rangos_fechas['december_inicial'], rangos_fechas['december_final'],
-            cliente_inicial, cliente_final,
+            producto_inicial, producto_final,
             fecha_inicial, fecha_final,
-            producto_inicial, producto_final
+            cliente_inicial, cliente_final,
         ]
 
         cursor.execute(query, params)
         columns = [col[0] for col in cursor.description]
         result = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
-        print("result", result)
-
         for row in result:
             for key, value in row.items():
                 if isinstance(value, Decimal):
                     row[key] = float(value)
-
-    # Debugging the query
-    print("Executing query:")
-    print(query)
-    for param in params:
-        print('El parametro es: ', param, type(param))
-
+        
     return result
 

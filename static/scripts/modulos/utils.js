@@ -27,7 +27,7 @@ export function formatNumber(value, isCurrency = false, key = '') {
                                             'clave', 'clave_sucursal', 'numero_tipo_documento', 'grupo_movimiento',
                                             'detalles_tipo_documento', 'almacen_correspondiente', 'moneda','zona',
                                             'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
-                                            'termina_folio'];
+                                            'termina_folio', 'nombre,', 'zona'];
 
     // Si la clave está en la lista de exclusión, devolver el valor sin cambios
     if (keysToExcludeFromFormatting.includes(key)) {

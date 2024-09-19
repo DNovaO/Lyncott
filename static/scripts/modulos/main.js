@@ -8,7 +8,7 @@ export let currentPage = 1;
 export let currentPageTable = 1;
 export let parametrosInforme = {};
 
-import { tipo_reporte, btnMostrarGrafico, btnReset, btnGenerarInforme, btnBorrarReporte, modalContent, modalFooter, btnExportarCSV, btnExportarExcel} from "./config.js"; 
+import { tipo_reporte, btnMostrarGrafico, btnReset, btnGenerarInforme, btnBorrarReporte, modalContent, modalFooter, fechaInicialInput, fechaFinalInput} from "./config.js"; 
 import { sendDataToServer, sendParametersToServer } from './apiHandler.js';
 import { handleItemSelected, renderGeneral } from './renderModal.js';
 import { errorParametros} from './utils.js'; // Asegúrate de importar las funciones necesarias
@@ -45,7 +45,35 @@ document.addEventListener("DOMContentLoaded", function(){
         });
 
     } 
-
+    
+    function recolectarValoresPorDefecto() {
+        const valoresPorDefecto = {};
+    
+        // Obtener todos los botones con el atributo 'data-type' y el atributo 'data-estado' igual a 'activo'
+        const botonesActivos = document.querySelectorAll('button[data-type][data-estado="activo"]');
+    
+        botonesActivos.forEach(boton => {
+            const dataType = boton.getAttribute('data-type');
+            const buttonText = boton.innerText.trim();
+    
+            try {
+                // Si el texto es JSON, parsearlo. Si no, tratarlo como una cadena de texto.
+                const parsedText = JSON.parse(buttonText);
+                valoresPorDefecto[dataType] = [parsedText];
+            } catch (e) {
+                // Si no se puede parsear, simplemente almacenar el texto
+                valoresPorDefecto[dataType] = [{ nombre: buttonText }];
+            }
+        });
+    
+        // Añadir las fechas
+        valoresPorDefecto['fecha_inicial'] = fechaInicialInput.value;
+        valoresPorDefecto['fecha_final'] = fechaFinalInput.value;
+    
+        console.log('Valores por defecto:', valoresPorDefecto);
+        return valoresPorDefecto;
+    }
+    
     // Evento cuando se presiona el botón de generar informe
     if (btnGenerarInforme) {
         btnGenerarInforme.addEventListener('click', function(e) {
@@ -53,36 +81,46 @@ document.addEventListener("DOMContentLoaded", function(){
             console.log('boton activado, y cache vacio', cache);
             e.preventDefault();
         
-            
             // Actualizar dataType al inicio
             dataType = this.getAttribute("data-type");
-            parametrosSeleccionados =  handleItemSelected(dataType, this);
+    
+            // Intentar obtener los parámetros seleccionados
+            let parametrosSeleccionados = handleItemSelected(dataType, this);
             
-            // Copiar valores seleccionados en parametrosInforme
-            for (const parametro in parametrosSeleccionados) {
-                parametrosInforme[parametro] = parametrosSeleccionados[parametro];
-            }
+            console.log('longitud de parametros seleccionados:', parametrosSeleccionados.length);
 
+            // Si no se seleccionaron parámetros, usar valores por defecto
+            if (parametrosSeleccionados.length === undefined) {
+                let parametrosSeleccionados = recolectarValoresPorDefecto();
 
-            console.log('Parametros longitud:', Object.keys(parametrosInforme).length - 2);
+                console.log('Parametros seleccionados:', parametrosSeleccionados);
+                sendParametersToServer(parametrosSeleccionados, currentPageTable, tipo_reporte, dataType);
 
-            console.log('numero parametro', numeroParametro - 3);
-            
-            // Verificar si el número de parámetros seleccionados es menor que el requerido
-            if (Object.keys(parametrosInforme).length - 2 >= numeroParametro - 3) {
-                console.log('boton activado mandando informacion');
-                errorParametros(false);
-
-                currentPageTable = 1;
-
-                console.log('dataType en sendParametersToServer:', dataType);
-                sendParametersToServer(parametrosInforme, currentPageTable, tipo_reporte, dataType);
-            } else {
-                errorParametros(true);
+            }else{
+                // Copiar valores seleccionados en parametrosInforme
+                for (const parametro in parametrosSeleccionados) {
+                    parametrosInforme[parametro] = parametrosSeleccionados[parametro];
+                }
+        
+                console.log('Parametros longitud:', Object.keys(parametrosInforme).length - 2);
+                console.log('numero parametro', numeroParametro - 3);
+                
+                // Verificar si el número de parámetros seleccionados es menor que el requerido
+                if (Object.keys(parametrosInforme).length - 2 >= numeroParametro - 3) {
+                    console.log('boton activado mandando informacion');
+                    errorParametros(false);
+        
+                    currentPageTable = 1;
+        
+                    console.log('dataType en sendParametersToServer:', dataType);
+                    sendParametersToServer(parametrosInforme, currentPageTable, tipo_reporte, dataType);
+                } else {
+                    errorParametros(true);
+                }
             }
         });
     }
-
+    
     if (btnBorrarReporte){
         btnBorrarReporte.addEventListener('click', function(e) {
             e.preventDefault();

@@ -281,53 +281,64 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
   function actualizarFormato() {
-    numeroParametro = 0
-    
+    numeroParametro = 0;
+
     const tipo_reporte = document.getElementById("tipo_reporte");
     if (!tipo_reporte) {
-      console.error("No se encontró el elemento con ID 'tipo_reporte'");
-      return;
+        console.error("No se encontró el elemento con ID 'tipo_reporte'");
+        return;
     }
-  
+
     const reporteElegido = tipo_reporte.textContent.trim();
     const familia = REPORTE_FAMILIA[reporteElegido];
     if (familia === undefined) {
-      console.error("No se encontró familia para el reporte seleccionado:", reporteElegido);
-      return;
+        console.error("No se encontró familia para el reporte seleccionado:", reporteElegido);
+        return;
     }
-  
+
     const parametros = FAMILIA[familia] || [];
     const camposParaMostrar = new Set(parametros);
-    
+
     // Obtener todos los contenedores relevantes
     const todosLosContenedores = document.querySelectorAll(".contenedor-div");
-  
+
     // Eliminar los contenedores que no contienen parámetros a mostrar
     todosLosContenedores.forEach((contenedor) => {
-      // Buscar dentro del contenedor si hay un parámetro que debe ser mostrado
-      const parametroEncontrado = Array.from(contenedor.querySelectorAll(".parametro"))
-        .some(param => camposParaMostrar.has(param.classList[0]));
-  
-      if (!parametroEncontrado) {
-        contenedor.remove();
-      } else {
-        numeroParametro++;
-        contenedor.style.display = "flow-root";
-      }
+        // Buscar dentro del contenedor si hay un parámetro que debe ser mostrado
+        const parametroEncontrado = Array.from(contenedor.querySelectorAll(".parametro"))
+            .some(param => camposParaMostrar.has(param.classList[0]));
+
+        if (!parametroEncontrado) {
+            contenedor.style.display = "none";
+            // Añadir data-estado="inactivo" a los botones en el contenedor eliminado
+            const botones = contenedor.querySelectorAll('button[data-type]');
+            botones.forEach(boton => {
+                boton.setAttribute('data-estado', 'inactivo');
+            });
+        } else {
+            numeroParametro++;
+            contenedor.style.display = "flow-root";
+            // Añadir data-estado="activo" a los botones en el contenedor visible
+            const botones = contenedor.querySelectorAll('button[data-type]');
+            botones.forEach(boton => {
+                boton.setAttribute('data-estado', 'activo');
+            });
+        }
     });
-  
+
     // Mostrar solo los campos correspondientes a los parámetros disponibles
     parametros.forEach((paramName) => {
-      const field = document.querySelector(`.${paramName}`);
-      if (field) {
-        field.style.display = "inline";
-      }
+        const field = document.querySelector(`.${paramName}`);
+        if (field) {
+            field.style.display = "inline";
+        }
     });
 
     return numeroParametro;
-  }
-  
-  window.onload = function () {
+}
+
+window.onload = function () {
     actualizarFormato();
-  };
+};
+
 });
