@@ -248,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "cliente_final",
     ],
     20: ["grupoCorporativo_inicial", "grupoCorporativo_final"],
-    21: ["producto_inicial", "producto_final", "zona"],
+    21: ["producto_inicial", "producto_final"],
     22: [
       "sucursal_inicial",
       "sucursal_final",

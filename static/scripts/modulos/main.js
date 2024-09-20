@@ -91,8 +91,10 @@ document.addEventListener("DOMContentLoaded", function(){
 
             // Si no se seleccionaron parámetros, usar valores por defecto
             if (parametrosSeleccionados.length === undefined) {
-                let parametrosSeleccionados = recolectarValoresPorDefecto();
-
+                parametrosSeleccionados = recolectarValoresPorDefecto();
+                errorParametros(false);
+        
+                currentPageTable = 1;
                 console.log('Parametros seleccionados:', parametrosSeleccionados);
                 sendParametersToServer(parametrosSeleccionados, currentPageTable, tipo_reporte, dataType);
 

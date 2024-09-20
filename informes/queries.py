@@ -13,14 +13,16 @@ def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     for key, value in parametrosSeleccionados.items():
         if isinstance(value, list) and len(value) > 0 and isinstance(value[0], dict):
             for item in value:
-                key_value = item[list(item.keys())[0]].strip()
+                key_value = item[list(item.keys())[0]].strip().split('-')[0].strip()  # Obtiene el valor antes del "-"
                 if key in ('fecha_inicial', 'fecha_final', 'cliente_inicial', 'cliente_final', 'producto_inicial', 'producto_final', 'sucursal', 'sucursal_inicial', 'sucursal_final', 'vendedor_inicial', 'vendedor_final', 'linea_inicial', 'linea_final', 'familia', 'familia_inicial', 'familia_final', 'marca_inicial', 'marca_final', 'grupoCorporativo', 'grupoCorporativo_inicial', 'grupoCorporativo_final', 'segmento_inicial', 'segmento_final', 'status', 'zona', 'grupo', 'region', 'year'):
                     filtros[key] = key_value
+                    
+                print(f"Clave: {key}, Valor: {key_value}")
         else:
             if isinstance(value, list) and len(value) > 0:
                 value = value[0]
                 if isinstance(value, dict):
-                    value = value[list(value.keys())[0]].strip()
+                    value = value[list(value.keys())[0]].strip().split('-')[0].strip()  # Obtiene el valor antes del "-"
                     
             filtros[key] = value
     
@@ -91,6 +93,11 @@ def ejecutarConsulta(filtros, tipo_reporte):
     elif tipo_reporte == "Ventas en General (Pesos Sin Refacturación)":
         resultados.extend(consultaVentasEnGeneral(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
 
+    elif tipo_reporte == "Lista de Precios por Producto y por Zonas":
+        resultados.extend(consultaListaPreciosProducto(producto_inicial, producto_final))
+        
+    elif tipo_reporte == "Ventas por Zonas Pesos (Sin Refacturación)":
+        resultados.extend(consultaVentasPorZonasPesos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
     
     return resultados
     
@@ -449,13 +456,6 @@ def consultaVentasPorFamiliaKgConRefacturacion(fecha_inicial, fecha_final, produ
     
     return result
 
-    
-def consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final):
-    print(f"Consulta de ventas por crédito contable desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial}, cliente final: {cliente_final}")
-
-def consultaVentaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final):
-    print(f"Consulta de ventas por cliente desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}")
-
 def consultaPresupuestoVsVentas(sucursal, year):
     print(f"Consulta de ventas por sucursal: {sucursal} y el año {year}")
 
@@ -576,12 +576,12 @@ def consultaTrazabilidadPorProducto(fecha_inicial, fecha_final, producto_inicial
                 FROM KL2020.dbo.KDPORD 
                 INNER JOIN KL2020.dbo.KDII ON KDPORD.C3 = KDII.C1
                 INNER JOIN KL2020.dbo.KDM1 ON KDPORD.C1 = KDM1.C11
-                WHERE KDPORD.C19 = %s  /*Sucursal*/
-                AND KDPORD.C6 >= %s  /*Fecha inicial*/
-                AND KDPORD.C6 <= %s  /*Fecha final*/
-                AND KDPORD.C3 >= %s  /*Producto inicial*/
-                AND KDPORD.C3 <= %s  /*Producto final*/
-                AND KDPORD.C2 {status_filter}  /*Status (A, I, o ambos)*/
+                WHERE KDPORD.C19 = '{sucursal}'  /*Sucursal*/
+                AND KDPORD.C6 >= '{fecha_inicial}'  /*Fecha inicial*/
+                AND KDPORD.C6 <= '{fecha_final}'  /*Fecha final*/
+                AND KDPORD.C3 >= '{producto_inicial}'  /*Producto inicial*/
+                AND KDPORD.C3 <= '{producto_final}'  /*Producto final*/
+                AND KDPORD.C2 {status_filter} /*Status (A, I, o ambos)*/
             ) AS Orden
             LEFT JOIN (
                 SELECT DISTINCT
@@ -601,10 +601,12 @@ def consultaTrazabilidadPorProducto(fecha_inicial, fecha_final, producto_inicial
             ORDER BY Orden.CLAVE
         """
 
-        params = [sucursal, fecha_inicial, fecha_final, producto_inicial, producto_final]
-        cursor.execute(query, params)
+        # params = [sucursal, fecha_inicial, fecha_final, producto_inicial, producto_final]
+        cursor.execute(query)
         columns = [col[0] for col in cursor.description]
         result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        print(query)
 
         for row in result:
             for key, value in row.items():
@@ -759,3 +761,181 @@ def consultaVentasEnGeneral(fecha_inicial, fecha_final, cliente_inicial, cliente
         
     return result
 
+def consultaListaPreciosProducto(producto_inicial, producto_final):
+    print(f"Consulta de lista de precios por producto desde {producto_inicial} hasta {producto_final}")
+
+    with connection.cursor() as cursor:
+        query = """
+            SELECT 
+                KDII.C1 	AS clave_producto,
+                KDII.C2 	AS nombre_producto,
+                KDII.C7 	AS UPC,
+                KDIG.C2 	AS linea,
+                KDII.C12 AS unidad,
+                KDII.C13 AS factor_conversion,
+                KDII.C14 AS A_centro,
+                KDII.C15 AS B_peninsula,
+                KDII.C16 AS C_pacifico,
+                KDII.C17 AS D_chihuahua
+            FROM KDII
+                INNER JOIN KDIG ON KDIG.C1 = KDII.C3
+            WHERE KDII.C4 ='PT'
+                AND  KDII.C1 >= %s
+                AND  KDII.C1 <= %s
+        """
+
+        params = [producto_inicial, producto_final]
+
+        cursor.execute(query, params)
+        columns = [col[0] for col in cursor.description]
+        result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        for row in result:
+            for key, value in row.items():
+                if isinstance(value, Decimal):
+                    row[key] = float(value)
+        
+    return result
+
+def consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final):
+    print(f"Consulta de ventas por crédito contable desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial}, cliente final: {cliente_final}")
+        
+    with connection.cursor() as cursor:
+        query = """
+          
+        """
+
+        params = [ ]
+
+        cursor.execute(query, params)
+        columns = [col[0] for col in cursor.description]
+        result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        for row in result:
+            for key, value in row.items():
+                if isinstance(value, Decimal):
+                    row[key] = float(value)
+        
+    return result
+
+def consultaVentaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final):
+    print(f"Consulta de ventas por cliente desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}")
+        
+    with connection.cursor() as cursor:
+        query = """
+          
+        """
+
+        params = [ ]
+
+        cursor.execute(query, params)
+        columns = [col[0] for col in cursor.description]
+        result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+
+        for row in result:
+            for key, value in row.items():
+                if isinstance(value, Decimal):
+                    row[key] = float(value)
+        
+    return result
+
+def consultaVentasPorZonasPesos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final):
+    print(f"Consulta de ventas por zonas en pesos desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}")
+    
+    with connection.cursor() as cursor:
+        query = """
+           SELECT 
+                ISNULL(ANTERIOR.ZONA, ACTUAL.ZONA) AS ZONA,
+                ISNULL(ANTERIOR.ZONA_ORDER, ACTUAL.ZONA_ORDER) AS ZONA_ORDER,
+                ISNULL(ANTERIOR.CLAVE, ACTUAL.CLAVE) AS CLAVE,
+                ISNULL(ANTERIOR.SUC, ACTUAL.SUC) AS SUC,
+                SUM(ISNULL(ANTERIOR.VENTA, 0)) AS VENTA_ANTERIOR,
+                SUM(ISNULL(ACTUAL.VENTA, 0)) AS VENTA_ACTUAL,
+                SUM(ISNULL(ACTUAL.VENTA, 0)) - SUM(ISNULL(ANTERIOR.VENTA, 0)) AS DIFERENCIA,
+                CASE 
+                    WHEN SUM(ISNULL(ANTERIOR.VENTA, 0)) = 0 THEN 
+                        CASE 
+                            WHEN SUM(ISNULL(ACTUAL.VENTA, 0)) = 0 THEN 0
+                            ELSE 100
+                        END 
+                    ELSE
+                        CASE 
+                            WHEN SUM(ISNULL(ACTUAL.VENTA, 0)) = 0 THEN -100
+                            ELSE (SUM(ISNULL(ACTUAL.VENTA, 0)) / SUM(ISNULL(ANTERIOR.VENTA, 0)) * 100) - 100
+                        END
+                END AS DIFERENCIA_EN_PORCENTAJE,
+                ISNULL(
+                    SUM(ISNULL(ACTUAL.VENTA, 0)) / KL2020.dbo.f_DifDias(%s, %s) * KL2020.dbo.f_DifDiasTotales(%s, %s), 
+                    0
+                ) AS ESTIMADO_MES,
+                CASE 
+                    WHEN SUM(ISNULL(ACTUAL.KILOS, 0)) = 0 THEN 0
+                    ELSE SUM(ISNULL(ACTUAL.VENTA, 0)) / SUM(ISNULL(ACTUAL.KILOS, 0)) 
+                END AS PROMEDIO,
+                SUM(ISNULL(ACTUAL.KILOS, 0)) AS VENTAS_anioAct_EN_KILOS
+                FROM (
+                -- Subconsulta ANTERIOR
+                SELECT
+                    ...
+                WHERE
+                    KL2020.dbo.KDII.C1 >= %s /*PInicial*/
+                    AND KL2020.dbo.KDII.C1 <= %s /*PFinal*/
+                    AND KL2020.dbo.KDIJ.C10 >=  %s /*FInicial*/
+                    AND KL2020.dbo.KDIJ.C10 <= %s /*FFinal*/
+                    AND KL2020.dbo.KDUD.C2 >= %s /*CInicial*/
+                    AND KL2020.dbo.KDUD.C2 <= %s /*CFinal*/
+                    ...
+                ) AS ANTERIOR
+                FULL JOIN (
+                -- Subconsulta ACTUAL
+                SELECT
+                    ...
+                WHERE
+                    KL2020.dbo.KDII.C1 >= %s /*PInicial*/
+                    AND KL2020.dbo.KDII.C1 <= %s /*PFinal*/
+                    AND KL2020.dbo.KDIJ.C10 >= %s /*FInicial*/
+                    AND KL2020.dbo.KDIJ.C10 <= %s /*FFinal*/
+                    AND KL2020.dbo.KDUD.C2 >= %s /*CInicial*/
+                    AND KL2020.dbo.KDUD.C2 <= %s /*CFinal*/
+                    ...
+                ) AS ACTUAL 
+                ON ANTERIOR.SUC = ACTUAL.SUC
+                GROUP BY 
+                ISNULL(ANTERIOR.ZONA, ACTUAL.ZONA),
+                ISNULL(ANTERIOR.ZONA_ORDER, ACTUAL.ZONA_ORDER),
+                ISNULL(ANTERIOR.CLAVE, ACTUAL.CLAVE),
+                ISNULL(ANTERIOR.SUC, ACTUAL.SUC)
+                ORDER BY 
+                ISNULL(ANTERIOR.ZONA_ORDER, ACTUAL.ZONA_ORDER),
+                ISNULL(ANTERIOR.ZONA, ACTUAL.ZONA);
+        """
+    
+        # Lista de parámetros en el orden que aparecen en la consulta
+        params = [
+            fecha_inicial, fecha_final, fecha_inicial, fecha_final, producto_inicial, producto_final,
+            fecha_inicial, fecha_final,
+            cliente_inicial, cliente_final,
+            
+            producto_inicial, producto_final,
+            fecha_inicial, fecha_final,
+            cliente_inicial, cliente_final,
+        ]
+    
+        try:
+            # Depuración: Imprimir la consulta y los parámetros
+            print("Consulta SQL:", query)
+            print("Parámetros:", params)
+    
+            cursor.execute(query, params)
+            columns = [col[0] for col in cursor.description]
+            result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+    
+            for row in result:
+                for key, value in row.items():
+                    if isinstance(value, Decimal):
+                        row[key] = float(value)
+    
+            return result
+        except Exception as e:
+            print(f"Error ejecutando la consulta: {e}")
+            return {"error": str(e)}
