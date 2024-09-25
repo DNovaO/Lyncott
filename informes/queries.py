@@ -17,7 +17,9 @@ from .queries_reportes.trazabilidad_por_producto import *
 from .queries_reportes.ventas_en_general import * 
 from .queries_reportes.lista_precios_producto import * 
 from .queries_reportes.ventas_por_zona_pesos import * 
-from .queries_reportes.semana_80_20 import * 
+from .queries_reportes.semana_80_20 import *
+from .queries_reportes.clientes_consignatarios_activos import *
+from .queries_reportes.ventas_por_zona_kilos import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -113,6 +115,12 @@ def ejecutarConsulta(filtros, tipo_reporte):
         
     elif tipo_reporte == "Análisis Semanal de los Principales Contribuyentes a través del Principio 80/20":
         resultados.extend(consultaSemana8020(fecha_inicial, fecha_final, sucursal))
+        
+    elif tipo_reporte == "Clientes y Consignatarios Activos":
+        resultados.extend(consultaConsignatariosClientesActivos(fecha_inicial, fecha_final))
+        
+    elif tipo_reporte == "Informe de Ventas por Zonas en Kilogramos y por Marca (Sin Refacturación)":
+        resultados.extend(consultaVentasPorZonaKilos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, marca_inicial, marca_final))
     
     return resultados
     

@@ -26,8 +26,6 @@ document.addEventListener("DOMContentLoaded", function () {
     "Ventas Sin Cargo por Zona": 4,
     "Ventas Sin Cargo por Zona según el Mes": 4,
     "Devoluciones por Sucursal": 4,
-
-    "Clientes y Consignatarios Activos": 4,
     "Consignatarios por Sucursal": 4,
 
     // Familia 5
@@ -108,6 +106,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "Clientes y Productos por Grupo": 25,
 
     "Comparativa de Ventas y Presupuesto por Zonas en Pesos": 26,
+
+    "Clientes y Consignatarios Activos": 27,
   };
 
   const FAMILIA = {
@@ -120,9 +120,9 @@ document.addEventListener("DOMContentLoaded", function () {
       "producto_final",
     ],
     2: [
-      "sucursal",
       "fecha_inicial",
       "fecha_final",
+      "sucursal",
     ],
     3: ["fecha_inicial", "fecha_final", "region"],
     4: ["fecha_inicial", "fecha_final", "sucursal"],
@@ -276,7 +276,10 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
     25: ["fecha_inicial", "fecha_final", "grupoCorporativo"],
 
-    26:['sucursal', 'year']
+    26:['sucursal', 'year'],
+
+    27:["fecha_inicial", "fecha_final"],
+
   };
 
 

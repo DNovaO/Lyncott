@@ -24,10 +24,25 @@ export function transformHeader(header) {
 export function formatNumber(value, isCurrency = false, key = '') {
     // Lista de claves que no deben ser formateadas
     const keysToExcludeFromFormatting = ['clave_producto', 'descripcion_producto', 'producto','sucursal', 
-                                            'clave', 'clave_sucursal', 'numero_tipo_documento', 'grupo_movimiento',
-                                            'detalles_tipo_documento', 'almacen_correspondiente', 'moneda','zona',
-                                            'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
-                                            'termina_folio', 'nombre,', 'zona', 'nombre_producto','UPC','linea'];
+        'clave', 'clave_sucursal', 'numero_tipo_documento', 'grupo_movimiento',
+        'detalles_tipo_documento', 'almacen_correspondiente', 'moneda','zona',
+        'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
+        'termina_folio', 'nombre', 'zona', 'nombre_producto','UPC','linea',
+        // 'Enero_Cliente', 'Enero_Consignatario', 
+        // 'Febrero_Cliente', 'Febrero_Consignatario', 
+        // 'Marzo_Cliente', 'Marzo_Consignatario',
+        // 'Abril_Cliente', 'Abril_Consignatario',
+        // 'Mayo_Cliente', 'Mayo_Consignatario',
+        // 'Junio_Cliente', 'Junio_Consignatario',
+        // 'Julio_Cliente', 'Julio_Consignatario',
+        // 'Agosto_Cliente', 'Agosto_Consignatario',
+        // 'Septiembre_Cliente', 'Septiembre_Consignatario',
+        // 'Octubre_Cliente', 'Octubre_Consignatario',
+        // 'Noviembre_Cliente', 'Noviembre_Consignatario',
+        // 'Diciembre_Cliente', 'Diciembre_Consignatario',
+        'Promedio_Cliente', 'Promedio_Consignatario',
+    ];
+
 
     // Si la clave está en la lista de exclusión, devolver el valor sin cambios
     if (keysToExcludeFromFormatting.includes(key)) {
@@ -39,7 +54,7 @@ export function formatNumber(value, isCurrency = false, key = '') {
     }
 
     // Convertir el valor a una cadena si no lo es
-    let valueStr = value.toString();
+    let valueStr = value.toString().trim();
 
     // Si el valor es una cadena y comienza con $, limpiarlo
     if (valueStr.startsWith('$')) {
@@ -57,7 +72,7 @@ export function formatNumber(value, isCurrency = false, key = '') {
 
     // Si el valor es 0, devolverlo en rojo y negrita
     if (numericValue === 0) {
-        return '<span style="color: red; font-weight: bold;">0.00</span>';
+        return '<span style="color: red; font-weight: bold;"> 0 </span>';
     }
 
 
