@@ -19,11 +19,11 @@ def consultaVentaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente
         query = """
             SELECT
                 CASE	
-                    WHEN VENTAS.SUC IN ('04','15','16','17')	THEN '<div hidden>2</div>Norte'
-                    WHEN VENTAS.SUC IN ('05','08','10','19')	THEN '<div hidden>3</div>Centro'
-                    WHEN VENTAS.SUC IN ('03','09','12','14','20')	THEN '<div hidden>4</div>Pacifico'
-                    WHEN VENTAS.SUC IN ('07','11','13','18')	THEN '<div hidden>5</div>Sureste'
-                    ELSE '<div hidden>1</div>Vallejo'
+                    WHEN VENTAS.SUC IN ('04','15','16','17')	THEN '2.-Norte'
+                    WHEN VENTAS.SUC IN ('05','08','10','19')	THEN '3.-Centro'
+                    WHEN VENTAS.SUC IN ('03','09','12','14','20')	THEN '4.-Pacifico'
+                    WHEN VENTAS.SUC IN ('07','11','13','18')	THEN '5.-Sureste'
+                    ELSE '1.-Vallejo'
                 END AS zona,
                 CASE	
                     WHEN VENTAS.SUC = 1 THEN '1&nbsp;-&nbsp;Autoservicio'

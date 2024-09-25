@@ -28,18 +28,6 @@ export function formatNumber(value, isCurrency = false, key = '') {
         'detalles_tipo_documento', 'almacen_correspondiente', 'moneda','zona',
         'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
         'termina_folio', 'nombre', 'zona', 'nombre_producto','UPC','linea',
-        // 'Enero_Cliente', 'Enero_Consignatario', 
-        // 'Febrero_Cliente', 'Febrero_Consignatario', 
-        // 'Marzo_Cliente', 'Marzo_Consignatario',
-        // 'Abril_Cliente', 'Abril_Consignatario',
-        // 'Mayo_Cliente', 'Mayo_Consignatario',
-        // 'Junio_Cliente', 'Junio_Consignatario',
-        // 'Julio_Cliente', 'Julio_Consignatario',
-        // 'Agosto_Cliente', 'Agosto_Consignatario',
-        // 'Septiembre_Cliente', 'Septiembre_Consignatario',
-        // 'Octubre_Cliente', 'Octubre_Consignatario',
-        // 'Noviembre_Cliente', 'Noviembre_Consignatario',
-        // 'Diciembre_Cliente', 'Diciembre_Consignatario',
         'Promedio_Cliente', 'Promedio_Consignatario',
     ];
 
@@ -70,9 +58,13 @@ export function formatNumber(value, isCurrency = false, key = '') {
         return value; // Devuelve el valor original si no es un número válido
     }
 
-    // Si el valor es 0, devolverlo en rojo y negrita
+    // Si el valor es 0 , devolverlo en rojo y negrita
     if (numericValue === 0) {
         return '<span style="color: red; font-weight: bold;"> 0 </span>';
+    }
+
+    if(numericValue < 0){
+        return '<span style="color: red; font-weight: bold;">' + numericValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</span>';
     }
 
 
