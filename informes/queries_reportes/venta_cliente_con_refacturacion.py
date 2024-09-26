@@ -17,82 +17,105 @@ def consultaVentaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente
         
     with connection.cursor() as cursor:
         query = """
+            DECLARE @p_inicial AS VARCHAR(10) = %s, 
+                    @p_final AS VARCHAR(10) = %s, 
+                    @f_inicial AS DATETIME = %s, 
+                    @f_final AS DATETIME = %s, 
+                    @c_inicial AS VARCHAR(10) = %s, 
+                    @c_final AS VARCHAR(10) = %s;
+
             SELECT
-                CASE	
-                    WHEN VENTAS.SUC IN ('04','15','16','17')	THEN '2.-Norte'
-                    WHEN VENTAS.SUC IN ('05','08','10','19')	THEN '3.-Centro'
-                    WHEN VENTAS.SUC IN ('03','09','12','14','20')	THEN '4.-Pacifico'
-                    WHEN VENTAS.SUC IN ('07','11','13','18')	THEN '5.-Sureste'
+                CASE    
+                    WHEN VENTAS.SUC IN ('04','15','16','17') THEN '2.-Norte'
+                    WHEN VENTAS.SUC IN ('05','08','10','19') THEN '3.-Centro'
+                    WHEN VENTAS.SUC IN ('03','09','12','14','20') THEN '4.-Pacifico'
+                    WHEN VENTAS.SUC IN ('07','11','13','18') THEN '5.-Sureste'
                     ELSE '1.-Vallejo'
                 END AS zona,
-                CASE	
-                    WHEN VENTAS.SUC = 1 THEN '1&nbsp;-&nbsp;Autoservicio'
-                    WHEN VENTAS.SUC = 2 THEN '2&nbsp;-&nbsp;Norte'
-                    WHEN VENTAS.SUC = 3 THEN '3&nbsp;-&nbsp;Sur'
-                    WHEN VENTAS.SUC = 4 THEN '4&nbsp;-&nbsp;Vent. Especiales'
-                    WHEN VENTAS.SUC = 5 THEN '5&nbsp;-&nbsp;Cadenas'
-                    WHEN VENTAS.SUC = 6 THEN '6&nbsp;-&nbsp;Centro'
-                    ELSE VENTAS.SUC +'&nbsp;-&nbsp;'+Sucursal.C2
-                END AS sucursal,
-                SUM(VENTAS.KilosAutoservice) 																		AS KilosAutoservice,
-                SUM(VENTAS.VentaAutoservice) 																		AS VentaAutoservice,
-                SUM(VENTAS.KilosFoodservice) 																		AS KilosFoodservice,
-                SUM(VENTAS.VentaFoodservice) 																		AS VentaFoodservice,
                 
-                SUM(VENTAS.KilosAutoservice) +			SUM(VENTAS.KilosFoodservice) 								AS KilosTotal,
-                SUM(VENTAS.VentaAutoservice) +			SUM(VENTAS.VentaFoodservice) 								AS VentaTotal
-            FROM(
-                                    SELECT 
-                                        CASE 
-                                            WHEN KDIJ.C1 = '02' THEN LTRIM(RTRIM(KDUV.C22))
-                                            ELSE LTRIM(RTRIM(KDIJ.C1))
-                                        END 																									AS SUC,
-                                        SUM(CASE WHEN KDUD.C30 = 'A' THEN KDIJ.C14 ELSE 0 END) 							AS VentaAutoservice,
-                                        SUM(CASE WHEN KDUD.C30 = 'A' THEN KDIJ.C11 * KDII.C13 ELSE 0 END) 		AS KilosAutoservice,
-                                        SUM(CASE WHEN KDUD.C30 <>'A' THEN KDIJ.C14 ELSE 0 END) 							AS VentaFoodservice,
-                                        SUM(CASE WHEN KDUD.C30 <>'A' THEN KDIJ.C11 * KDII.C13 ELSE 0 END) 		AS KilosFoodservice
-                                    FROM 			KDIJ
-                                        INNER JOIN 	KDUD ON KDIJ.C15 = KDUD.C2
-                                        INNER JOIN	KDUV ON KDIJ.C16 = KDUV.C2 
-                                        INNER JOIN 	KDII ON KDIJ.C3 = KDII.C1
-                                    WHERE 	KDIJ.C3 >= %s /*PInicial*/
-                                        AND KDIJ.C3 <= %s /*PFinal*/
-                                        AND KDIJ.C10 >= CONVERT(DATETIME, %s, 102) /*FInicial*/
-                                        AND KDIJ.C10 <= CONVERT(DATETIME, %s, 102) /*FFinal*/
-                                        AND KDIJ.C15 >= %s /*CInicial*/
-                                        AND KDIJ.C15 <= %s /*CFinal*/
-                                        AND KDIJ.C4 = 'U'
-                                        AND KDIJ.C5 = 'D'
-                                        AND KDIJ.C6 IN ('5','45')
-                                    GROUP BY KDIJ.C1, KDUV.C22, KDUD.C30
-                            UNION
-                                    SELECT 
-                                        CASE 
-                                            WHEN KDIJ.C1 = '02' THEN LTRIM(RTRIM(KDUV.C22))
-                                            ELSE LTRIM(RTRIM(KDIJ.C1))
-                                        END 																							AS SUC,
-                                        SUM(CASE WHEN KDUD.C33 = 'A' THEN KDIJ.C14 ELSE 0 END) 							AS VentaAutoservice,
-                                        SUM(CASE WHEN KDUD.C33 = 'A' THEN KDIJ.C11 * KDII.C13 ELSE 0 END) 	AS KilosAutoservice,
-                                        SUM(CASE WHEN KDUD.C33 <>'A' THEN KDIJ.C14 ELSE 0 END) 							AS VentaFoodservice,
-                                        SUM(CASE WHEN KDUD.C33 <>'A' THEN KDIJ.C11 * KDII.C13 ELSE 0 END) 	AS KilosFoodservice
-                                    FROM 			KDIJ
-                                        INNER JOIN 	KDUD ON KDIJ.C15 = KDUD.C2
-                                        INNER JOIN	KDUV ON KDIJ.C16 = KDUV.C2 
-                                        INNER JOIN 	KDII ON KDIJ.C3 = KDII.C1
-                                    WHERE 	KDIJ.C3 >= %s /*PInicial*/
-                                        AND KDIJ.C3 <= %s /*PFinal*/
-                                        AND KDIJ.C10 >= CONVERT(DATETIME, %s, 102) /*FInicial*/
-                                        AND KDIJ.C10 <= CONVERT(DATETIME, %s, 102) /*FFinal*/
-                                        AND KDIJ.C15 >= %s /*CInicial*/
-                                        AND KDIJ.C15 <= %s /*CFinal*/
-                                        AND KDIJ.C4 = 'U'
-                                        AND KDIJ.C5 = 'D'
-                                        AND KDIJ.C6 IN ('5','45')
-                                    GROUP BY KDIJ.C1, KDUV.C22, KDUD.C33
-            ) AS VENTAS LEFT JOIN (
-                SELECT KDMS.C1, KDMS.c2 FROM KDMS
-            ) AS SUCURSAL ON Sucursal.C1 = VENTAS.SUC
-            GROUP BY VENTAS.SUC, SUCURSAL.c2
+                CASE    
+                    WHEN VENTAS.SUC = '1' THEN '1&nbsp;-&nbsp;Autoservicio'
+                    WHEN VENTAS.SUC = '2' THEN '2&nbsp;-&nbsp;Norte'
+                    WHEN VENTAS.SUC = '3' THEN '3&nbsp;-&nbsp;Sur'
+                    WHEN VENTAS.SUC = '4' THEN '4&nbsp;-&nbsp;Vent. Especiales'
+                    WHEN VENTAS.SUC = '5' THEN '5&nbsp;-&nbsp;Cadenas'
+                    WHEN VENTAS.SUC = '6' THEN '6&nbsp;-&nbsp;Centro'
+                    ELSE VENTAS.SUC + '&nbsp;-&nbsp;' + SUCURSAL.C2
+                END AS sucursal,
+                
+                SUM(VENTAS.KilosAutoservice) AS KilosAutoservice,
+                SUM(VENTAS.VentaAutoservice) AS VentaAutoservice,
+                SUM(VENTAS.KilosFoodservice) AS KilosFoodservice,
+                SUM(VENTAS.VentaFoodservice) AS VentaFoodservice,
+                
+                SUM(VENTAS.KilosAutoservice) + SUM(VENTAS.KilosFoodservice) AS KilosTotal,
+                SUM(VENTAS.VentaAutoservice) + SUM(VENTAS.VentaFoodservice) AS VentaTotal
+                
+            FROM (
+                -- Primer bloque de la consulta UNION
+                SELECT 
+                    CASE 
+                        WHEN KDIJ.C1 = '02' THEN LTRIM(RTRIM(KDUV.C22))
+                        ELSE LTRIM(RTRIM(KDIJ.C1))
+                    END AS SUC,
+                    
+                    SUM(CASE WHEN KDUD.C30 = 'A' THEN KDIJ.C14 ELSE 0 END) AS VentaAutoservice,
+                    SUM(CASE WHEN KDUD.C30 = 'A' THEN KDIJ.C11 * KDII.C13 ELSE 0 END) AS KilosAutoservice,
+                    SUM(CASE WHEN KDUD.C30 <> 'A' THEN KDIJ.C14 ELSE 0 END) AS VentaFoodservice,
+                    SUM(CASE WHEN KDUD.C30 <> 'A' THEN KDIJ.C11 * KDII.C13 ELSE 0 END) AS KilosFoodservice
+                FROM KDIJ
+                INNER JOIN KDUD ON KDIJ.C15 = KDUD.C2
+                INNER JOIN KDUV ON KDIJ.C16 = KDUV.C2
+                INNER JOIN KDII ON KDIJ.C3 = KDII.C1
+                WHERE KDIJ.C3 BETWEEN @p_inicial AND @p_final
+                AND KDIJ.C10 BETWEEN @f_inicial AND @f_final
+                AND KDIJ.C15 BETWEEN @c_inicial AND @c_final
+                AND KDIJ.C4 = 'U'
+                AND KDIJ.C5 = 'D'
+                AND KDIJ.C6 IN ('5', '45')
+                GROUP BY KDIJ.C1, KDUV.C22, KDUD.C30
+
+                UNION
+
+                -- Segundo bloque de la consulta UNION
+                SELECT 
+                    CASE 
+                        WHEN KDIJ.C1 = '02' THEN LTRIM(RTRIM(KDUV.C22))
+                        ELSE LTRIM(RTRIM(KDIJ.C1))
+                    END AS SUC,
+                    
+                    SUM(CASE WHEN KDUD.C33 = 'A' THEN KDIJ.C14 ELSE 0 END) AS VentaAutoservice,
+                    SUM(CASE WHEN KDUD.C33 = 'A' THEN KDIJ.C11 * KDII.C13 ELSE 0 END) AS KilosAutoservice,
+                    SUM(CASE WHEN KDUD.C33 <> 'A' THEN KDIJ.C14 ELSE 0 END) AS VentaFoodservice,
+                    SUM(CASE WHEN KDUD.C33 <> 'A' THEN KDIJ.C11 * KDII.C13 ELSE 0 END) AS KilosFoodservice
+                FROM KDIJ
+                INNER JOIN KDUD ON KDIJ.C15 = KDUD.C2
+                INNER JOIN KDUV ON KDIJ.C16 = KDUV.C2
+                INNER JOIN KDII ON KDIJ.C3 = KDII.C1
+                WHERE KDIJ.C3 BETWEEN @p_inicial AND @p_final
+                AND KDIJ.C10 BETWEEN @f_inicial AND @f_final
+                AND KDIJ.C15 BETWEEN @c_inicial AND @c_final
+                AND KDIJ.C4 = 'U'
+                AND KDIJ.C5 = 'D'
+                AND KDIJ.C6 IN ('5', '45')
+                GROUP BY KDIJ.C1, KDUV.C22, KDUD.C33
+            ) AS VENTAS
+            LEFT JOIN (
+                SELECT KDMS.C1, KDMS.C2 FROM KDMS
+            ) AS SUCURSAL ON SUCURSAL.C1 = VENTAS.SUC
+            GROUP BY VENTAS.SUC, SUCURSAL.C2
+
+            -- Ordenar por zona y luego por sucursal
+            ORDER BY 
+                CASE    
+                    WHEN VENTAS.SUC IN ('04','15','16','17') THEN 2  -- '2.-Norte'
+                    WHEN VENTAS.SUC IN ('05','08','10','19') THEN 3  -- '3.-Centro'
+                    WHEN VENTAS.SUC IN ('03','09','12','14','20') THEN 4  -- '4.-Pacifico'
+                    WHEN VENTAS.SUC IN ('07','11','13','18') THEN 5  -- '5.-Sureste'
+                    ELSE 1  -- '1.-Vallejo'
+                END, 
+                SUCURSAL.C2;
+
 
         """
 
@@ -100,10 +123,7 @@ def consultaVentaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente
             producto_inicial, producto_final, 
             fecha_inicial, fecha_final,
             cliente_inicial, cliente_final,
-            
-            producto_inicial, producto_final, 
-            fecha_inicial, fecha_final,
-            cliente_inicial, cliente_final
+        
         ]
 
         cursor.execute(query, params)

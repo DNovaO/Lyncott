@@ -91,7 +91,7 @@ footer {
 }
 
 .table th, .table td {
-  width: max-content;
+  width: 30vh;
   height: max-content;
 } 
 

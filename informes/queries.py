@@ -21,6 +21,7 @@ from .queries_reportes.semana_80_20 import *
 from .queries_reportes.clientes_consignatarios_activos import *
 from .queries_reportes.informe_ventas_por_zona_kilos_marca import *
 from .queries_reportes.informe_ventas_por_zona_pesos_marca import *
+from .queries_reportes.venta_por_zona_kilos import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -114,6 +115,9 @@ def ejecutarConsulta(filtros, tipo_reporte):
     elif tipo_reporte == "Ventas por Zonas Pesos (Sin Refacturación)":
         resultados.extend(consultaVentasPorZonasPesos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
         
+    elif tipo_reporte == "Ventas por Zonas Kilos (Sin Refacturación)":
+        resultados.extend(consultaVentasPorZonaKilos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
+        
     elif tipo_reporte == "Análisis Semanal de los Principales Contribuyentes a través del Principio 80/20":
         resultados.extend(consultaSemana8020(fecha_inicial, fecha_final, sucursal))
         
@@ -125,6 +129,7 @@ def ejecutarConsulta(filtros, tipo_reporte):
     
     elif tipo_reporte == "Informe de Ventas por Zonas en Kilogramos y por Marca (Sin Refacturación)":
         resultados.extend(consultaVentasPorZonaKilosMarca(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, marca_inicial, marca_final))
+    
     
     return resultados
     
