@@ -28,7 +28,7 @@ export function formatNumber(value, isCurrency = false, key = '') {
         'detalles_tipo_documento', 'almacen_correspondiente', 'moneda','zona',
         'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
         'termina_folio', 'nombre', 'zona', 'nombre_producto','UPC','linea',
-        'Promedio_Cliente', 'Promedio_Consignatario',
+        'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia'
     ];
 
 

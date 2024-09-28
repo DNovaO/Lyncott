@@ -22,6 +22,10 @@ from .queries_reportes.clientes_consignatarios_activos import *
 from .queries_reportes.informe_ventas_por_zona_kilos_marca import *
 from .queries_reportes.informe_ventas_por_zona_pesos_marca import *
 from .queries_reportes.venta_por_zona_kilos import *
+from .queries_reportes.ventas_por_familia_pesos_sin_refacturacion import *
+from .queries_reportes.ventas_por_familia_kilos_sin_refacturacion import *
+from .queries_reportes.tendencia_ventas import *
+from .queries_reportes.tendencia_ventas_por_giro import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -130,6 +134,20 @@ def ejecutarConsulta(filtros, tipo_reporte):
     elif tipo_reporte == "Informe de Ventas por Zonas en Kilogramos y por Marca (Sin Refacturación)":
         resultados.extend(consultaVentasPorZonaKilosMarca(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, marca_inicial, marca_final))
     
+    elif tipo_reporte == "Ventas por Familia en Pesos (Sin Refacturación)":
+        resultados.extend(consutlaVentasPorFamiliaPesosSinRefacturacion(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, producto_inicial, producto_final, familia_inicial, familia_final))
+    
+    elif tipo_reporte == "Ventas por Familia en Kilos (Sin Refacturación)":
+        resultados.extend(consutlaVentasPorFamiliaKilosSinRefacturacion(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, producto_inicial, producto_final, familia_inicial, familia_final))
+        
+    elif tipo_reporte == "Tendencia de las Ventas":
+        resultados.extend(consultaTendenciaVentas(fecha_inicial, fecha_final))
+        
+    elif tipo_reporte == "Tendencia de las Ventas por Sector (2020)":
+        resultados.extend(consultaTendenciaVentasPorGiro(fecha_inicial, fecha_final))
+        
+        
+        
     
     return resultados
     

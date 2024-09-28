@@ -12,6 +12,8 @@ def consultaCierreDeMes(fecha_inicial, fecha_final, sucursal):
 
     with connection.cursor() as cursor:
         query = """
+            SET LANGUAGE Español;
+
             -- Selección de columnas con alias para mejorar la legibilidad
             SELECT 
                 KDM1.C1 AS sucursal,            -- Código de la sucursal

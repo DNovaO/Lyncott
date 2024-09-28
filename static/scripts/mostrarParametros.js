@@ -16,8 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Conciliación de Ventas": 2,
 
     // Familia 3
-    "Tendencia de las Ventas": 3,
-    "Tendencia de las Ventas por Sector (2020)": 3,
+
     "Ventas por Categoría según la Región": 3,
     "Ventas por Producto según la Familia": 3,
     "Ventas de Producto según el Sector": 3,
@@ -108,6 +107,9 @@ document.addEventListener("DOMContentLoaded", function () {
     "Comparativa de Ventas y Presupuesto por Zonas en Pesos": 26,
 
     "Clientes y Consignatarios Activos": 27,
+
+    "Tendencia de las Ventas": 28,
+    "Tendencia de las Ventas por Sector (2020)": 28
   };
 
   const FAMILIA = {
@@ -132,8 +134,6 @@ document.addEventListener("DOMContentLoaded", function () {
       "sucursal_final",
       "fecha_inicial",
       "fecha_final",
-      "cliente_inicial",
-      "cliente_final",
       "producto_inicial",
       "producto_final",
       "familia_inicial",
@@ -279,6 +279,8 @@ document.addEventListener("DOMContentLoaded", function () {
     26:['sucursal', 'year'],
 
     27:["fecha_inicial", "fecha_final"],
+
+    28: ["fecha_inicial", "fecha_final"],
 
   };
 
