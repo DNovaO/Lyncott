@@ -26,6 +26,8 @@ from .queries_reportes.ventas_por_familia_pesos_sin_refacturacion import *
 from .queries_reportes.ventas_por_familia_kilos_sin_refacturacion import *
 from .queries_reportes.tendencia_ventas import *
 from .queries_reportes.tendencia_ventas_por_giro import *
+from .queries_reportes.consignatarios_por_familia import *
+from .queries_reportes.consignatarios_por_segmento import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -146,9 +148,12 @@ def ejecutarConsulta(filtros, tipo_reporte):
     elif tipo_reporte == "Tendencia de las Ventas por Sector (2020)":
         resultados.extend(consultaTendenciaVentasPorGiro(fecha_inicial, fecha_final))
         
+    elif tipo_reporte == "Consignatarios por Familia":
+        resultados.extend(consultaConsignatariosPorFamilia(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal, familia_inicial, familia_final))
         
+    elif tipo_reporte == "Consignatarios por Segmento":
+        resultados.extend(consultaConsignatariosPorSegmento(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal_inicial, sucursal_final))
         
-    
     return resultados
     
 def parse_date(date_str):

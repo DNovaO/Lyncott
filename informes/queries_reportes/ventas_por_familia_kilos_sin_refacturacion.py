@@ -1,3 +1,4 @@
+# Description: Consulta de ventas por faimilia en kilos sin refacturación
 from datetime import datetime, timedelta
 from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When, Window, DecimalField, Q
 from django.db.models.functions import Concat, Round, RowNumber, LTrim, RTrim, Coalesce

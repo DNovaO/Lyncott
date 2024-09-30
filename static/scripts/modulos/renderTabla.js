@@ -53,10 +53,10 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
     // Renderizar encabezados de tabla (thead)
     const theadHTML = `
         <tr>
-            <th scope="col">#</th>
+            <th scope="col" class="numero-tabla">#</th>
             ${dataGlobal.campos_reporte.map(campo => {
                 const transformedHeader = transformHeader(campo);
-                return `<th scope="col">${transformedHeader}</th>`;
+                return `<th scope="col" class="datos-tabla">${transformedHeader}</th>`;
             }).join('')}
         </tr>
     `;
@@ -70,10 +70,10 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         const tbodyHTML = paginatedData.map((fila, index) => {
             const filaHTML = `
                 <tr>
-                    <th scope="row">${(currentPage - 1) * pageSize + index + 1}</th>
+                    <th scope="row" class="numero-tabla">${(currentPage - 1) * pageSize + index + 1}</th>
                     ${dataGlobal.campos_reporte.map(campo => {
                         const value = fila[campo];
-                        return `<td>${formatNumber(value, false, campo)}</td>`;
+                        return `<td class="datos-tabla">${formatNumber(value, false, campo)}</td>`;
                     }).join('')}
                 </tr>
             `;

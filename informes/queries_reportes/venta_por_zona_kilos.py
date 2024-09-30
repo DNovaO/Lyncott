@@ -1,4 +1,4 @@
-# Description: Consulta de ventas por zonas en pesos
+# Description: Consulta de ventas por zonas en kilos
 from datetime import datetime, timedelta, date
 from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When, Window, DecimalField, Q
 from django.db.models.functions import Concat, Round, RowNumber, LTrim, RTrim, Coalesce

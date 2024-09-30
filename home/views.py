@@ -72,7 +72,7 @@ def home_view(request):
             "Clientes y Productos por Grupo",
             "Consignatarios por Código Postal",
             "Consignatarios por Familia",
-            "Consignatarios por Producto",
+            # "Consignatarios por Producto",
             "Consignatarios por Segmento",
             "Consignatarios por Sucursal",
             "Ventas a Clientes/Consignatarios por Mes",

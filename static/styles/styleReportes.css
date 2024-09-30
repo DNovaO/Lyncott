@@ -90,8 +90,13 @@ footer {
   width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible del contenedor */
 }
 
-.table th, .table td {
-  width: 30vh;
+.datos-tabla {
+  width: 15vh;
+  height: max-content;
+} 
+
+.numero-tabla {
+  width: 2vh;
   height: max-content;
 } 
 

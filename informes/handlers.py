@@ -96,14 +96,21 @@ def handle_linea(request, data_type):
 
 def handle_familia(request, data_type):
     
-    valores_especificos = [ 
-        "CREMA PARA BATIR", "CREMA ENTERA", "CREMA REDUCIDA EN GRASA", "CREMA DULCE", "CREMA PARA CAFE",
-        "CREMA NATURAL", "Q. COTTAGE", "FLETE", "INTERDELI Y MERMELADA", "LECHE UHT", "LURPAK", "LOS LLANOS", 
-        "MANTEQUILLA", "MARGARINA", "NATURA", "OTRO", "PORT BLEU", "QUESO COTTAGE", "QUESO CREMA", "QUESOS MADUROS", 
-        "QUESO OAXACA", "QUESO PANELA", "QUESUAVE", "REJAS", "TARIMAS", "YOGURT"
+    # valores_especificos = [ 
+    #     "CREMA PARA BATIR", "CREMA ENTERA", "CREMA REDUCIDA EN GRASA", "CREMA DULCE", "CREMA PARA CAFE",
+    #     "CREMA NATURAL", "Q. COTTAGE", "FLETE", "INTERDELI Y MERMELADA", "LECHE UHT", "LURPAK", "LOS LLANOS", 
+    #     "MANTEQUILLA", "MARGARINA", "NATURA", "OTRO", "PORT BLEU", "QUESO COTTAGE", "QUESO CREMA", "QUESOS MADUROS", 
+    #     "QUESO OAXACA", "QUESO PANELA", "QUESUAVE", "REJAS", "TARIMAS", "YOGURT"
+    # ]
+    
+    valores_especificos = [
+        "C.BAT","C.ENT","C.REG","CD","CMERO","CN",
+        "CO","FLETE","I.DEL","LECHE","LURPA","LLANO",
+        "MANTE","MG","OTRO","PORT","Q.COT","Q.CRE",
+        "Q.MAD","Q.OAX","QUESU","REJAS", "TARI", "Y"
     ]
 
-    familias = Kdif.objects.filter(descripcion_grupo__in=valores_especificos)\
+    familias = Kdif.objects.filter(clave_grupo__in=valores_especificos)\
                        .values('clave_grupo', 'descripcion_grupo')\
                        .distinct()\
                        .order_by('clave_grupo')
@@ -112,7 +119,6 @@ def handle_familia(request, data_type):
     response_data = {
         'data_type': data_type,
         'familias': list(familias),
-        # 'familiasPaginados': familias_paginados,
     }
     
     response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
