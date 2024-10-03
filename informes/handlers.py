@@ -127,17 +127,24 @@ def handle_familia(request, data_type):
 
 def handle_grupo_corporativo(request, data_type):
     gruposCorporativos = Kdcorpo.objects.values('clave_corporativo', 'descripcion_corporativo').distinct().order_by('clave_corporativo')
+    
+    # Insertar la opción "Todos" al inicio de la lista
+    gruposCorporativos = list(gruposCorporativos)  # Convertir a lista para poder modificarla
+    gruposCorporativos.insert(0, {'clave_corporativo': 'ALL', 'descripcion_corporativo': 'Todos'})
+    
+    # Si es necesario paginar después de insertar "Todos"
     gruposCorporativos_paginados = objPaginator(request, gruposCorporativos, data_type)
     
     response_data = {
         'data_type': data_type,
-        'gruposCorporativos': list(gruposCorporativos),
+        'gruposCorporativos': list(gruposCorporativos),  # Aquí ya se incluye la opción "Todos"
         # 'gruposCorporativosPaginados': gruposCorporativos_paginados,
     }
     
     response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
     response['Content-Encoding'] = 'gzip'
     return response
+
 
 def handle_segmento(request, data_type):
     segmentos = Kdsegmentacion.objects.values('clave_segmentacion', 'descripcion_segmentacion').distinct().order_by('clave_segmentacion')

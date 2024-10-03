@@ -22,9 +22,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "Ventas de Producto según el Sector": 3,
 
     // Familia 4
-    "Ventas Sin Cargo por Zona": 4,
+    
     "Ventas Sin Cargo por Zona según el Mes": 4,
-    "Devoluciones por Sucursal": 4,
     "Consignatarios por Sucursal": 4,
 
     // Familia 5
@@ -109,7 +108,9 @@ document.addEventListener("DOMContentLoaded", function () {
     "Clientes y Consignatarios Activos": 27,
 
     "Tendencia de las Ventas": 28,
-    "Tendencia de las Ventas por Sector (2020)": 28
+    "Tendencia de las Ventas por Sector (2020)": 28,
+    "Devoluciones por Sucursal": 28,
+    "Ventas Sin Cargo por Zona": 28
   };
 
   const FAMILIA = {
@@ -248,6 +249,7 @@ document.addEventListener("DOMContentLoaded", function () {
     ],
     20: ["grupoCorporativo_inicial", "grupoCorporativo_final"],
     21: ["producto_inicial", "producto_final"],
+    
     22: [
       "sucursal_inicial",
       "sucursal_final",
@@ -255,8 +257,10 @@ document.addEventListener("DOMContentLoaded", function () {
       "fecha_final",
       "cliente_inicial",
       "cliente_final",
-      "grupoCorporativo",
+      "grupoCorporativo_inicial", 
+      "grupoCorporativo_final"
     ],
+
     23: [
       "sucursal",
       "fecha_inicial",
