@@ -93,113 +93,53 @@ def ejecutarConsulta(filtros, tipo_reporte):
 
     fecha_inicial = parse_date(fecha_inicial_str)
     fecha_final = parse_date(fecha_final_str)
-    
-    resultados = []
-                        
-    if tipo_reporte == "Por Producto (con Refacturación)":
-        resultados.extend(consultaVentasPorProductoConRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
-    
-    elif tipo_reporte == "Por Tipo de Cliente (con Refacturación)":
-        resultados.extend(consultaVentaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
-    
-    elif tipo_reporte == "Credito Contable (con Refacturación)":
-        resultados.extend(consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final))
-        
-    elif tipo_reporte == "Clientes por Grupos":
-        resultados.extend(consultaClientesPorGrupo(grupoCorporativo_inicial, grupoCorporativo_final))
-    
-    elif tipo_reporte == "Cierre de Mes":
-        resultados.extend(consultaCierreDeMes(fecha_inicial, fecha_final, sucursal))
-        
-    elif tipo_reporte == "Por Producto":
-        resultados.extend(consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final))
-    
-    elif tipo_reporte == "Por Familia en Kilos (con Refacturación)":
-        resultados.extend(consultaVentasPorFamiliaKgConRefacturacion(fecha_inicial, fecha_final, producto_inicial, producto_final, familia_inicial, familia_final, sucursal))
-    
-    elif tipo_reporte == "Comparativa de Ventas y Presupuesto por Zonas en Pesos":
-        resultados.extend(consultaPresupuestoVsVentas(sucursal, year))
-        
-    elif tipo_reporte == "Trazabilidad por Producto":
-        resultados.extend(consultaTrazabilidadPorProducto(fecha_inicial, fecha_final, producto_inicial, producto_final, status, sucursal))
-        
-    elif tipo_reporte == "Ventas en General (Pesos Sin Refacturación)":
-        resultados.extend(consultaVentasEnGeneral(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
 
-    elif tipo_reporte == "Lista de Precios por Producto y por Zonas":
-        resultados.extend(consultaListaPreciosProducto(producto_inicial, producto_final))
-        
-    elif tipo_reporte == "Ventas por Zonas Pesos (Sin Refacturación)":
-        resultados.extend(consultaVentasPorZonasPesos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
-        
-    elif tipo_reporte == "Ventas por Zonas Kilos (Sin Refacturación)":
-        resultados.extend(consultaVentasPorZonaKilos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
-        
-    elif tipo_reporte == "Análisis Semanal de los Principales Contribuyentes a través del Principio 80/20":
-        resultados.extend(consultaSemana8020(fecha_inicial, fecha_final, sucursal))
-        
-    elif tipo_reporte == "Clientes y Consignatarios Activos":
-        resultados.extend(consultaConsignatariosClientesActivos(fecha_inicial, fecha_final))
-        
-    elif tipo_reporte == "Informe de Ventas por Zonas en Pesos":
-        resultados.extend(consultaVentasPorZonaPesosMarca(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, marca_inicial, marca_final))
-    
-    elif tipo_reporte == "Informe de Ventas por Zonas en Kilogramos y por Marca (Sin Refacturación)":
-        resultados.extend(consultaVentasPorZonaKilosMarca(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, marca_inicial, marca_final))
-    
-    elif tipo_reporte == "Ventas por Familia en Pesos (Sin Refacturación)":
-        resultados.extend(consutlaVentasPorFamiliaPesosSinRefacturacion(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, producto_inicial, producto_final, familia_inicial, familia_final))
-    
-    elif tipo_reporte == "Ventas por Familia en Kilos (Sin Refacturación)":
-        resultados.extend(consutlaVentasPorFamiliaKilosSinRefacturacion(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, producto_inicial, producto_final, familia_inicial, familia_final))
-        
-    elif tipo_reporte == "Tendencia de las Ventas":
-        resultados.extend(consultaTendenciaVentas(fecha_inicial, fecha_final))
-        
-    elif tipo_reporte == "Tendencia de las Ventas por Sector (2020)":
-        resultados.extend(consultaTendenciaVentasPorGiro(fecha_inicial, fecha_final))
-        
-    elif tipo_reporte == "Consignatarios por Familia":
-        resultados.extend(consultaConsignatariosPorFamilia(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal, familia_inicial, familia_final))
-        
-    elif tipo_reporte == "Consignatarios por Segmento":
-        resultados.extend(consultaConsignatariosPorSegmento(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal_inicial, sucursal_final))
-        
-    elif tipo_reporte == "Devoluciones por Fecha":
-        resultados.extend(consultaDevolucionesPorFecha(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, grupoCorporativo))
-        
-    elif tipo_reporte == "Devoluciones por Sucursal":
-        resultados.extend(consultaDevolucionesPorSucursal(fecha_inicial, fecha_final))
-        
-    elif tipo_reporte == "Ventas por Tipo de Cliente (Sin Refacturación)":
-        resultados.extend(consultaVentasPorTipoClienteSinRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final))
-        
-    elif tipo_reporte == "Ventas de Credito y Contado (Sin Refacturación)":
-        resultados.extend(consultaVentasDeCreditoContadoSinRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final))
-    
-    elif tipo_reporte == "Comparativo Precios, Reales vs Teoricos y Venta Simulada":
-        resultados.extend(consultaComparativoPreciosRealesvsTeoricos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal_inicial, sucursal_final, grupoCorporativo_inicial, grupoCorporativo_final))
-        
-    elif tipo_reporte == "Ventas Sin Cargo por Zona":
-        resultados.extend(consultaVentaSinCargoPorZona(fecha_inicial, fecha_final))
-    
-    elif tipo_reporte == "Ventas Sin Cargo":
-        resultados.extend(consultaVentaSinCargo(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
-        
-    elif tipo_reporte == "Avance de Ventas por Vendedor":
-        resultados.extend(consultaAvanceVentas(fecha_inicial, fecha_final, sucursal))
-    
-    elif tipo_reporte == "Ventas Contra Devoluciones":
-        resultados.extend(consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, grupoCorporativo_inicial, grupoCorporativo_final))  
-        
-    elif tipo_reporte == "Consignatarios por Código Postal":
-        resultados.extend(consultaConsignatarioPorCodigoPostal(fecha_inicial, fecha_final, sucursal)) 
-    
-    elif tipo_reporte == "Por Cliente":
-        resultados.extend(consultaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
-    
+    # Mapeo de tipo de reporte a funciones y sus parámetros
+    reportes = {
+        "Por Producto (con Refacturación)": lambda: consultaVentasPorProductoConRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
+        "Por Tipo de Cliente (con Refacturación)": lambda: consultaVentaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
+        "Credito Contable (con Refacturación)": lambda: consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial, cliente_final),
+        "Clientes por Grupos": lambda: consultaClientesPorGrupo(grupoCorporativo_inicial, grupoCorporativo_final),
+        "Cierre de Mes": lambda: consultaCierreDeMes(fecha_inicial, fecha_final, sucursal),
+        "Por Producto": lambda: consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final),
+        "Por Familia en Kilos (con Refacturación)": lambda: consultaVentasPorFamiliaKgConRefacturacion(fecha_inicial, fecha_final, producto_inicial, producto_final, familia_inicial, familia_final, sucursal),
+        "Comparativa de Ventas y Presupuesto por Zonas en Pesos": lambda: consultaPresupuestoVsVentas(sucursal, year),
+        "Trazabilidad por Producto": lambda: consultaTrazabilidadPorProducto(fecha_inicial, fecha_final, producto_inicial, producto_final, status, sucursal),
+        "Ventas en General (Pesos Sin Refacturación)": lambda: consultaVentasEnGeneral(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
+        "Lista de Precios por Producto y por Zonas": lambda: consultaListaPreciosProducto(producto_inicial, producto_final),
+        "Ventas por Zonas Pesos (Sin Refacturación)": lambda: consultaVentasPorZonasPesos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
+        "Ventas por Zonas Kilos (Sin Refacturación)": lambda: consultaVentasPorZonaKilos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
+        "Análisis Semanal de los Principales Contribuyentes a través del Principio 80/20": lambda: consultaSemana8020(fecha_inicial, fecha_final, sucursal),
+        "Clientes y Consignatarios Activos": lambda: consultaConsignatariosClientesActivos(fecha_inicial, fecha_final),
+        "Informe de Ventas por Zonas en Pesos": lambda: consultaVentasPorZonaPesosMarca(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, marca_inicial, marca_final),
+        "Informe de Ventas por Zonas en Kilogramos y por Marca (Sin Refacturación)": lambda: consultaVentasPorZonaKilosMarca(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, marca_inicial, marca_final),
+        "Ventas por Familia en Pesos (Sin Refacturación)": lambda: consutlaVentasPorFamiliaPesosSinRefacturacion(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, producto_inicial, producto_final, familia_inicial, familia_final),
+        "Ventas por Familia en Kilos (Sin Refacturación)": lambda: consutlaVentasPorFamiliaKilosSinRefacturacion(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, producto_inicial, producto_final, familia_inicial, familia_final),
+        "Tendencia de las Ventas": lambda: consultaTendenciaVentas(fecha_inicial, fecha_final),
+        "Tendencia de las Ventas por Sector (2020)": lambda: consultaTendenciaVentasPorGiro(fecha_inicial, fecha_final),
+        "Consignatarios por Familia": lambda: consultaConsignatariosPorFamilia(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal, familia_inicial, familia_final),
+        "Consignatarios por Segmento": lambda: consultaConsignatariosPorSegmento(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal_inicial, sucursal_final),
+        "Devoluciones por Fecha": lambda: consultaDevolucionesPorFecha(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, grupoCorporativo),
+        "Devoluciones por Sucursal": lambda: consultaDevolucionesPorSucursal(fecha_inicial, fecha_final),
+        "Ventas por Tipo de Cliente (Sin Refacturación)": lambda: consultaVentasPorTipoClienteSinRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
+        "Ventas de Credito y Contado (Sin Refacturación)": lambda: consultaVentasDeCreditoContadoSinRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final),
+        "Comparativo Precios, Reales vs Teoricos y Venta Simulada": lambda: consultaComparativoPreciosRealesvsTeoricos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal_inicial, sucursal_inicial, grupoCorporativo_inicial, grupoCorporativo_final),
+        "Ventas Sin Cargo por Zona": lambda: consultaVentaSinCargoPorZona(fecha_inicial, fecha_final),
+        "Ventas Sin Cargo": lambda: consultaVentaSinCargo(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
+        "Avance de Ventas por Vendedor": lambda: consultaAvanceVentas(fecha_inicial, fecha_final, sucursal),
+        "Ventas Contra Devoluciones": lambda: consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, grupoCorporativo_inicial, grupoCorporativo_final),
+        "Consignatarios por Código Postal": lambda: consultaConsignatarioPorCodigoPostal(fecha_inicial, fecha_final, sucursal),
+        "Por Cliente": lambda: consultaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final)
+    }
+
+    # Ejecutar la consulta correspondiente
+    if tipo_reporte in reportes:
+        resultados = reportes[tipo_reporte]()
+    else:
+        resultados = []
+
     return resultados
-    
+
 def parse_date(date_str):
     if date_str is None:
         return None
