@@ -29,11 +29,16 @@ from .queries_reportes.tendencia_ventas_por_giro import *
 from .queries_reportes.consignatarios_por_familia import *
 from .queries_reportes.consignatarios_por_segmento import *
 from .queries_reportes.devoluciones_por_fecha import *
-from .queries_reportes.devoluciones_por_sucursal import * # No funciona
+from .queries_reportes.devoluciones_por_sucursal import *
 from .queries_reportes.venta_por_tipo_cliente_sin_refacturacion import *
 from .queries_reportes.venta_credito_contado_sin_refacturacion import *
 from .queries_reportes.comparativo_precios_reales_vs_teoricos import *
 from .queries_reportes.venta_sin_cargo_por_zona import *
+from .queries_reportes.venta_sin_cargo import *
+from .queries_reportes.avance_ventas import *
+from .queries_reportes.ventas_vs_devoluciones import *
+from .queries_reportes.consignatario_por_codigo_postal import *
+from .queries_reportes.por_cliente import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -176,7 +181,22 @@ def ejecutarConsulta(filtros, tipo_reporte):
         resultados.extend(consultaComparativoPreciosRealesvsTeoricos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal_inicial, sucursal_final, grupoCorporativo_inicial, grupoCorporativo_final))
         
     elif tipo_reporte == "Ventas Sin Cargo por Zona":
-        resultados.extend(consultaVentaSinCargoPorZona(fecha_inicial, fecha_final))    
+        resultados.extend(consultaVentaSinCargoPorZona(fecha_inicial, fecha_final))
+    
+    elif tipo_reporte == "Ventas Sin Cargo":
+        resultados.extend(consultaVentaSinCargo(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
+        
+    elif tipo_reporte == "Avance de Ventas por Vendedor":
+        resultados.extend(consultaAvanceVentas(fecha_inicial, fecha_final, sucursal))
+    
+    elif tipo_reporte == "Ventas Contra Devoluciones":
+        resultados.extend(consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, grupoCorporativo_inicial, grupoCorporativo_final))  
+        
+    elif tipo_reporte == "Consignatarios por Código Postal":
+        resultados.extend(consultaConsignatarioPorCodigoPostal(fecha_inicial, fecha_final, sucursal)) 
+    
+    elif tipo_reporte == "Por Cliente":
+        resultados.extend(consultaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final))
     
     return resultados
     

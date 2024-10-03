@@ -197,8 +197,6 @@ document.addEventListener("DOMContentLoaded", function () {
       "sucursal_final",
       "fecha_inicial",
       "fecha_final",
-      "cliente_inicial",
-      "cliente_final",
       "grupoCorporativo_inicial",
       "grupoCorporativo_final",
     ],

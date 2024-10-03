@@ -28,7 +28,9 @@ export function formatNumber(value, isCurrency = false, key = '') {
         'detalles_tipo_documento', 'almacen_correspondiente', 'moneda','zona',
         'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
         'termina_folio', 'nombre', 'zona', 'nombre_producto','UPC','linea',
-        'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia','clave_cliente', 'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente', 'clave_consignatario', 'producto', 'No'
+        'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia','clave_cliente', 'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente', 'clave_consignatario', 'producto', 'No', 'id_vendedor', 'id_almacen',
+        'vendedor','id_grupo_corporativo','grupo_corporativo',
+        'id_consignatario', 'consignatario', 'CP', 'colonia', 'cantidad'
     ];
 
 
