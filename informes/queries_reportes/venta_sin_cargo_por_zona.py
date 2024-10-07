@@ -34,139 +34,140 @@ def consultaVentaSinCargoPorZona(fecha_inicial, fecha_final):
     with connection.cursor() as cursor:
         query = f"""
             SET LANGUAGE Español;
-
+            
             DECLARE 
                 @fecha_inicial VARCHAR(20) = %s,
                 @fecha_final VARCHAR(20) = %s,
                 @fecha_inicial_year_anterior VARCHAR(20) = %s,
                 @fecha_final_year_anterior VARCHAR(20) = %s;
-                
+            
             SELECT 
-                    ISNULL(A.ZONA, B.ZONA)                                                          AS zona,
-                    ISNULL(A.SUCURSAL, B.SUCURSAL)                                                  AS sucursal,
-                    ISNULL(A.VENTA, 0) 											                    AS venta_anterior_{last_year},
-                    ISNULL(B.VENTA, 0) 											                    AS venta_actual_{actual_year},
-                    ISNULL(B.VENTA, 0)-ISNULL(A.VENTA,0) 						                    AS diferencia_en_pesos,
-                    ((ISNULL(B.VENTA, 0)/ISNULL(A.VENTA,B.VENTA))-1)*100 				            AS diferencia_en_porcentaje
-                    
+                ISNULL(A.ZONA, B.ZONA) AS zona,
+                ISNULL(A.SUCURSAL, B.SUCURSAL) AS sucursal,
+                ISNULL(A.VENTA, 0) AS venta_anterior_{last_year},
+                ISNULL(B.VENTA, 0) AS venta_actual_{actual_year},
+                ISNULL(B.VENTA, 0) - ISNULL(A.VENTA, 0) AS diferencia_en_pesos,
+                ((ISNULL(B.VENTA, 0) / ISNULL(A.VENTA, B.VENTA)) - 1) * 100 AS diferencia_en_porcentaje
             FROM (
-                    SELECT 	
-                            KDM2.C1 												AS 'ID_Zona',
-                            KDUV.C22												AS 'ID_Sucursal',
-                            '1.-Vallejo'									AS 'ZONA',
-                            CASE	WHEN KDUV.C22 = 1 THEN 'Autoservicio'
-                                    WHEN KDUV.C22 = 2 THEN 'Norte'
-                                    WHEN KDUV.C22 = 3 THEN 'Sur'
-                                    WHEN KDUV.C22 = 4 THEN 'Vent. Especiales'
-                                    WHEN KDUV.C22 = 5 THEN 'Cadenas'
-                                    WHEN KDUV.C22 IS NULL THEN 'Cadenas'
-                                    WHEN KDUV.C22 ='' THEN 'Cadenas'
-                                    ELSE 'sin asignar a Vallejo'
-                            END																AS 'SUCURSAL',
-                            sum (KDM2.C13)										AS 'VENTA'
-                    FROM 			KDM2
-                        INNER JOIN 	KDUV ON KDUV.C2  = KDM2.C27 
-                    WHERE 
-                                KDM2.C32 >= CONVERT(DATETIME, @fecha_inicial_year_anterior , 102)
-                            AND KDM2.C32 <= CONVERT(DATETIME, @fecha_final_year_anterior , 102)
-                            AND KDM2.C1 = '02'
-                            AND KDM2.C2 = 'U'
-                            AND KDM2.C3 = 'D'
-                            AND KDM2.C4 = '5'
-                            AND KDM2.C5 IN ('71','72','73','74','75','76','77','78','79','80','81','82','86','87','88','91','92','93','94','95','96','97','98','99')
-                            AND KDM2.C27 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
-                    GROUP BY KDUV.C22, KDM2.C1
-                ) AS A FULL JOIN (
-                                    SELECT 
-                                            KDM2.C1 												AS 'ID_Zona',
-                                            KDUV.C22												AS 'ID_Sucursal',
-                                            'Vallejo' 									                    AS 'ZONA',
-                                            CASE	WHEN KDUV.C22 = 1 THEN 'Autoservicio'
-                                                    WHEN KDUV.C22 = 2 THEN 'Norte'
-                                                    WHEN KDUV.C22 = 3 THEN 'Sur'
-                                                    WHEN KDUV.C22 = 4 THEN 'Vent. Especiales'
-                                                    WHEN KDUV.C22 = 5 THEN 'Cadenas'
-                                                    WHEN KDUV.C22 IS NULL THEN 'Cadenas'
-                                                    WHEN KDUV.C22 ='' THEN 'Cadenas'
-                                                    ELSE 'sin asignar a Vallejo'
-                                            END																AS 'SUCURSAL',
-                                            sum (KDM2.C13)										AS 'VENTA'
-                                    FROM 			KDM2
-                                        INNER JOIN 	KDUV ON KDUV.C2  = KDM2.C27 
-                                    WHERE 
-                                                KDM2.C32 >= CONVERT(DATETIME, @fecha_inicial, 102)
-                                            AND KDM2.C32 <= CONVERT(DATETIME, @fecha_final , 102)
-                                            AND KDM2.C1 = '02'
-                                            AND KDM2.C2 = 'U'
-                                            AND KDM2.C3 = 'D'
-                                            AND KDM2.C4 = '5'
-                                            AND KDM2.C5 IN ('71','72','73','74','75','76','77','78','79','80','81','82','86','87','88','91','92','93','94','95','96','97','98','99')
-                                            AND KDM2.C27 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
-                                    GROUP BY KDUV.C22, KDM2.C1
-                            
-                ) AS B ON B.ID_Zona = A.ID_Zona AND B.ID_Sucursal =A.ID_Sucursal
+                SELECT 
+                    KDM2.C1 AS 'ID_Zona',
+                    KDUV.C22 AS 'ID_Sucursal',
+                    '1.-Vallejo' AS 'ZONA',
+                    CASE 
+                        WHEN KDUV.C22 = 1 THEN 'Autoservicio'
+                        WHEN KDUV.C22 = 2 THEN 'Norte'
+                        WHEN KDUV.C22 = 3 THEN 'Sur'
+                        WHEN KDUV.C22 = 4 THEN 'Vent. Especiales'
+                        WHEN KDUV.C22 = 5 THEN 'Cadenas'
+                        WHEN KDUV.C22 IS NULL THEN 'Cadenas'
+                        WHEN KDUV.C22 = '' THEN 'Cadenas'
+                        ELSE 'sin asignar a Vallejo'
+                    END AS 'SUCURSAL',
+                    SUM(KDM2.C13) AS 'VENTA'
+                FROM KDM2
+                INNER JOIN KDUV ON KDUV.C2 = KDM2.C27 
+                WHERE 
+                    KDM2.C32 >= CONVERT(DATETIME, @fecha_inicial_year_anterior, 102)
+                    AND KDM2.C32 <= CONVERT(DATETIME, @fecha_final_year_anterior, 102)
+                    AND KDM2.C1 = '02'
+                    AND KDM2.C2 = 'U'
+                    AND KDM2.C3 = 'D'
+                    AND KDM2.C4 = '5'
+                    AND KDM2.C5 IN ('71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '86', '87', '88', '91', '92', '93', '94', '95', '96', '97', '98', '99')
+                    AND KDM2.C27 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
+                GROUP BY KDUV.C22, KDM2.C1
+            ) AS A
+            FULL JOIN (
+                SELECT 
+                    KDM2.C1 AS 'ID_Zona',
+                    KDUV.C22 AS 'ID_Sucursal',
+                    'Vallejo' AS 'ZONA',
+                    CASE 
+                        WHEN KDUV.C22 = 1 THEN 'Autoservicio'
+                        WHEN KDUV.C22 = 2 THEN 'Norte'
+                        WHEN KDUV.C22 = 3 THEN 'Sur'
+                        WHEN KDUV.C22 = 4 THEN 'Vent. Especiales'
+                        WHEN KDUV.C22 = 5 THEN 'Cadenas'
+                        WHEN KDUV.C22 IS NULL THEN 'Cadenas'
+                        WHEN KDUV.C22 = '' THEN 'Cadenas'
+                        ELSE 'sin asignar a Vallejo'
+                    END AS 'SUCURSAL',
+                    SUM(KDM2.C13) AS 'VENTA'
+                FROM KDM2
+                INNER JOIN KDUV ON KDUV.C2 = KDM2.C27 
+                WHERE 
+                    KDM2.C32 >= CONVERT(DATETIME, @fecha_inicial, 102)
+                    AND KDM2.C32 <= CONVERT(DATETIME, @fecha_final, 102)
+                    AND KDM2.C1 = '02'
+                    AND KDM2.C2 = 'U'
+                    AND KDM2.C3 = 'D'
+                    AND KDM2.C4 = '5'
+                    AND KDM2.C5 IN ('71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '86', '87', '88', '91', '92', '93', '94', '95', '96', '97', '98', '99')
+                    AND KDM2.C27 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
+                GROUP BY KDUV.C22, KDM2.C1
+            ) AS B ON B.ID_Zona = A.ID_Zona AND B.ID_Sucursal = A.ID_Sucursal
+            
             UNION
+            
             SELECT 
-                    ISNULL(A.ZONA, B.ZONA)															            AS 'ZONA',
-                    ISNULL(A.SUCURSAL, B.SUCURSAL) 																AS 'SUCURSAL',
-                    ISNULL(A.VENTA, 0) 											                                AS 'VENTAS anioAnt',
-                    ISNULL(B.VENTA, 0) 											                                AS 'VENTAS anioAct',
-                    ISNULL(B.VENTA, 0)-ISNULL(A.VENTA,0) 						                                AS 'diferencia_en_pesos',
-                    ((ISNULL(B.VENTA, 0)/ISNULL(A.VENTA,B.VENTA))-1)*100 				                        AS 'diferencia_en_porcentaje'
-                    
-                FROM (
-                    SELECT 	
-                            LTRIM(RTRIM(KDM2.C1)) 									AS 'ID_Zona',
-                            
-                            CASE	WHEN KDM2.C1 IN ('17','04','15','16')	THEN '2.-Norte'
-                                    WHEN KDM2.C1 IN ('09','14','12','03','20')	THEN '3.-Pacifico'
-                                    WHEN KDM2.C1 IN ('05','10','08','19')	THEN '4.-Centro'
-                                    WHEN KDM2.C1 IN ('13','11','18','07')	THEN '5.-Sureste'
-                                    ELSE 'Sin zona'
-                            END 																AS 'ZONA',
-                            KDMS.C2 													AS 'SUCURSAL',
-                            sum (KDM2.C13)											AS 'VENTA'
-                    FROM 			KDM2
-                        INNER JOIN 	KDUV ON KDUV.C2  = KDM2.C27 
-                        INNER JOIN 	KDMS ON KDMS.C1 = KDM2.C1 
-                    WHERE 
-                                KDM2.C32 >= CONVERT(DATETIME, @fecha_inicial_year_anterior , 102)
-                            AND KDM2.C32 <= CONVERT(DATETIME, @fecha_final_year_anterior , 102)
-                            AND KDM2.C1 <> '02'
-                            AND KDM2.C2 = 'U'
-                            AND KDM2.C3 = 'D'
-                            AND KDM2.C4 = '5'
-                            AND KDM2.C5 IN ('71','72','73','74','75','76','77','78','79','80','81','82','86','87','88','91','92','93','94','95','96','97','98','99')
-                            AND KDM2.C27 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
-                    GROUP BY  KDM2.C1,  KDMS.C2
-                    
-            ) AS A FULL JOIN (
-                                SELECT 
-                                    KDM2.C1 													AS 'ID_Zona',
-                                    
-                                    CASE	WHEN KDM2.C1 IN ('17','04','15','16')	THEN '2.-Norte'
-                                            WHEN KDM2.C1 IN ('09','14','12','03','20')	THEN '3.-Pacifico'
-                                            WHEN KDM2.C1 IN ('05','10','08','19')	THEN '4.-Centro'
-                                            WHEN KDM2.C1 IN ('13','11','18','07')	THEN '5.-Sureste'
-                                            ELSE 'Sin zona'
-                                    END 																AS 'ZONA',
-                                    KDMS.C2 													AS 'SUCURSAL',
-                                    sum (KDM2.C13)											AS 'VENTA'
-                                FROM 			KDM2
-                                    INNER JOIN 	KDUV ON KDUV.C2  = KDM2.C27 
-                                    INNER JOIN 	KDMS ON KDMS.C1 = KDM2.C1 
-                                WHERE 
-                                        KDM2.C32 >= CONVERT(DATETIME, @fecha_inicial , 102)
-                                        AND KDM2.C32 <= CONVERT(DATETIME, @fecha_final , 102)
-                                        AND KDM2.C1 <> '02'
-                                        AND KDM2.C2 = 'U'
-                                        AND KDM2.C3 = 'D'
-                                        AND KDM2.C4 = '5'
-                                        AND KDM2.C5 IN ('71','72','73','74','75','76','77','78','79','80','81','82','86','87','88','91','92','93','94','95','96','97','98','99')
-                                        AND KDM2.C27 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
-                                GROUP BY KDM2.C1,  KDMS.C2
-                            
-            ) AS B ON B.ID_Zona = A.ID_Zona  
+                ISNULL(A.ZONA, B.ZONA) AS 'ZONA',
+                ISNULL(A.SUCURSAL, B.SUCURSAL) AS 'SUCURSAL',
+                ISNULL(A.VENTA, 0) AS 'VENTAS anioAnt',
+                ISNULL(B.VENTA, 0) AS 'VENTAS anioAct',
+                ISNULL(B.VENTA, 0) - ISNULL(A.VENTA, 0) AS 'diferencia_en_pesos',
+                ((ISNULL(B.VENTA, 0) / ISNULL(A.VENTA, B.VENTA)) - 1) * 100 AS 'diferencia_en_porcentaje'
+            FROM (
+                SELECT 
+                    LTRIM(RTRIM(KDM2.C1)) AS 'ID_Zona',
+                    CASE 
+                        WHEN KDM2.C1 IN ('17', '04', '15', '16') THEN '2.-Norte'
+                        WHEN KDM2.C1 IN ('09', '14', '12', '03', '20') THEN '3.-Pacifico'
+                        WHEN KDM2.C1 IN ('05', '10', '08', '19') THEN '4.-Centro'
+                        WHEN KDM2.C1 IN ('13', '11', '18', '07') THEN '5.-Sureste'
+                        ELSE 'Sin zona'
+                    END AS 'ZONA',
+                    KDMS.C2 AS 'SUCURSAL',
+                    SUM(KDM2.C13) AS 'VENTA'
+                FROM KDM2
+                INNER JOIN KDUV ON KDUV.C2 = KDM2.C27 
+                INNER JOIN KDMS ON KDMS.C1 = KDM2.C1 
+                WHERE 
+                    KDM2.C32 >= CONVERT(DATETIME, @fecha_inicial_year_anterior, 102)
+                    AND KDM2.C32 <= CONVERT(DATETIME, @fecha_final_year_anterior, 102)
+                    AND KDM2.C1 <> '02'
+                    AND KDM2.C2 = 'U'
+                    AND KDM2.C3 = 'D'
+                    AND KDM2.C4 = '5'
+                    AND KDM2.C5 IN ('71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '86', '87', '88', '91', '92', '93', '94', '95', '96', '97', '98', '99')
+                    AND KDM2.C27 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
+                GROUP BY KDM2.C1, KDMS.C2
+            ) AS A
+            FULL JOIN (
+                SELECT 
+                    KDM2.C1 AS 'ID_Zona',
+                    CASE 
+                        WHEN KDM2.C1 IN ('17', '04', '15', '16') THEN '2.-Norte'
+                        WHEN KDM2.C1 IN ('09', '14', '12', '03', '20') THEN '3.-Pacifico'
+                        WHEN KDM2.C1 IN ('05', '10', '08', '19') THEN '4.-Centro'
+                        WHEN KDM2.C1 IN ('13', '11', '18', '07') THEN '5.-Sureste'
+                        ELSE 'Sin zona'
+                    END AS 'ZONA',
+                    KDMS.C2 AS 'SUCURSAL',
+                    SUM(KDM2.C13) AS 'VENTA'
+                FROM KDM2
+                INNER JOIN KDUV ON KDUV.C2 = KDM2.C27 
+                INNER JOIN KDMS ON KDMS.C1 = KDM2.C1 
+                WHERE 
+                    KDM2.C32 >= CONVERT(DATETIME, @fecha_inicial, 102)
+                    AND KDM2.C32 <= CONVERT(DATETIME, @fecha_final, 102)
+                    AND KDM2.C1 <> '02'
+                    AND KDM2.C2 = 'U'
+                    AND KDM2.C3 = 'D'
+                    AND KDM2.C4 = '5'
+                    AND KDM2.C5 IN ('71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '86', '87', '88', '91', '92', '93', '94', '95', '96', '97', '98', '99')
+                    AND KDM2.C27 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
+                GROUP BY KDM2.C1, KDMS.C2
+            ) AS B ON B.ID_Zona = A.ID_Zona;  
         """
 
         params = [

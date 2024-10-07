@@ -17,13 +17,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Familia 3
 
-    "Ventas por Categoría según la Región": 3,
-    "Ventas por Producto según la Familia": 3,
-    "Ventas de Producto según el Sector": 3,
+    "Ventas por Familia por Región": 3,
+    "Ventas por Familia por Producto": 3,
+    "Ventas por Producto por Giro": 3,
 
     // Familia 4
     
-    "Ventas Sin Cargo por Zona según el Mes": 4,
+    
     "Consignatarios por Sucursal": 4,
 
     // Familia 5
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Familia 10
     "Por Cliente": 10,
-    "Comparativo de Ventas por (Producto Sin Refacturación)": 10,
+    "Comparativo de Ventas por Producto (Sin Refacturación)": 10,
     "Por Producto (con Refacturación)": 10,
     "Ventas Sin Cargo": 10,
     "Ventas a Clientes/Consignatarios por Mes": 10,
@@ -110,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Tendencia de las Ventas por Sector (2020)": 28,
     "Devoluciones por Sucursal": 28,
     "Ventas Sin Cargo por Zona": 28,
+    "Ventas Sin Cargo por Zona según el Mes": 28,
 
     "Análisis de Ventas por Vendedor": 29,
   };

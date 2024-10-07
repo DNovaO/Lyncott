@@ -21,7 +21,7 @@ def home_view(request):
     categorias_reporte = { 
         "Ventas": [
             "Cierre de Mes",
-            "Comparativo de Ventas por (Producto Sin Refacturación)",
+            "Comparativo de Ventas por Producto (Sin Refacturación)",
             "Comparativo Precios, Reales vs Teoricos y Venta Simulada",
             "Conciliación de Ventas",
             "Lista de Precios por Producto y por Zonas",
@@ -82,9 +82,9 @@ def home_view(request):
         "Regional": [
             "Ventas Sin Cargo por Zona",
             "Ventas Sin Cargo por Zona según el Mes",
-            "Ventas de Producto según el Sector",
-            "Ventas por Categoría según la Región",
-            "Ventas por Producto según la Familia"
+            "Ventas por Producto por Giro",
+            "Ventas por Familia por Producto",
+            "Ventas por Familia por Región",
         ],
 
         "Devoluciones": [

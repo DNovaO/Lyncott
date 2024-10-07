@@ -42,6 +42,13 @@ from .queries_reportes.por_cliente import *
 from .queries_reportes.folios_facturas import *
 from .queries_reportes.venta_cliente_grupo_consignatario_producto import *
 from .queries_reportes.analisis_ventas_vendedor import *
+from .queries_reportes.venta_por_producto_por_giro import *
+from .queries_reportes.venta_por_familia_por_producto import *
+from .queries_reportes.venta_por_familia_por_region import *
+from .queries_reportes.venta_cliente_consignatario_por_mes import *
+from .queries_reportes.comparativo_ventas_producto_sin_refacturacion import *
+from .queries_reportes.venta_sin_cargo_zona_mes import *
+from .queries_reportes.comparativo_notas_credito_kilogramos import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -136,6 +143,14 @@ def ejecutarConsulta(filtros, tipo_reporte):
         "Folios de Facturas": lambda: consultaFoliosFacturas(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final),
         "Ventas de Clientes por Grupo, Consignatario y Producto" : lambda: consultaVentaClienteGrupoConsignatarioProducto(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, grupoCorporativo_inicial, grupoCorporativo_final),
         "Análisis de Ventas por Vendedor": lambda: consultaAnalisisVentasVendedor(fecha_inicial, fecha_final, producto_inicial, producto_final, cliente_inicial, cliente_final, vendedor_inicial, vendedor_final ,sucursal),
+        "Ventas por Producto por Giro": lambda: consultaVentaPorProductoPorGiro(fecha_inicial, fecha_final, region),
+        "Ventas por Familia por Producto": lambda: consultaVentaPorFamiliaPorProducto(fecha_inicial, fecha_final, region),
+        "Ventas por Familia por Región": lambda: consultaVentaPorFamiliaPorRegion(fecha_inicial, fecha_final, region),
+        "Ventas a Clientes/Consignatarios por Mes": lambda: consultaVentaPorClienteConsignatarioPorMes(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
+        "Comparativo de Ventas por Producto (Sin Refacturación)": lambda:consultaComparativoVentasProductoSinRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
+        "Ventas Sin Cargo por Zona según el Mes": lambda: consultaVentaSinCargoPorZonaMes(fecha_inicial, fecha_final),
+        "Comparativa de Notas de Crédito en Kilogramos": lambda: consultaComparativoNotasCreditoKilogramos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
+    
     }
 
     # Ejecutar la consulta correspondiente
