@@ -39,6 +39,9 @@ from .queries_reportes.avance_ventas import *
 from .queries_reportes.ventas_vs_devoluciones import *
 from .queries_reportes.consignatario_por_codigo_postal import *
 from .queries_reportes.por_cliente import *
+from .queries_reportes.folios_facturas import *
+from .queries_reportes.venta_cliente_grupo_consignatario_producto import *
+from .queries_reportes.analisis_ventas_vendedor import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -129,7 +132,10 @@ def ejecutarConsulta(filtros, tipo_reporte):
         "Avance de Ventas por Vendedor": lambda: consultaAvanceVentas(fecha_inicial, fecha_final, sucursal),
         "Ventas Contra Devoluciones": lambda: consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, grupoCorporativo_inicial, grupoCorporativo_final),
         "Consignatarios por Código Postal": lambda: consultaConsignatarioPorCodigoPostal(fecha_inicial, fecha_final, sucursal),
-        "Por Cliente": lambda: consultaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final)
+        "Por Cliente": lambda: consultaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
+        "Folios de Facturas": lambda: consultaFoliosFacturas(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final),
+        "Ventas de Clientes por Grupo, Consignatario y Producto" : lambda: consultaVentaClienteGrupoConsignatarioProducto(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, grupoCorporativo_inicial, grupoCorporativo_final),
+        "Análisis de Ventas por Vendedor": lambda: consultaAnalisisVentasVendedor(fecha_inicial, fecha_final, producto_inicial, producto_final, cliente_inicial, cliente_final, vendedor_inicial, vendedor_final ,sucursal),
     }
 
     # Ejecutar la consulta correspondiente

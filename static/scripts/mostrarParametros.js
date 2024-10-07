@@ -47,8 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Avance de Ventas por Vendedor": 9,
     "Análisis Semanal de los Principales Contribuyentes a través del Principio 80/20": 9,
     "Consignatarios por Código Postal": 9,
-    "Análisis de Ventas por Vendedor": 9,
-
+    
     // Familia 10
     "Por Cliente": 10,
     "Comparativo de Ventas por (Producto Sin Refacturación)": 10,
@@ -110,7 +109,9 @@ document.addEventListener("DOMContentLoaded", function () {
     "Tendencia de las Ventas": 28,
     "Tendencia de las Ventas por Sector (2020)": 28,
     "Devoluciones por Sucursal": 28,
-    "Ventas Sin Cargo por Zona": 28
+    "Ventas Sin Cargo por Zona": 28,
+
+    "Análisis de Ventas por Vendedor": 29,
   };
 
   const FAMILIA = {
@@ -282,6 +283,8 @@ document.addEventListener("DOMContentLoaded", function () {
     27:["fecha_inicial", "fecha_final"],
 
     28: ["fecha_inicial", "fecha_final"],
+
+    29: ["fecha_inicial", "fecha_final", "producto_inicial", "producto_final", "cliente_inicial", "cliente_final", "vendedor_inicial", "vendedor_final", "sucursal"],
 
   };
 
