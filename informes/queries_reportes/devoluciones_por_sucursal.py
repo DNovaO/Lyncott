@@ -9,13 +9,12 @@ from django.db import connection
 from informes.f_DifDias import *
 from informes.f_DifDiasTotales import *
 
-#INCOMPLETO
 def consultaDevolucionesPorSucursal(fecha_inicial, fecha_final):
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}")
     
     with connection.cursor() as cursor:
         query = f"""
-                        DECLARE
+            DECLARE
                 @fecha_inicial DATE = CONVERT(DATE, %s, 102),
                 @fecha_final DATE = CONVERT(DATE, %s, 102);
             

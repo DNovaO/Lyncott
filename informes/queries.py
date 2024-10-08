@@ -51,6 +51,9 @@ from .queries_reportes.venta_sin_cargo_zona_mes import *
 from .queries_reportes.comparativo_notas_credito_kilogramos import *
 from .queries_reportes.ventas_cadena_foodservice import *
 from .queries_reportes.ventas_sin_notas_de_credito_en_pesos import *
+from .queries_reportes.devoluciones_por_zona import *
+from .queries_reportes.ventas_foodservice_KAM import *
+from .queries_reportes.ventas_autoservice_KAM import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -133,6 +136,7 @@ def ejecutarConsulta(filtros, tipo_reporte):
         "Consignatarios por Segmento": lambda: consultaConsignatariosPorSegmento(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal_inicial, sucursal_final),
         "Devoluciones por Fecha": lambda: consultaDevolucionesPorFecha(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, grupoCorporativo),
         "Devoluciones por Sucursal": lambda: consultaDevolucionesPorSucursal(fecha_inicial, fecha_final),
+        "Devoluciones por Zona en Pesos": lambda: consultaDevolucionesPorZona(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final),
         "Ventas por Tipo de Cliente (Sin Refacturación)": lambda: consultaVentasPorTipoClienteSinRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
         "Ventas de Credito y Contado (Sin Refacturación)": lambda: consultaVentasDeCreditoContadoSinRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final),
         "Comparativo Precios, Reales vs Teoricos y Venta Simulada": lambda: consultaComparativoPreciosRealesvsTeoricos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal_inicial, sucursal_inicial, grupoCorporativo_inicial, grupoCorporativo_final),
@@ -154,6 +158,8 @@ def ejecutarConsulta(filtros, tipo_reporte):
         "Comparativa de Notas de Crédito en Kilogramos": lambda: consultaComparativoNotasCreditoKilogramos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
         "Ventas en Cadenas FoodService": lambda:consultaVentasCadenaFoodService(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
         "Ventas sin Notas de Credito en Pesos": lambda: consultaVentaSinNotaDeCreditoEnPesos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
+        "Ventas de Cadenas FoodService KAM": lambda: consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
+        "Ventas de Cadenas AutoService KAM": lambda: consultaVentasAutoServiceKAM(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
     
     }
 
