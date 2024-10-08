@@ -52,6 +52,7 @@ from .queries_reportes.comparativo_notas_credito_kilogramos import *
 from .queries_reportes.ventas_cadena_foodservice import *
 from .queries_reportes.ventas_sin_notas_de_credito_en_pesos import *
 from .queries_reportes.devoluciones_por_zona import *
+from .queries_reportes.devolucion_por_zona_en_kilos import *
 from .queries_reportes.ventas_foodservice_KAM import *
 from .queries_reportes.ventas_autoservice_KAM import *
 
@@ -160,6 +161,7 @@ def ejecutarConsulta(filtros, tipo_reporte):
         "Ventas sin Notas de Credito en Pesos": lambda: consultaVentaSinNotaDeCreditoEnPesos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
         "Ventas de Cadenas FoodService KAM": lambda: consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
         "Ventas de Cadenas AutoService KAM": lambda: consultaVentasAutoServiceKAM(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
+        "Devoluciones por Zona en Kilogramos": lambda: consultaDevolucionPorZonaKilos(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final),
     
     }
 
