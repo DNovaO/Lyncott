@@ -49,6 +49,8 @@ from .queries_reportes.venta_cliente_consignatario_por_mes import *
 from .queries_reportes.comparativo_ventas_producto_sin_refacturacion import *
 from .queries_reportes.venta_sin_cargo_zona_mes import *
 from .queries_reportes.comparativo_notas_credito_kilogramos import *
+from .queries_reportes.ventas_cadena_foodservice import *
+from .queries_reportes.ventas_sin_notas_de_credito_en_pesos import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -150,6 +152,8 @@ def ejecutarConsulta(filtros, tipo_reporte):
         "Comparativo de Ventas por Producto (Sin Refacturación)": lambda:consultaComparativoVentasProductoSinRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
         "Ventas Sin Cargo por Zona según el Mes": lambda: consultaVentaSinCargoPorZonaMes(fecha_inicial, fecha_final),
         "Comparativa de Notas de Crédito en Kilogramos": lambda: consultaComparativoNotasCreditoKilogramos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
+        "Ventas en Cadenas FoodService": lambda:consultaVentasCadenaFoodService(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
+        "Ventas sin Notas de Credito en Pesos": lambda: consultaVentaSinNotaDeCreditoEnPesos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final),
     
     }
 

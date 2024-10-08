@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Ventas por Zonas Kilos (Sin Refacturación)": 1,
     "Comparativa de Notas de Crédito en Kilogramos": 1,
     "Ventas sin Notas de Crédito en Pesos": 1,
+    "Ventas sin Notas de Credito en Pesos": 1,
 
     // Familia 2
     "Cierre de Mes": 2,
