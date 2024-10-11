@@ -32,7 +32,7 @@ def consultaVentaSinCargo(fecha_inicial, fecha_final, cliente_inicial, cliente_f
                 DBKL2019.UNI AS unidad,
                 ISNULL(DBKL2019.KGSLTS, 0) AS kgslts,
                 DBKL2019.UNID AS unidad_de_medida,
-                CONCAT('$', ISNULL(DBKL2019.PESOS, 0)) AS pesos, 
+                ISNULL(DBKL2019.PESOS, 0) AS pesos, 
                 (ISNULL(DBKL2019.PESOS, 0)) / (ISNULL(DBKL2019.CANTIDAD, 0)) AS precio_promedio
             FROM (
                 SELECT 

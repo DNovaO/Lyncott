@@ -13,5 +13,6 @@ export const btnMostrarFiltros = document.getElementById('btnMostrarFiltros');
 export const btnBorrarReporte = document.getElementById('btnBorrarReporte');
 export const btnExportarExcel = document.getElementById('btnExportarExcel');
 export const btnExportarCSV = document.getElementById('btnExportarCSV');
+export const btnImprimir = document.getElementById('btnImprimir');
 export const fechaInicialInput = document.getElementById('fecha_inicial');
 export const fechaFinalInput = document.getElementById('fecha_final');
