@@ -8,7 +8,6 @@ function removeHTMLTags(str) {
     return str;  // Si no es una cadena, retorna el valor sin modificaciones
 }
 
-
 export function exportToCSV(dataGlobal, filename) {
     const { campos_reporte, datos_completos } = dataGlobal;
 

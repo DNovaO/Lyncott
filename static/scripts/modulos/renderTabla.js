@@ -1,7 +1,8 @@
 // renderTabla.js
 import { formatNumber, transformHeader } from './utils.js';
 import { exportToCSV, exportToExcel, imprimirInformacion } from "./exportaciones.js";
-import { btnExportarCSV , btnExportarExcel, btnImprimir} from "./config.js"
+import { btnExportarCSV , btnExportarExcel, btnImprimir, btnMostrarGrafico, tipo_reporte} from "./config.js"
+import { mostrarGrafico } from "./graficas.js";
 
 let dataGlobal;
 
@@ -22,6 +23,12 @@ document.addEventListener("DOMContentLoaded", function(){
     if (btnImprimir){
         btnImprimir.addEventListener('click', function(e) {
             imprimirInformacion(datos, 'data.pdf');    
+        });
+    }
+
+    if (btnMostrarGrafico){
+        btnMostrarGrafico.addEventListener('click', function(e) {
+            mostrarGrafico(dataGlobal, tipo_reporte)
         });
     }
 

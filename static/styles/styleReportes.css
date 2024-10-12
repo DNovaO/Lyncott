@@ -100,18 +100,6 @@ footer {
   height: max-content;
 } 
 
-.btn-active-green {
-  background-color: #ed1c24;
-  border-color: #ed1c24;
-  color: white;
-}
-
-.btn-active-green:focus, .btn-active-green:hover {
-  background-color: #ed1c24;
-  border-color: #ed1c24; 
-  color: white;
-}
-
 .lds-ellipsis,
 .lds-ellipsis div {
   box-sizing: border-box;
@@ -238,3 +226,40 @@ p {
   color: #ffffff;
   border-color: #ed1c24;
 } */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-check-inline {
+  display: inline-block;
+  width: 45%;
+  margin-bottom: 10px;
+}
+
+.form-container {
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  margin-bottom: 20px;
+}
+
+.form-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.custom-select {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  margin-top: 10px;
+  width: 100%;
+}
+
+label {
+  font-weight: 600;
+}
