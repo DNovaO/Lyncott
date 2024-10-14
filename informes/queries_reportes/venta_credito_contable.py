@@ -28,13 +28,13 @@ def consultaVentaPorCreditoContable(fecha_inicial, fecha_final, cliente_inicial,
                 END AS zona,
                 
                 CASE 
-                    WHEN IEPS.SUC  = '1' THEN  '1&nbsp;-&nbsp;Autoservicio'
-                    WHEN IEPS.SUC  = '2' THEN  '2&nbsp;-&nbsp;Norte'
-                    WHEN IEPS.SUC  = '3' THEN  '3&nbsp;-&nbsp;Sur'
-                    WHEN IEPS.SUC  = '4' THEN  '4&nbsp;-&nbsp;Vent. Especiales'
-                    WHEN IEPS.SUC  = '5' THEN  '5&nbsp;-&nbsp;Cadenas'
-                    WHEN IEPS.SUC  = '6' THEN  '6&nbsp;-&nbsp;Centro'
-                    ELSE LTRIM(RTRIM(IEPS.SUC)) + '&nbsp;-&nbsp;' + SUCURSAL.C2
+                    WHEN IEPS.SUC  = '1' THEN  '1 - Autoservicio'
+                    WHEN IEPS.SUC  = '2' THEN  '2 - Norte'
+                    WHEN IEPS.SUC  = '3' THEN  '3 - Sur'
+                    WHEN IEPS.SUC  = '4' THEN  '4 - Vent. Especiales'
+                    WHEN IEPS.SUC  = '5' THEN  '5 - Cadenas'
+                    WHEN IEPS.SUC  = '6' THEN  '6 - Centro'
+                    ELSE LTRIM(RTRIM(IEPS.SUC)) + ' - ' + SUCURSAL.C2
                 END AS sucursal,
                 
                 SUM(IEPS.CONT) AS contado,

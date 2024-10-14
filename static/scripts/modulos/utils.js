@@ -31,7 +31,7 @@ export function formatNumber(value, isCurrency = false, key = '') {
         'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia','clave_cliente', 'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente', 'clave_consignatario', 'producto', 'No', 'id_vendedor', 'id_almacen',
         'vendedor','id_grupo_corporativo','grupo_corporativo',
         'id_consignatario', 'consignatario', 'CP', 'colonia', 'cantidad','folio','RFC', 'UUID', 'serie','clave_vendedor',
-        'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente'
+        'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente', 'descripcion'
     ];
 
 

@@ -220,13 +220,6 @@ p {
   color: currentColor;
 }
 
-
-/* .pagination .page-item.active .page-link {
-  background-color: #ed1c24;
-  color: #ffffff;
-  border-color: #ed1c24;
-} */
-
 .form-group {
   margin-bottom: 20px;
 }
@@ -262,4 +255,14 @@ p {
 
 label {
   font-weight: 600;
+}
+
+#resultadosPorPagina {
+  font-size: 0.9em; /* Ajusta el tamaño de la fuente */
+  width: auto; /* Mantiene el ancho automático */
+  padding: 5px; /* Reduce el padding para hacer el select más pequeño */
+  border: 1px solid #ced4da; /* Cambia el color del borde */
+  border-radius: 4px; /* Bordes redondeados */
+  background-color: #fff; /* Color de fondo */
+  height: auto; /* Deja que la altura se ajuste automáticamente */
 }

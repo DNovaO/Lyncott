@@ -5,7 +5,7 @@
 
 import { showLoaderModal } from './renderModal.js';
 import { formatNumber, transformHeader } from "./utils.js";
-// import { generarGrafico } from './grafico.js'; // Ajusta la ruta según tu estructura de archivos
+import { tipo_reporte } from './config.js';
 
 export function mostrarGrafico(dataGlobal, tipo_reporte) {
     const { campos_reporte, datos_completos } = dataGlobal;
@@ -77,7 +77,6 @@ export function mostrarGrafico(dataGlobal, tipo_reporte) {
         </div>
     `;
 
-
     // Agregar el listener para el botón 'Generar Gráfico'
     document.getElementById('generateGraph').addEventListener('click', function () {
         // Obtener las selecciones para Eje X
@@ -106,7 +105,7 @@ export function mostrarGrafico(dataGlobal, tipo_reporte) {
         }
 
         // Llamar a la función para generar el gráfico con los valores seleccionados
-        generarGrafico(selectedXValues, selectedYValues, tipoGrafico, datos_completos, tipo_reporte);
+        agregarGraficoATabla(selectedXValues, selectedYValues, tipoGrafico, datos_completos);
 
         // Cerrar el modal
         $("#genericModal").modal("hide");
@@ -115,6 +114,106 @@ export function mostrarGrafico(dataGlobal, tipo_reporte) {
     // Mostrar el modal
     $("#genericModal").modal("show");
 
-    // Imprimir el tipo de reporte para verificar
     console.log(tipo_reporte);
+}
+
+function agregarGraficoATabla(ejeX, ejeY, tipoGrafico, datos) {
+    const tabla = document.querySelector('.table');
+
+    console.log("Eje X:", ejeX);
+    console.log("Eje Y:", ejeY);
+    console.log("Datos completos:", datos);
+
+    let existingGraphContainer = document.getElementById('tablaGraphContainer');
+    if (existingGraphContainer) {
+        existingGraphContainer.remove();
+    }
+
+    const graphContainer = document.createElement('div');
+    graphContainer.id = 'tablaGraphContainer';
+    graphContainer.style.display = 'flex'; // Usar flexbox para centrar
+    graphContainer.style.justifyContent = 'center'; // Centrar horizontalmente
+    graphContainer.style.width = '100%'; // Ajustar al 100% del contenedor padre
+    graphContainer.style.height = '100vh';
+    graphContainer.innerHTML = '<canvas id="chartCanvas" style="display: flex; justify-content:center;"></canvas>';
+
+    tabla.insertAdjacentElement('afterend', graphContainer);
+
+    const ctx = document.getElementById('chartCanvas').getContext('2d');
+
+    // Crear etiquetas para el Eje X tomando valores de las ventas
+    const etiquetas = datos.map(fila => {
+        return ejeX.map(eje => convertirValor(fila[transformHeaderReverse(eje)])).join(', ') || 'Sin Datos';
+    });
+
+    console.log("Etiquetas del Eje X:", etiquetas);
+
+    // Obtener datasets para el eje Y
+    const datasets = ejeY.map((campoY, index) => {
+        const data = datos.map(fila => {
+            const valor = convertirValor(fila[transformHeaderReverse(campoY)]);
+            return (typeof valor === 'number') ? valor : 0; // Solo incluir números
+        });
+        console.log(`Datos para ${campoY}:`, data);
+
+        return {
+            label: campoY,
+            data: data,
+            backgroundColor: obtenerColor(index),
+            borderColor: obtenerColor(index, 0.8),
+            borderWidth: 1,
+        };
+    });
+
+    // Crear el gráfico
+    new Chart(ctx, {
+        type: tipoGrafico,
+        data: { labels: etiquetas, datasets: datasets },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' },
+                title: { display: true, text: `Gráfico generado` },
+            },
+            scales: { x: { beginAtZero: true }, y: { beginAtZero: true } },
+        }
+    });
+
+    setTimeout(() => {
+        $("#genericModal").modal("hide");
+    }, 300);
+}
+
+// Transformar encabezados de manera que se ajusten a los nombres en los datos
+function transformHeaderReverse(header) {
+    return header.toLowerCase().replace(/\s+/g, '_'); // Convertir a minúsculas y reemplazar espacios por guiones bajos
+}
+
+// La función convertirValor es la misma que antes
+function convertirValor(valor) {
+    if (typeof valor === 'string') {
+        valor = valor.replace(/,/g, '');
+        const numero = parseFloat(valor);
+        if (!isNaN(numero)) {
+            return numero;
+        }
+        const fecha = new Date(valor);
+        if (!isNaN(fecha.getTime())) {
+            return fecha;
+        }
+        return valor;
+    }
+    return valor;
+}
+
+function obtenerColor(index, opacity = 0.8) { // Aumentar la opacidad a 0.8
+    const colores = [
+        'rgba(255, 82, 127, OP)', // Un rosa más brillante
+        'rgba(0, 153, 255, OP)',  // Un azul más brillante
+        'rgba(255, 255, 0, OP)',   // Amarillo brillante
+        'rgba(0, 230, 230, OP)',   // Un cyan más brillante
+        'rgba(178, 102, 255, OP)', // Un morado más brillante
+        'rgba(255, 136, 0, OP)'    // Un naranja más brillante
+    ];
+    return colores[index % colores.length].replace('OP', opacity);
 }

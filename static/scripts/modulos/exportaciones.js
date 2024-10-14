@@ -65,24 +65,61 @@ export function exportToExcel(dataGlobal, filename) {
     XLSX.writeFile(wb, filename);
 }
 
-// Funcion para imprimir
-export function imprimirInformacion(dataGlobal, filename) {
+// Función para imprimir el informe
+// Función para imprimir el informe
+export async function imprimirInformacion(dataGlobal, filename) {
     const { campos_reporte, datos_completos } = dataGlobal;
+
+    // Comprobar que los datos necesarios están disponibles
+    if (!campos_reporte || !datos_completos) {
+        console.error('Datos incompletos para imprimir el informe.');
+        return;
+    }
 
     // Crear el HTML para el reporte
     let printWindow = window.open('', '', 'width=800,height=600');
-    
+
+    // Obtener las filas de totales por ID
+    const filaTotalPagina = document.getElementById('total-pagina');
+    const filaTotalGlobal = document.getElementById('total-pagina-global');
+    const graphCanvas = document.getElementById('chartCanvas'); // Obtener el canvas de la gráfica
+
+    // Convertir las filas de totales a HTML
+    const filaTotalPaginaHTML = filaTotalPagina ? filaTotalPagina.outerHTML : '';
+    const filaTotalGlobalHTML = filaTotalGlobal ? filaTotalGlobal.outerHTML : '';
+
+    // Verificar que el canvas existe y convertirlo a imagen
+    let graphImage = '';
+    if (graphCanvas) {
+        graphImage = await new Promise((resolve) => {
+            graphCanvas.toBlob((blob) => {
+                if (blob) {
+                    const url = URL.createObjectURL(blob);
+                    resolve(url);
+                } else {
+                    resolve('');
+                }
+            });
+        });
+    }
+
     // Agregar título y estilos básicos para impresión
     printWindow.document.write(`
         <html>
         <head>
             <title>${filename}</title>
             <style>
-                body { font-family: Arial, sans-serif; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+                h1 { text-align: center; margin-bottom: 20px; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
                 th { background-color: #f2f2f2; }
-                h1 { text-align: center; }
+                tr:nth-child(even) { background-color: #f9f9f9; }
+                tr:hover { background-color: #f1f1f1; }
+                img { display: block; margin: 0 auto; }
+                @media print {
+                    body { -webkit-print-color-adjust: exact; }
+                }
             </style>
         </head>
         <body>
@@ -90,12 +127,14 @@ export function imprimirInformacion(dataGlobal, filename) {
             <table>
                 <thead>
                     <tr>
+                        <th scope="col" class="numero-tabla">#</th>
                         ${campos_reporte.map(field => `<th>${transformHeader(field)}</th>`).join('')}
                     </tr>
                 </thead>
                 <tbody>
-                    ${datos_completos.map(row => `
+                    ${datos_completos.map((row, index) => `
                         <tr>
+                            <th scope="row" class="numero-tabla">${index + 1}</th>  <!-- Número de fila -->
                             ${campos_reporte.map(field => {
                                 // Formatear y limpiar los valores para impresión
                                 const formattedValue = formatNumber(row[field], false, field);
@@ -104,8 +143,14 @@ export function imprimirInformacion(dataGlobal, filename) {
                             }).join('')}
                         </tr>
                     `).join('')}
+                    
+                    ${filaTotalPaginaHTML}  <!-- Agregar la fila de Totales de Página -->
+                    ${filaTotalGlobalHTML}  <!-- Agregar la fila de Totales Globales -->
                 </tbody>
             </table>
+
+            ${graphImage ? `<img src="${graphImage}" alt="Gráfica" style="width: 100%; max-width: 800px;" />` : ''}  <!-- Agregar la gráfica como imagen -->
+
         </body>
         </html>
     `);
@@ -113,8 +158,10 @@ export function imprimirInformacion(dataGlobal, filename) {
     // Espera un momento para cargar el contenido y luego lanza la impresión
     printWindow.document.close();
     printWindow.focus();
-    printWindow.print();
 
-    // Cierra la ventana de impresión después de imprimir
-    printWindow.close();
+    // Usar un timeout para asegurar que la gráfica esté completamente renderizada antes de imprimir
+    setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+    }, 500); // Espera 500 ms
 }

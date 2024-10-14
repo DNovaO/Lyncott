@@ -934,10 +934,20 @@
 
         <div class="col-md-12 pb-auto pt-3" id="resultado-reporte">
           <div class="card h-100">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
               <strong>Resultados del reporte {{ tipo_reporte }}</strong>
+              <div class="form-group mb-0">
+                  <label for="resultadosPorPagina" class="mr-2" style="font-size: 0.9em;">Mostrar datos:</label>
+                  <select id="resultadosPorPagina" class="custom-select" onchange="cambiarResultadosPorPagina()">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="all">Todos</option>
+                </select>
+                </div>
             </div>
-
+            
             <div class="card-body" id="tablaReportes">
               <!-- Aquí se mostrarán los resultados de los reportes -->
               <table class="table">
@@ -1099,6 +1109,7 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Scripts personalizados -->
     <script src="{% static 'scripts/formatoFecha.js' %}"></script>

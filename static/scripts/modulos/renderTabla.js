@@ -4,34 +4,34 @@ import { exportToCSV, exportToExcel, imprimirInformacion } from "./exportaciones
 import { btnExportarCSV , btnExportarExcel, btnImprimir, btnMostrarGrafico, tipo_reporte} from "./config.js"
 import { mostrarGrafico } from "./graficas.js";
 
+let totalesPagina = {};
+let totalesGlobales = {};
 let dataGlobal;
 
-document.addEventListener("DOMContentLoaded", function(){
-
-    if (btnExportarCSV){
+document.addEventListener("DOMContentLoaded", function() {
+    if (btnExportarCSV) {
         btnExportarCSV.addEventListener('click', function(e) {
             exportToCSV(datos, 'data.csv');    
         });
     }
 
-    if (btnExportarExcel){
+    if (btnExportarExcel) {
         btnExportarExcel.addEventListener('click', function(e) {
             exportToExcel(datos, 'data.xlsx');    
         });
     }   
 
-    if (btnImprimir){
+    if (btnImprimir) {
         btnImprimir.addEventListener('click', function(e) {
             imprimirInformacion(datos, 'data.pdf');    
         });
     }
 
-    if (btnMostrarGrafico){
+    if (btnMostrarGrafico) {
         btnMostrarGrafico.addEventListener('click', function(e) {
-            mostrarGrafico(dataGlobal, tipo_reporte)
+            mostrarGrafico(dataGlobal, tipo_reporte);
         });
     }
-
 });
 
 export function showLoaderTabla() {
@@ -48,21 +48,37 @@ export function showLoaderTabla() {
     `;
 }
 
-export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize = 10, 
-        columnasNoSumar = ['clave_producto', 'descripcion_producto', 'producto', 'sucursal', 
+window.cambiarResultadosPorPagina = cambiarResultadosPorPagina;
+
+function cambiarResultadosPorPagina() {
+    // Obtener el valor seleccionado del select
+    const selectElement = document.getElementById('resultadosPorPagina');
+    const pageSize = selectElement.value === 'all' ? dataGlobal.datos_completos.length : parseInt(selectElement.value, 10);
+
+    // Obtener la página actual (puedes almacenar esto globalmente si es necesario)
+    const currentPage = 1; // O el valor que tengas actualmente
+
+    // Volver a renderizar la tabla con el nuevo pageSize
+    renderizarDatosEnTabla(dataGlobal, 'dataType', currentPage, pageSize);
+}
+
+export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize = 10,
+    columnasNoSumar = ['clave_producto', 'descripcion_producto', 'producto', 'sucursal',
         'clave', 'clave_sucursal', 'numero_tipo_documento', 'grupo_movimiento',
-        'detalles_tipo_documento', 'almacen_correspondiente', 'moneda','zona',
+        'detalles_tipo_documento', 'almacen_correspondiente', 'moneda', 'zona',
         'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
-        'termina_folio', 'nombre', 'zona', 'nombre_producto','UPC','linea',
-        'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia','clave_cliente', 'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente', 'clave_consignatario', 'producto', 'No', 'id_vendedor', 'id_almacen',
-        'vendedor','id_grupo_corporativo','grupo_corporativo',
-        'id_consignatario', 'consignatario', 'CP', 'colonia' ,'folio','RFC', 'UUID', 'serie','clave_vendedor',
-        'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente'
+        'termina_folio', 'nombre', 'zona', 'nombre_producto', 'UPC', 'linea',
+        'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia', 'clave_cliente',
+        'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente',
+        'clave_consignatario', 'producto', 'No', 'id_vendedor', 'id_almacen',
+        'vendedor', 'id_grupo_corporativo', 'grupo_corporativo', 'id_consignatario',
+        'consignatario', 'CP', 'colonia', 'folio', 'RFC', 'UUID', 'serie',
+        'clave_vendedor', 'nombre_vendedor', 'numero_mes', 'zona_vendedor',
+        'nombre_cliente', 'descripcion'
     ]) {
-    
+
     // Almacenar los datos globalmente
     dataGlobal = data;
-
     window.datos = dataGlobal;
 
     const tabla = document.querySelector('.table tbody');
@@ -85,12 +101,19 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
     `;
     thead.innerHTML = theadHTML;
 
+    // Función para eliminar separadores de miles y convertir a número
+    function limpiarYConvertir(value) {
+        if (typeof value === 'string') {
+            value = value.replace(/,/g, ''); // Eliminar comas
+        }
+        return parseFloat(value) || 0; // Convertir a número o devolver 0 si no es válido
+    }
+
     // Paginar los datos completos
     const paginatedData = paginarDatos(dataGlobal.datos_completos, pageSize, currentPage);
 
     // Inicializar objetos para almacenar los totales de las columnas
-    let totalesPagina = {};
-    let totalesGlobales = {};
+
 
     // Inicializar los totales solo para las columnas que se deben sumar
     dataGlobal.campos_reporte.forEach(campo => {
@@ -107,12 +130,11 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
                 <tr>
                     <th scope="row" class="numero-tabla">${(currentPage - 1) * pageSize + index + 1}</th>
                     ${dataGlobal.campos_reporte.map(campo => {
-                        const value = fila[campo];
-                        // Sumar a los totales de la página si es un número y no está en el arreglo columnasNoSumar
-                        if (!isNaN(parseFloat(value)) && !columnasNoSumar.includes(campo)) {
-                            totalesPagina[campo] += parseFloat(value);
+                        const value = limpiarYConvertir(fila[campo]);  // Usar la función personalizada
+                        if (!isNaN(value) && !columnasNoSumar.includes(campo)) {
+                            totalesPagina[campo] += value;
                         }
-                        return `<td class="datos-tabla">${formatNumber(value, false, campo)}</td>`;
+                        return `<td class="datos-tabla">${formatNumber(fila[campo], false, campo)}</td>`;
                     }).join('')}
                 </tr>
             `;
@@ -120,34 +142,36 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         }).join('');
         tabla.innerHTML = tbodyHTML;
 
-        // Calcular totales globales (para todos los datos)
+        // Calcular totales globales para **todos los datos**, no solo los visibles
         dataGlobal.datos_completos.forEach(fila => {
-            dataGlobal.campos_reporte.map(campo => {
-                const value = fila[campo];
-                if (!isNaN(parseFloat(value)) && !columnasNoSumar.includes(campo)) {
-                    totalesGlobales[campo] += parseFloat(value);
+            dataGlobal.campos_reporte.forEach(campo => {
+                const value = limpiarYConvertir(fila[campo]);  // Usar la función personalizada
+                if (!isNaN(value) && !columnasNoSumar.includes(campo)) {
+                    totalesGlobales[campo] += value;
                 }
             });
         });
 
         // Crear la fila de totales para la página actual
         const filaTotalPaginaHTML = `
-            <tr>
-                <th scope="row" class="numero-tabla" style="background-color:#00aae9;" style="background-color:#00aae9;">Total Página</th>
+            <tr id="total-pagina">
+                <th scope="row" class="numero-tabla" style="background-color: rgba(0, 170, 233, 0.5);" colspan="1">Total Página</th>
                 ${dataGlobal.campos_reporte.map(campo => {
-                    const totalValuePagina = (!isNaN(totalesPagina[campo]) && totalesPagina[campo] !== 0) ? formatNumber(totalesPagina[campo], false, campo) : '';
-                    return `<td class="datos-tabla" style="background-color:#00aae9;" style="background-color:#00aae9;"><strong>${totalValuePagina}</strong></td>`;
+                    const totalValuePagina = (!isNaN(totalesPagina[campo]) && totalesPagina[campo] !== 0)
+                        ? formatNumber(totalesPagina[campo], false, campo) : '';
+                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5);"><strong>${totalValuePagina}</strong></td>`;
                 }).join('')}
             </tr>
         `;
 
         // Crear la fila de totales globales (de todas las páginas)
         const filaTotalGlobalHTML = `
-            <tr>
-                <th scope="row" class="numero-tabla" style="background-color:#00aae9;" style="background-color:#00aae9;">Total Global</th>
+            <tr id="total-pagina-global">
+                <th scope="row" class="numero-tabla" style="background-color: rgba(0, 170, 233, 0.5);" colspan="1">Total Global</th>
                 ${dataGlobal.campos_reporte.map(campo => {
-                    const totalValueGlobal = (!isNaN(totalesGlobales[campo]) && totalesGlobales[campo] !== 0) ? formatNumber(totalesGlobales[campo], false, campo) : '';
-                    return `<td class="datos-tabla" style="background-color:#00aae9;" style="background-color:#00aae9;"><strong>${totalValueGlobal}</strong></td>`;
+                    const totalValueGlobal = (!isNaN(totalesGlobales[campo]) && totalesGlobales[campo] !== 0)
+                        ? formatNumber(totalesGlobales[campo], false, campo) : '';
+                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5);"><strong>${totalValueGlobal}</strong></td>`;
                 }).join('')}
             </tr>
         `;
@@ -369,6 +393,12 @@ export function resetTabla() {
     `;
 
     thead.innerHTML = theadHTML;
-    tabla.innerHTML = `<tr class="alert alert-success" role="alert"><td class="text-center">¡Reporte eliminado con éxito!</td></tr>`;        
+    tabla.innerHTML = `<tr class="alert alert-success" role="alert"><td class="text-center">¡Reporte eliminado con éxito!</td></tr>`;
     tablaFooter.innerHTML = '';
+
+    // Limpiar la gráfica
+    const graphContainer = document.getElementById('tablaGraphContainer');
+    if (graphContainer) {
+        graphContainer.remove(); // Eliminar el contenedor de la gráfica
+    }
 }
