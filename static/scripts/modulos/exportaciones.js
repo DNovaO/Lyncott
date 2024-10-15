@@ -1,5 +1,8 @@
 //exportaciones.js
 import { formatNumber, transformHeader } from "./utils.js";
+import { tipo_reporte } from "./config.js";
+
+
 // Función para remover etiquetas HTML de los valores
 function removeHTMLTags(str) {
     if (typeof str === 'string') {
@@ -8,7 +11,8 @@ function removeHTMLTags(str) {
     return str;  // Si no es una cadena, retorna el valor sin modificaciones
 }
 
-export function exportToCSV(dataGlobal, filename) {
+export function exportToCSV(dataGlobal, tipo_reporte) {
+    let filename = tipo_reporte + '.csv';
     const { campos_reporte, datos_completos } = dataGlobal;
 
     const csvRows = [];
@@ -41,8 +45,9 @@ export function exportToCSV(dataGlobal, filename) {
 }
 
 // Función para exportar a Excel
-export function exportToExcel(dataGlobal, filename) {
+export function exportToExcel(dataGlobal, tipo_reporte) {
     const { campos_reporte, datos_completos } = dataGlobal;
+    let filename = tipo_reporte + '.xlsx';
 
     // Filtrar datos y aplicar formato
     const filteredData = datos_completos.map(item => {
@@ -67,8 +72,9 @@ export function exportToExcel(dataGlobal, filename) {
 
 // Función para imprimir el informe
 // Función para imprimir el informe
-export async function imprimirInformacion(dataGlobal, filename) {
+export async function imprimirInformacion(dataGlobal, tipo_reporte ) {
     const { campos_reporte, datos_completos } = dataGlobal;
+    let filename = tipo_reporte;
 
     // Comprobar que los datos necesarios están disponibles
     if (!campos_reporte || !datos_completos) {

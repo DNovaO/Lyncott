@@ -11,19 +11,19 @@ let dataGlobal;
 document.addEventListener("DOMContentLoaded", function() {
     if (btnExportarCSV) {
         btnExportarCSV.addEventListener('click', function(e) {
-            exportToCSV(datos, 'data.csv');    
+            exportToCSV(datos, tipo_reporte);    
         });
     }
 
     if (btnExportarExcel) {
         btnExportarExcel.addEventListener('click', function(e) {
-            exportToExcel(datos, 'data.xlsx');    
+            exportToExcel(datos, tipo_reporte);    
         });
     }   
 
     if (btnImprimir) {
         btnImprimir.addEventListener('click', function(e) {
-            imprimirInformacion(datos, 'data.pdf');    
+            imprimirInformacion(datos, tipo_reporte);    
         });
     }
 

@@ -4,8 +4,7 @@
 */
 
 import { showLoaderModal } from './renderModal.js';
-import { formatNumber, transformHeader } from "./utils.js";
-import { tipo_reporte } from './config.js';
+import { transformHeader } from "./utils.js";
 
 export function mostrarGrafico(dataGlobal, tipo_reporte) {
     const { campos_reporte, datos_completos } = dataGlobal;
@@ -22,7 +21,7 @@ export function mostrarGrafico(dataGlobal, tipo_reporte) {
         <div class="form-container">
             <div class="row">
                 <div class="form-group col">
-                    <div class="form-title">Selecciona la variable para el Eje X:</div>
+                    <div class="form-title">Selecciona la categoria (Eje X):</div>
                     <div class="row">
                         ${campos_reporte.map(campo => `
                             <div class="form-check form-check-inline">
@@ -35,7 +34,7 @@ export function mostrarGrafico(dataGlobal, tipo_reporte) {
                     </div>
                 </div>
                 <div class="form-group col">
-                    <div class="form-title">Selecciona la variable para el Eje Y:</div>
+                    <div class="form-title">Selecciona el o los valores a medir (Eje Y):</div>
                     <div class="row">
                         ${campos_reporte.map(campo => `
                             <div class="form-check form-check-inline">
@@ -63,6 +62,7 @@ export function mostrarGrafico(dataGlobal, tipo_reporte) {
                     <option value="scatter">Dispersión</option>
                 </select>
             </div>
+            <div id="alert-container" style="top: 10px; right: 10px;"></div>
         </div>
     `;
 
@@ -82,28 +82,31 @@ export function mostrarGrafico(dataGlobal, tipo_reporte) {
         // Obtener las selecciones para Eje X
         const selectedXCheckboxes = Array.from(document.querySelectorAll('.ejeX-checkbox:checked'));
         if (selectedXCheckboxes.length === 0) {
-            alert('Por favor, selecciona al menos una variable para el Eje X.');
+            showAlert('Por favor, selecciona al menos una variable para la categoria (Eje X).');
             return;
         }
         const selectedXValues = selectedXCheckboxes.map(cb => cb.value);
-
+        
         // Obtener las selecciones para Eje Y
         const selectedYCheckboxes = Array.from(document.querySelectorAll('.ejeY-checkbox:checked'));
         if (selectedYCheckboxes.length === 0) {
-            alert('Por favor, selecciona al menos una variable para el Eje Y.');
+            showAlert('Por favor, selecciona al menos una variable para el valor a medir (Eje Y).');
             return;
         }
         const selectedYValues = selectedYCheckboxes.map(cb => cb.value);
-
+        
         const tipoGrafico = document.getElementById('tipoGrafico').value;
-
+        
         // Validar que Eje X y Eje Y no sean la misma variable
         const duplicates = selectedXValues.filter(value => selectedYValues.includes(value));
         if (duplicates.length > 0) {
-            alert(`Por favor, selecciona variables diferentes para los ejes X e Y. Los siguientes valores son duplicados: ${duplicates.join(', ')}`);
+            showAlert(
+                `Por favor, selecciona variables diferentes para los ejes X e Y. Los siguientes valores son duplicados: ${duplicates.join(', ')}`,
+                'warning'
+            );
             return;
         }
-
+        
         // Llamar a la función para generar el gráfico con los valores seleccionados
         agregarGraficoATabla(selectedXValues, selectedYValues, tipoGrafico, datos_completos);
 
@@ -186,10 +189,9 @@ function agregarGraficoATabla(ejeX, ejeY, tipoGrafico, datos) {
 
 // Transformar encabezados de manera que se ajusten a los nombres en los datos
 function transformHeaderReverse(header) {
-    return header.toLowerCase().replace(/\s+/g, '_'); // Convertir a minúsculas y reemplazar espacios por guiones bajos
+    return header.toLowerCase().replace(/\s+/g, '_');
 }
 
-// La función convertirValor es la misma que antes
 function convertirValor(valor) {
     if (typeof valor === 'string') {
         valor = valor.replace(/,/g, '');
@@ -206,14 +208,37 @@ function convertirValor(valor) {
     return valor;
 }
 
-function obtenerColor(index, opacity = 0.8) { // Aumentar la opacidad a 0.8
+function obtenerColor(index, opacity = 0.8) {
     const colores = [
-        'rgba(255, 82, 127, OP)', // Un rosa más brillante
-        'rgba(0, 153, 255, OP)',  // Un azul más brillante
-        'rgba(255, 255, 0, OP)',   // Amarillo brillante
-        'rgba(0, 230, 230, OP)',   // Un cyan más brillante
-        'rgba(178, 102, 255, OP)', // Un morado más brillante
-        'rgba(255, 136, 0, OP)'    // Un naranja más brillante
+        'rgba(255, 82, 127, OP)', 
+        'rgba(0, 153, 255, OP)',  
+        'rgba(255, 255, 0, OP)',  
+        'rgba(0, 230, 230, OP)',  
+        'rgba(178, 102, 255, OP)', 
+        'rgba(255, 136, 0, OP)'   
     ];
     return colores[index % colores.length].replace('OP', opacity);
+}
+
+function showAlert(message, type = 'danger') {
+    const alertContainer = document.getElementById('alert-container');
+    
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.style = `
+        margin-bottom: 10px;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: ${type === 'danger' ? '#f8d7da' : '#d1e7dd'};
+        color: ${type === 'danger' ? '#842029' : '#0f5132'};
+        border: 1px solid ${type === 'danger' ? '#f5c2c7' : '#badbcc'};
+    `;
+    alert.innerHTML = `
+        <strong>${type === 'danger' ? 'Error:' : 'Info:'}</strong> ${message}
+    `;
+
+    alertContainer.appendChild(alert);
+
+    // Remover la alerta después de 3 segundos
+    setTimeout(() => alert.remove(), 3000);
 }
