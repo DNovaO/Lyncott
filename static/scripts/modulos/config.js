@@ -16,3 +16,4 @@ export const btnImprimir = document.getElementById('btnImprimir');
 export const btnMostrarGrafico = document.getElementById('btnMostrarGrafico');
 export const fechaInicialInput = document.getElementById('fecha_inicial');
 export const fechaFinalInput = document.getElementById('fecha_final');
+

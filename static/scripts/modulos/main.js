@@ -57,18 +57,39 @@ document.addEventListener("DOMContentLoaded", function(){
             const buttonText = boton.innerText.trim();
     
             try {
-                // Si el texto es JSON, parsearlo. Si no, tratarlo como una cadena de texto.
+                // Intentamos parsear el texto como JSON
                 const parsedText = JSON.parse(buttonText);
+    
+                // Validar si alguno de los valores contiene "Buscar"
+                if (Object.values(parsedText).some(value => 
+                    typeof value === 'string' && value.startsWith('Buscar'))) {
+                    errorParametros(true,'Error, verifica que todos los campos estén seleccionados' )
+                    throw new Error('Valor no válido');
+                }
+    
                 valoresPorDefecto[dataType] = [parsedText];
             } catch (e) {
-                // Si no se puede parsear, simplemente almacenar el texto
+                // Si el parsing falla o hay un valor inválido, guardar como texto plano
+                if (buttonText.startsWith('Buscar')) {
+                    errorParametros(true, 'Error, verifica que todos los campos estén seleccionados');
+                    throw new Error('Valor no válido');
+                }
+    
                 valoresPorDefecto[dataType] = [{ nombre: buttonText }];
             }
         });
     
-        // Añadir las fechas
-        valoresPorDefecto['fecha_inicial'] = fechaInicialInput.value;
-        valoresPorDefecto['fecha_final'] = fechaFinalInput.value;
+        // Añadir las fechas pero antes comparar que la fecha_inicial no sea mayor a la fecha_final
+        if (fechaInicialInput.value > fechaFinalInput.value) {
+            errorParametros(true, 'Error la fecha inicial no puede ser mayor a la fecha final');
+            throw new Error('Fecha inicial mayor a fecha final');
+        }else {
+            errorParametros(false, 'Parámetros por defecto aplicados');
+            valoresPorDefecto['fecha_inicial'] = fechaInicialInput.value;
+            valoresPorDefecto['fecha_final'] = fechaFinalInput.value;
+        }
+
+
     
         console.log('Valores por defecto:', valoresPorDefecto);
         return valoresPorDefecto;
@@ -77,47 +98,52 @@ document.addEventListener("DOMContentLoaded", function(){
     // Evento cuando se presiona el botón de generar informe
     if (btnGenerarInforme) {
         btnGenerarInforme.addEventListener('click', function(e) {
+            e.preventDefault();
+    
+            // Deshabilitar el botón
+            this.disabled = true;
+    
             cache = {};
             console.log('boton activado, y cache vacio', cache);
-            e.preventDefault();
-        
+    
             // Actualizar dataType al inicio
             dataType = this.getAttribute("data-type");
     
             // Intentar obtener los parámetros seleccionados
             let parametrosSeleccionados = handleItemSelected(dataType, this);
             
-            console.log('longitud de parametros seleccionados:', parametrosSeleccionados.length);
-
             // Si no se seleccionaron parámetros, usar valores por defecto
             if (parametrosSeleccionados.length === undefined) {
                 parametrosSeleccionados = recolectarValoresPorDefecto();
-                errorParametros(false);
-        
+                errorParametros(false, 'Parámetros por defecto aplicados');
+    
                 currentPageTable = 1;
                 console.log('Parametros seleccionados:', parametrosSeleccionados);
-                sendParametersToServer(parametrosSeleccionados, currentPageTable, tipo_reporte, dataType);
-
-            }else{
+                
+                // Llamar a sendParametersToServer y manejar la habilitación del botón
+                sendParametersToServer(parametrosSeleccionados, currentPageTable, tipo_reporte, this);
+    
+            } else {
                 // Copiar valores seleccionados en parametrosInforme
                 for (const parametro in parametrosSeleccionados) {
                     parametrosInforme[parametro] = parametrosSeleccionados[parametro];
                 }
-        
-                console.log('Parametros longitud:', Object.keys(parametrosInforme).length - 2);
-                console.log('numero parametro', numeroParametro - 3);
                 
                 // Verificar si el número de parámetros seleccionados es menor que el requerido
                 if (Object.keys(parametrosInforme).length - 2 >= numeroParametro - 3) {
                     console.log('boton activado mandando informacion');
-                    errorParametros(false);
-        
+                    errorParametros(false, 'Parámetros seleccionados aplicados');
+    
                     currentPageTable = 1;
-        
+    
                     console.log('dataType en sendParametersToServer:', dataType);
-                    sendParametersToServer(parametrosInforme, currentPageTable, tipo_reporte, dataType);
+                    
+                    // Llamar a sendParametersToServer y manejar la habilitación del botón
+                    sendParametersToServer(parametrosInforme, currentPageTable, tipo_reporte, this);
                 } else {
-                    errorParametros(true);
+                    errorParametros(true, 'Error, verifica que todos los campos estén seleccionados');
+                    // Habilitar el botón si hay un error
+                    this.disabled = false;
                 }
             }
         });
@@ -189,6 +215,10 @@ export function buscador(dataType) {
 }
 
 export function resetFormulario() {
+
+    // Tomar valor del footer por id
+    const footer = document.getElementById('genericTablaPagination');
+
     // Restablecer texto de botones que activan los modales
     const modalButtons = document.querySelectorAll('.modal-trigger');
     modalButtons.forEach(button => {
@@ -198,6 +228,7 @@ export function resetFormulario() {
     // Limpiar contenido y pie del modal
     modalContent.innerHTML = '';
     modalFooter.innerHTML = '';
+    footer.innerHTML = '';
     parametrosSeleccionados = {};
     parametrosInforme = {};
 

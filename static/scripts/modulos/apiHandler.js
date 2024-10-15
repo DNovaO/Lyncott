@@ -52,7 +52,7 @@ export function sendDataToServer(dataType, currentPage) {
 }
 
 // Función para enviar parámetros al servidor y manejar la respuesta
-export function sendParametersToServer(parametrosInforme, currentPageTable, tipoReporte) {
+export function sendParametersToServer(parametrosInforme, currentPageTable, tipoReporte, btnGenerarInforme) {
     console.log('Parametros que fueron seleccionados y seran manipulados', parametrosInforme);
 
     const dataType = 'resultado';
@@ -67,5 +67,11 @@ export function sendParametersToServer(parametrosInforme, currentPageTable, tipo
             renderizarDatosEnTabla(data, tipoReporte);
             console.log('Los datos recibidos son:', data);
         })
-        .catch(error => console.error("Error:", error));
+        .catch(error => console.error("Error:", error))
+        .finally(() => {
+            // Habilitar el botón después de completar la petición
+            if (btnGenerarInforme) {
+                btnGenerarInforme.disabled = false;
+            }
+        });
 }

@@ -77,7 +77,7 @@ export function formatNumber(value, isCurrency = false, key = '') {
     return isCurrency ? `$${formattedValue}` : formattedValue;
 }
 
-export function errorParametros(estado) {
+export function errorParametros(estado, mensaje) {
     if (estado) {
         // Limpiar alertas anteriores
         parametrosReporte.querySelectorAll('.alert').forEach(alert => alert.remove());
@@ -85,7 +85,7 @@ export function errorParametros(estado) {
         // Agregar nueva alerta
         parametrosReporte.insertAdjacentHTML('beforeend', `
             <div class="alert alert-danger fade show text-center" role="alert">
-                <strong>¡Oops!</strong> ¡Verifica que los parámetros estén completos!
+                <strong>¡Oops!</strong> ${mensaje || 'Ocurrió un error al procesar los parámetros.'}
             </div> 
         `);
     } else {

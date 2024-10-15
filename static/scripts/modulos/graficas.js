@@ -220,7 +220,7 @@ function obtenerColor(index, opacity = 0.8) {
     return colores[index % colores.length].replace('OP', opacity);
 }
 
-function showAlert(message, type = 'danger') {
+export function showAlert(message, type = 'danger') {
     const alertContainer = document.getElementById('alert-container');
     
     const alert = document.createElement('div');
