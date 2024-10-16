@@ -64,6 +64,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 if (Object.values(parsedText).some(value => 
                     typeof value === 'string' && value.startsWith('Buscar'))) {
                     errorParametros(true,'Error, verifica que todos los campos estén seleccionados' )
+        
                     throw new Error('Valor no válido');
                 }
     
@@ -72,6 +73,7 @@ document.addEventListener("DOMContentLoaded", function(){
                 // Si el parsing falla o hay un valor inválido, guardar como texto plano
                 if (buttonText.startsWith('Buscar')) {
                     errorParametros(true, 'Error, verifica que todos los campos estén seleccionados');
+        
                     throw new Error('Valor no válido');
                 }
     
@@ -82,9 +84,11 @@ document.addEventListener("DOMContentLoaded", function(){
         // Añadir las fechas pero antes comparar que la fecha_inicial no sea mayor a la fecha_final
         if (fechaInicialInput.value > fechaFinalInput.value) {
             errorParametros(true, 'Error la fecha inicial no puede ser mayor a la fecha final');
+
             throw new Error('Fecha inicial mayor a fecha final');
         }else {
             errorParametros(false, 'Parámetros por defecto aplicados');
+
             valoresPorDefecto['fecha_inicial'] = fechaInicialInput.value;
             valoresPorDefecto['fecha_final'] = fechaFinalInput.value;
         }
@@ -153,12 +157,14 @@ document.addEventListener("DOMContentLoaded", function(){
         btnBorrarReporte.addEventListener('click', function(e) {
             e.preventDefault();
             resetTabla();
+            btnGenerarInforme.disabled = false;
         });
     }
 
     if (btnMostrarGrafico)
         document.getElementById('btnMostrarGrafico').addEventListener('click', function() {
             this.classList.toggle('btn-active-green');
+            btnGenerarInforme.disabled = false;
     });
 
 });

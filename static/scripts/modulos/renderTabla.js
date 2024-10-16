@@ -7,32 +7,91 @@ import { mostrarGrafico } from "./graficas.js";
 let totalesPagina = {};
 let totalesGlobales = {};
 let dataGlobal;
+let mensajeError;
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
     if (btnExportarCSV) {
-        btnExportarCSV.addEventListener('click', function(e) {
-            exportToCSV(datos, tipo_reporte);    
+        btnExportarCSV.addEventListener('click', function (e) {
+            try {
+                if (!datos || datos.length === 0) {
+                    throw new Error("No hay un reporte disponible para exportar a CSV.");
+                }
+                exportToCSV(datos, tipo_reporte);
+            } catch (error) {
+                mensajeError = "No hay un reporte disponible para exportar a CSV."
+                mostrarAlertaHTML(mensajeError);
+            }
         });
     }
 
     if (btnExportarExcel) {
-        btnExportarExcel.addEventListener('click', function(e) {
-            exportToExcel(datos, tipo_reporte);    
+        btnExportarExcel.addEventListener('click', function (e) {
+            try {
+                if (!datos || datos.length === 0) {
+                    throw new Error("No hay un reporte disponible para exportar a Excel.");
+                }
+                exportToExcel(datos, tipo_reporte);
+            } catch (error) {
+                mensajeError = "No hay un reporte disponible para exportar a Excel."
+                mostrarAlertaHTML(mensajeError);
+            }
         });
-    }   
+    }
 
     if (btnImprimir) {
-        btnImprimir.addEventListener('click', function(e) {
-            imprimirInformacion(datos, tipo_reporte);    
+        btnImprimir.addEventListener('click', function (e) {
+            try {
+                if (!datos || datos.length === 0) {
+                    throw new Error("No hay información para imprimir.");
+                }
+                imprimirInformacion(datos, tipo_reporte);
+            } catch (error) {
+                mensajeError = "No hay un reporte para imprimir."
+                mostrarAlertaHTML(mensajeError);
+            }
         });
     }
 
     if (btnMostrarGrafico) {
-        btnMostrarGrafico.addEventListener('click', function(e) {
-            mostrarGrafico(dataGlobal, tipo_reporte);
+        btnMostrarGrafico.addEventListener('click', function (e) {
+            try {
+                if (!dataGlobal || dataGlobal.length === 0) {
+                    throw new Error("No hay datos para mostrar en el gráfico.");
+                }
+                mostrarGrafico(dataGlobal, tipo_reporte);
+            } catch (error) {
+                mensajeError = "No hay datos para mostrar en el gráfico."
+                mostrarAlertaHTML(error.message);
+            }
         });
     }
+
+    // Función para mostrar alerta personalizada en HTML
+    function mostrarAlertaHTML(mensaje) {
+        const tabla = document.querySelector('.table tbody');
+        
+        if (!tabla) {
+            console.error('No hay datos disponibles');
+            return;
+        }
+    
+        // Crear la fila de alerta
+        const alertaFila = document.createElement('tr');
+        alertaFila.innerHTML = `
+            <td colspan="50%" class="text-center alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 15px; font-weight: bold;">
+                ${mensaje}
+            </td>
+        `;
+    
+        // Insertar la alerta en la tabla
+        tabla.insertBefore(alertaFila, tabla.firstChild);
+    
+        // Remover la alerta automáticamente después de 3 segundos
+        setTimeout(() => alertaFila.remove(), 3000);
+    }
+    
 });
+
 
 export function showLoaderTabla() {
     const tabla = document.querySelector('.table tbody');

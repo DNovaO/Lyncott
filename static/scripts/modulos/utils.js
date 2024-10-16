@@ -88,6 +88,7 @@ export function errorParametros(estado, mensaje) {
                 <strong>¡Oops!</strong> ${mensaje || 'Ocurrió un error al procesar los parámetros.'}
             </div> 
         `);
+        btnGenerarInforme.disabled = false;
     } else {
         // Limpiar alertas cuando estado es false
         parametrosReporte.querySelectorAll('.alert').forEach(alert => alert.remove());
