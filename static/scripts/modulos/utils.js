@@ -1,4 +1,14 @@
 //utils.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que contiene funciones de utilidad para el manejo de cookies, formato de números y manejo de errores.
+    Permite una reutilización de código en otros scripts.
+    
+
+*/ 
 import { parametrosReporte } from './config.js';
 
 

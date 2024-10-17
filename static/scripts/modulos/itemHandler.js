@@ -1,3 +1,15 @@
+// itemHandler.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que contiene funciones de utilidad para el manejo de los items en los modales.
+    Se encarga de manejar el dataType y cargar los datos respectivos en el modal.
+    
+*/ 
+
+
 import { cargarData } from "./renderModal.js";
 import { fullItemsArray } from "./main.js";
 

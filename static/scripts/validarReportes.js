@@ -1,3 +1,14 @@
+// validarReportes.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que se encarga de validar los reportes antes de ser ir a la siguiente página,
+    para evitar errores en el backend e incongurencias en el frontend.    
+*/ 
+
+
 function validarFormulario() {
     const categoriaSelect = document.getElementById("categoriaReporte");
     const tipoSelect = document.getElementById("tipoReporte");

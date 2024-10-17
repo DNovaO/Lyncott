@@ -13,14 +13,14 @@ def consultaSemana8020(fecha_inicial, fecha_final, sucursal):
     with connection.cursor() as cursor:
         query = """
             SELECT 
-                ISNULL(A.CODIGO,B.CODIGO)					AS 'clave_producto',
-                ISNULL(A.PRODUCTO,B.PRODUCTO)				AS 'producto',
-                ISNULL(A.VENDEDOR,B.VENDEDOR)				AS 'vendedor' ,
-                ISNULL(A.PIEZAS,0)							AS 'devolucion_buena_piezas',
-                CONCAT('$', FORMAT(ISNULL(A.PESOS, 0), 'N2')) AS 'devolucion_buena_pesos',
-                ISNULL(B.PIEZAS,0)							AS 'devolucion_mala_piezas',
-                CONCAT('$', FORMAT(ISNULL(B.PESOS, 0), 'N2')) AS 'devolucion_mala_pesos',
-                B.PESOS/C.PESOS*100	 AS 'porcentaje',
+                ISNULL(A.CODIGO, B.CODIGO) AS 'clave_producto',
+                ISNULL(A.PRODUCTO, B.PRODUCTO) AS 'producto',
+                ISNULL(A.VENDEDOR, B.VENDEDOR) AS 'vendedor',
+                ISNULL(A.PIEZAS, 0) AS 'devolucion_buena_piezas',
+                FORMAT(ISNULL(A.PESOS, 0), 'N2') AS 'devolucion_buena_pesos',
+                ISNULL(B.PIEZAS, 0) AS 'devolucion_mala_piezas',
+                FORMAT(ISNULL(B.PESOS, 0), 'N2') AS 'devolucion_mala_pesos',
+                B.PESOS / C.PESOS * 100 AS 'porcentaje',
                 SUM(B.PESOS / NULLIF(C.PESOS, 0) * 100) OVER (ORDER BY B.PESOS DESC) AS '80/20'
             FROM(
                         SELECT

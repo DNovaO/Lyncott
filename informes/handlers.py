@@ -1,3 +1,13 @@
+# handlers.py
+
+# Diego Nova Olguín
+# Ultima modificación: 17/10/2024
+
+# Funcion que se encarga de manejar el data_type recibido y llamar a la funcion correspondiente
+# Cada funcion corresponde a un parametro en el front, por que se hace una llamada a la base de datos
+# para obtener los datos correspondientes a ese parametro y enviarlos al frontend.
+
+
 from .queries import clasificarParametros
 from django.http import JsonResponse
 from .models import *
@@ -95,13 +105,6 @@ def handle_linea(request, data_type):
     return response
 
 def handle_familia(request, data_type):
-    
-    # valores_especificos = [ 
-    #     "CREMA PARA BATIR", "CREMA ENTERA", "CREMA REDUCIDA EN GRASA", "CREMA DULCE", "CREMA PARA CAFE",
-    #     "CREMA NATURAL", "Q. COTTAGE", "FLETE", "INTERDELI Y MERMELADA", "LECHE UHT", "LURPAK", "LOS LLANOS", 
-    #     "MANTEQUILLA", "MARGARINA", "NATURA", "OTRO", "PORT BLEU", "QUESO COTTAGE", "QUESO CREMA", "QUESOS MADUROS", 
-    #     "QUESO OAXACA", "QUESO PANELA", "QUESUAVE", "REJAS", "TARIMAS", "YOGURT"
-    # ]
     
     valores_especificos = [
         "C.BAT","C.ENT","C.REG","CD","CMERO","CN",

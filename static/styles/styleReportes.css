@@ -266,3 +266,26 @@ label {
   background-color: #fff; /* Color de fondo */
   height: auto; /* Deja que la altura se ajuste automáticamente */
 }
+
+.modal-custom {
+  min-width: 300px;
+  max-width: 90%;  /* Adaptativo para pantallas pequeñas */
+  min-height: 75vh;
+  max-height: 90vh;
+  overflow-y: auto; /* Scroll si el contenido excede */
+  overflow-x: hidden;
+}
+
+.selectable-item {
+  white-space: nowrap;       /* Evita saltos de línea */
+  overflow: hidden;          /* Oculta el contenido excedente */
+  text-overflow: ellipsis;   /* Agrega puntos suspensivos al truncar */
+  max-width: 100%;           /* Asegura que no desborde */
+}
+
+@media (max-width: 768px) {
+  .selectable-item {
+      max-width: 80vw;       /* Ajuste específico para móviles */
+      font-size: 0.9rem;     /* Tamaño de texto más pequeño */
+  }
+}

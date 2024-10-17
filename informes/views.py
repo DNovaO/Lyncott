@@ -1,3 +1,12 @@
+# views.py
+
+# Diego Nova Olguín
+# Ultima modificación: 17/10/2024
+
+# Funcion que se encarga de manejar las peticiones de los datos de los reportes.
+# Maneja los datatypes y en base a estos se encarga de llamar a las funciones correspondientes y
+# renderizar los datos en el formato correspondiente para los reportes.
+
 from django.shortcuts import render
 from django.http import JsonResponse
 from .models import *

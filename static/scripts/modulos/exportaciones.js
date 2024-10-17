@@ -1,4 +1,14 @@
 //exportaciones.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que contiene funciones de utilidad para exportar los datos a CSV, Excel e imprimir el informe.
+    Manejo de la logica para que los botones funcionen de la manera correcta
+    
+*/ 
+
 import { formatNumber, transformHeader } from "./utils.js";
 import { tipo_reporte } from "./config.js";
 

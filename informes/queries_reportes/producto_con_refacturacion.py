@@ -1,6 +1,6 @@
 # Description: Consulta de ventas por producto con refacturación 
 from datetime import datetime, timedelta
-from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When, Window, DecimalField, Q
+from django.db.models import Value, CharField, OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When, Window, DecimalField, Q
 from django.db.models.functions import Concat, Round, RowNumber, LTrim, RTrim, Coalesce
 from django.db.models.expressions import CombinedExpression
 from informes.models import *
@@ -35,35 +35,21 @@ def consultaVentasPorProductoConRefacturacion(fecha_inicial, fecha_final, client
         'clave_producto'
     ).annotate(
         descripcion_producto=Subquery(kdii_subquery.values('descripcion_producto')),
-        
         unidad_medida=Subquery(kdii_subquery.values('unidad_medida')),
-        
         unidad_alternativa=Subquery(kdii_subquery.values('unidad_alternativa')),
-        
         factor_conversion=Subquery(kdii_subquery.values('factor_conversion')),
-        
         cantidad=Round(Sum('cantidad_unidades_entrada'), 2),
-        
-        venta_sumatoria=Sum('monto_venta'),
-        
-        venta=Concat(
-            Value('$'),
-            'venta_sumatoria',
-            output_field=CharField()
-        ),
-        
+        venta=Sum('monto_venta'),
         kgslts=ExpressionWrapper(
             Round(F('cantidad') * F('factor_conversion'), 2),
             output_field=FloatField()
         ),
-        
-        venta_sobre_Kg = ExpressionWrapper(
-            F('venta_sumatoria') / F('kgslts'),
+        venta_sobre_Kg=ExpressionWrapper(
+            F('venta') / F('kgslts'),
             output_field=FloatField()
         ),
-        
-        venta_sobre_UV = ExpressionWrapper(
-            Round(F('venta_sumatoria') / F('cantidad'), 2),
+        venta_sobre_UV=ExpressionWrapper(
+            Round(F('venta') / F('cantidad'), 2),
             output_field=FloatField()
         ),   
     )
@@ -81,5 +67,11 @@ def consultaVentasPorProductoConRefacturacion(fecha_inicial, fecha_final, client
     ).order_by(
         'clave_producto'
     )
+    
+    # Convert Decimal values to float
+    result = []
+    for row in queryVentaPorProducto:
+        converted_row = {key: float(value) if isinstance(value, Decimal) else value for key, value in row.items()}
+        result.append(converted_row)
 
-    return list(queryVentaPorProducto)
+    return result

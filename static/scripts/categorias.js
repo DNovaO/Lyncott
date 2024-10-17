@@ -1,3 +1,15 @@
+//categorias.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que contiene las categorias y tipos de reporte que se utilizan en el sistema.
+    Dependiendo la categoria seleccionada se mostrarán los tipos de reporte correspondientes.
+    
+*/ 
+
+
 function updateTiposReporte() {
   const categoriaSelect = document.getElementById("categoriaReporte");
   const tipoSelect = document.getElementById("tipoReporte");

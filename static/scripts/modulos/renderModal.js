@@ -1,3 +1,14 @@
+// renderModal.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que contiene funciones de utilidad para el manejo de los modales, desde el renderizado de los datos hasta la paginación de los mismos. 
+    Los datos que se cargan al modal son gracias a las funciones de fetch.
+*/ 
+
+
 import { modalContent, modalFooter, fechaInicialInput, fechaFinalInput } from './config.js';
 import { handlers } from './itemHandler.js';
 import { fullItemsArray, parametrosSeleccionados } from './main.js';
@@ -38,10 +49,14 @@ export function handleResponseData(data) {
     // Establecer la página actual en el modal
     setCurrentModalPage(1); // O cualquier otra lógica para establecer la página que deseas
 
+    // Capture the event of closing the modal
+    $("#genericModal").on("hidden.bs.modal", function () {
+        setCurrentModalPage(1);
+    });
+
     // Manejar la selección de un elemento de la lista
     modalContent.querySelectorAll('.selectable-item').forEach(item => {
         item.addEventListener('click', function() {
-            console.log('Seleccionando...', dataType);
             handleItemSelected(dataType, this);
         });
     });
@@ -65,7 +80,6 @@ export function cargarData(data, key, dataType) {
         // Volver a agregar manejadores de eventos
         modalContent.querySelectorAll('.selectable-item').forEach(item => {
             item.addEventListener('click', function() {
-                console.log('Seleccionando...', dataType);
                 handleItemSelected(dataType, this);
             });
         });
@@ -108,8 +122,6 @@ export function handleItemSelected(dataType, selectedItem) {
     // Obtener el objeto JSON del elemento seleccionado
     const parsedItem = JSON.parse(selectedItem.getAttribute('data-item'));
     
-    console.log('Elemento seleccionado:', parsedItem);
-    
     // Actualizar el texto del botón con el texto del elemento seleccionado
     const button = document.querySelector(`.modal-trigger[data-type="${dataType}"]`);
     if (button) {
@@ -132,9 +144,6 @@ export function handleItemSelected(dataType, selectedItem) {
     $("#genericModal").modal("hide");
     setCurrentModalPage(1);
 
-    // Imprimir para verificar
-    console.log('Parámetros seleccionados:', parametrosSeleccionados);
-    
     // Retornar los parámetros seleccionados para su uso posterior
     return parametrosSeleccionados;
 }

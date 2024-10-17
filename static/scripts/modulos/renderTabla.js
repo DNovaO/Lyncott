@@ -1,4 +1,16 @@
 // renderTabla.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que se encarga de renderizar los datos en la tabla, paginarlos y mostrar los totales.
+    Además, se encarga de manejar el control de los botones de exportar los datos a CSV y Excel, e imprimir la información en la 
+    tabla.
+    
+*/ 
+
+
 import { formatNumber, transformHeader } from './utils.js';
 import { exportToCSV, exportToExcel, imprimirInformacion } from "./exportaciones.js";
 import { btnExportarCSV , btnExportarExcel, btnImprimir, btnMostrarGrafico, tipo_reporte} from "./config.js"

@@ -1,4 +1,16 @@
 // apiHandler.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que contiene funciones de utilidad para el manejo de las llamadas a la API.
+    Permite una reutilización de código en otros scripts.
+    Donde se enviaran los datos al servidor y se manejaran las respuestas tanto del modal como de la tabla.
+    
+*/ 
+
+
 import { showLoaderModal, handleResponseData } from './renderModal.js';
 import { showLoaderTabla, renderizarDatosEnTabla } from './renderTabla.js';
 import { categoria_reporte, tipo_reporte } from './config.js';
@@ -65,7 +77,6 @@ export function sendParametersToServer(parametrosInforme, currentPageTable, tipo
     fetchData(endpointURL, body, cacheKey)
         .then(data => {
             renderizarDatosEnTabla(data, tipoReporte);
-            console.log('Los datos recibidos son:', data);
         })
         .catch(error => console.error("Error:", error))
         .finally(() => {

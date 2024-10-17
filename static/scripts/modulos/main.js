@@ -1,4 +1,16 @@
 //main.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script principal que se encarga de manejar la lógica de los modales y la generación de reportes.
+    Ademas de mandar la información al servidor y recibir la información de los modulos. (No son los fetch) pero mandan 
+    la información a los fetch.
+    Haciendo uso de los demas de elementos de la carpeta modulos.
+
+*/ 
+
 export let cache = {};
 export let dataType;
 export let debouncedBuscador; 

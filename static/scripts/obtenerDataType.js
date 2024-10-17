@@ -1,3 +1,16 @@
+// obtenerDataType.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que se encarga de enviar el dataType al backend para obtener los datos correspondientes. 
+    Se encarga de manejar las llamadas a la API y enviar los datos al servidor.
+    Dependinedo del dataType se obtendrán los datos correspondientes.
+        
+*/ 
+
+
 document.addEventListener("DOMContentLoaded", function(){
     const modalButtons = document.querySelectorAll(".modal-trigger");
 

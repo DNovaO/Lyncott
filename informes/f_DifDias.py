@@ -1,3 +1,11 @@
+# f_DifDias.py
+
+# Diego Nova Olguín
+# Ultima modificación: 17/10/2024
+
+# Funcion que tambien se encuentra en la base de datos para la obtencion de los 
+# dias habiles dentro de un rango de fechas establecido.
+
 from datetime import date, timedelta
 
 def f_DifDias(start_date: date, end_date: date, festivos: list) -> int:

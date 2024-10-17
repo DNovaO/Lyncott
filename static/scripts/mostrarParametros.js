@@ -1,4 +1,15 @@
-// Script que ayuda a mostrar/ocultar los parametros segun el tipo de reporte.
+
+/*
+  Diego Nova Olguín
+  Ultima modificación: 17/10/2024
+
+  Script que ayuda a mostrar/ocultar los parametros segun el tipo de reporte.
+  Se basa en un objeto que contiene las familias de reportes y los parametros que
+  se deben mostrar segun la familia del reporte seleccionado.
+
+*/ 
+
+
 let numeroParametro = 0;
 
 document.addEventListener("DOMContentLoaded", function () {

@@ -1,7 +1,13 @@
-/*  
-    Sección para graficar los reportes, donde el usuario puede elegir los ejes de la gráfica.
-    Se manejarán condicionales para manejar reportes prioritarios con una gráfica preestablecida y no modificable.
-*/
+// graficas.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Se encarga de mostrar el modal con las opciones de selección y de generar el gráfico en la tabla.
+    Hace uso de funciones de utilidad para mostrar alertas y transformar encabezados.
+        
+*/ 
 
 import { showLoaderModal } from './renderModal.js';
 import { transformHeader } from "./utils.js";

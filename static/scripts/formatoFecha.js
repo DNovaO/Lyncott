@@ -1,3 +1,13 @@
+// formatoFecha.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que contiene multiples funciones para el manejo de las fechas, obtener las fechas, formatearlas y modificarlas.    
+*/ 
+
+
 document.addEventListener('DOMContentLoaded', function () {
   const fechaInicialInput = document.getElementById('fecha_inicial');
   const fechaFinalInput = document.getElementById('fecha_final');

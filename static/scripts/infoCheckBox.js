@@ -1,3 +1,14 @@
+// infoCheckBox.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que contiene la funcionalidad para mostrar información detallada de la categoria de reportes 
+    seleccionados en el area de manuales.
+*/ 
+
+
 const infoCard = document.getElementById("infoCard");
 const infoContent = document.getElementById("infoContent");
 

@@ -1,4 +1,15 @@
 //config.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 17/10/2024
+
+    Script que contiene las variables y elementos del DOM que se utilizan en los demás scripts.
+    Siempre y cuando el script lo permita.
+
+*/ 
+
+
 export const parametrosReporte = document.getElementById("parametros-reporte");
 export const modal = document.getElementById("genericModal");
 export const modalLabel = modal.querySelector(".modal-title");

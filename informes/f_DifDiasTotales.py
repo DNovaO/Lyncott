@@ -1,3 +1,11 @@
+# f_DifDiasTotales.py
+
+# Diego Nova Olguín
+# Ultima modificación: 17/10/2024
+
+# Funcion que tambien se encuentra en la base de datos para la obtencion de los 
+# dias totales dentro de un rango de fechas establecido.
+
 from datetime import datetime, date, timedelta
 from .f_DifDias import *
 

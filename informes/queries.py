@@ -1,3 +1,14 @@
+# handlers.py
+
+# Diego Nova Olguín
+# Ultima modificación: 17/10/2024
+
+# Funcion para manejar tanto las funciones de los reportes, como el ajustar los parametros para
+# un mejor manejo de los mismos en las queries correspondientes.
+# retorna los resultados de la consulta.
+
+
+
 from datetime import datetime, timedelta
 from django.db.models import Value, CharField,OuterRef, Subquery, Sum, FloatField, ExpressionWrapper, F, Case, When, Window, DecimalField, Q
 from django.db.models.functions import Concat, Round, RowNumber, LTrim, RTrim, Coalesce
