@@ -15,19 +15,30 @@ import { formatNumber, transformHeader } from './utils.js';
 import { exportToCSV, exportToExcel, imprimirInformacion } from "./exportaciones.js";
 import { btnExportarCSV , btnExportarExcel, btnImprimir, btnMostrarGrafico, tipo_reporte} from "./config.js"
 import { mostrarGrafico } from "./graficas.js";
+import { currentPage } from './main.js';
+import { datosParaBuscador } from './apiHandler.js';
 
+let debouncedBuscadorReportes;
 let totalesPagina = {};
 let totalesGlobales = {};
 let dataGlobal;
 let mensajeError;
 
 document.addEventListener("DOMContentLoaded", function () {
+    
+    debouncedBuscadorReportes = debouncedReportes(() => {
+        buscadorResultadosReporte(datosParaBuscador);
+    }, 300);
+
+    window.debouncedBuscadorReportes = debouncedBuscadorReportes;
+
     if (btnExportarCSV) {
         btnExportarCSV.addEventListener('click', function (e) {
             try {
                 if (!datos || datos.length === 0) {
                     throw new Error("No hay un reporte disponible para exportar a CSV.");
                 }
+                console.log('Exportando a CSV', datos);
                 exportToCSV(datos, tipo_reporte);
             } catch (error) {
                 mensajeError = "No hay un reporte disponible para exportar a CSV."
@@ -42,6 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!datos || datos.length === 0) {
                     throw new Error("No hay un reporte disponible para exportar a Excel.");
                 }
+                console.log('Exportando a Excel', datos);
                 exportToExcel(datos, tipo_reporte);
             } catch (error) {
                 mensajeError = "No hay un reporte disponible para exportar a Excel."
@@ -472,4 +484,45 @@ export function resetTabla() {
     if (graphContainer) {
         graphContainer.remove(); // Eliminar el contenedor de la gráfica
     }
+}
+
+
+function debouncedReportes(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+function buscadorResultadosReporte(datosParaBuscador) {
+    let input = document.getElementById("inputBusquedaReportes");
+    
+    if (!input) {
+        console.error("No se encontró el elemento de input");
+        return;
+    }
+    
+    const currentPage = 1; // Reiniciamos siempre a la primera página
+    let filter = input.value.trim().toLowerCase();
+
+    // Manejar la búsqueda vacía
+    if (filter === "") {
+        renderizarDatosEnTabla(datosParaBuscador, 'dataType', currentPage);
+        return;
+    }
+
+    // Filtrar los datos si es necesario
+    const dataFiltered = datosParaBuscador.datos_completos.filter(fila => 
+        datosParaBuscador.campos_reporte.some(campo => 
+            fila[campo].toString().toLowerCase().includes(filter)
+        )
+    );
+
+    // Renderizar los datos filtrados
+    renderizarDatosEnTabla(
+        { ...datosParaBuscador, datos_completos: dataFiltered },
+        'dataType',
+        currentPage
+    );
 }

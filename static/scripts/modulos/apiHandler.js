@@ -17,6 +17,8 @@ import { categoria_reporte, tipo_reporte } from './config.js';
 import { cache } from './main.js';
 import { getCookie } from './utils.js';
 
+export let datosParaBuscador = [];
+
 // Función para manejar llamadas a la API con cacheo
 export async function fetchData(endpoint, body, cacheKey, prefetch = false) {
 
@@ -77,6 +79,7 @@ export function sendParametersToServer(parametrosInforme, currentPageTable, tipo
     fetchData(endpointURL, body, cacheKey)
         .then(data => {
             renderizarDatosEnTabla(data, tipoReporte);
+            datosParaBuscador = data;
         })
         .catch(error => console.error("Error:", error))
         .finally(() => {

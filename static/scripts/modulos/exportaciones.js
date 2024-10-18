@@ -10,8 +10,6 @@
 */ 
 
 import { formatNumber, transformHeader } from "./utils.js";
-import { tipo_reporte } from "./config.js";
-
 
 // Función para remover etiquetas HTML de los valores
 function removeHTMLTags(str) {

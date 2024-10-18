@@ -936,7 +936,7 @@
           <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
               <strong>Resultados del reporte {{ tipo_reporte }}</strong>
-              <div class="form-group mb-0">
+                <div class="form-group mb-1">
                   <label for="resultadosPorPagina" class="mr-2" style="font-size: 0.9em;">Mostrar datos:</label>
                   <select id="resultadosPorPagina" class="custom-select" onchange="cambiarResultadosPorPagina()">
                     <option value="10">10</option>
@@ -944,7 +944,11 @@
                     <option value="30">30</option>
                     <option value="40">40</option>
                     <option value="all">Todos</option>
-                </select>
+                  </select>
+                  <div id="search-reportes" class="search-container mt-2">
+                      <input style="margin-top: auto; margin-bottom: auto" class="rounded search-input" type="text" id="inputBusquedaReportes" onkeyup="debouncedBuscadorReportes()" placeholder="Buscar...">
+                  </div>
+
                 </div>
             </div>
             
