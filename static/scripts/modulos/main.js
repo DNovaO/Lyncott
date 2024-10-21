@@ -116,6 +116,25 @@ document.addEventListener("DOMContentLoaded", function(){
         btnGenerarInforme.addEventListener('click', function(e) {
             e.preventDefault();
     
+            // Limpiar la gráfica
+            const graphContainer = document.getElementById('tablaGraphContainer');
+            if (graphContainer) {
+                graphContainer.remove(); // Eliminar el contenedor de la gráfica
+            }
+
+            let input = document.getElementById("inputBusquedaReportes");
+            let filter = input.value.trim().toLowerCase();
+
+            if(filter != ""){ 
+                filter = "";
+                input.value = "";
+            }  
+
+            const tablaFooter = document.getElementById('genericTablaPagination');
+            if (tablaFooter) {
+                tablaFooter.innerHTML = '';
+            }
+
             // Deshabilitar el botón
             this.disabled = true;
     

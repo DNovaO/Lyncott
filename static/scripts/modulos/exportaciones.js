@@ -20,6 +20,11 @@ function removeHTMLTags(str) {
 }
 
 export function exportToCSV(dataGlobal, tipo_reporte) {
+    // Validación de la estructura de dataGlobal
+    if (!dataGlobal || !dataGlobal.campos_reporte || !dataGlobal.datos_completos) {
+        throw new Error("Datos no válidos para la exportación a CSV.");
+    }
+
     let filename = tipo_reporte + '.csv';
     const { campos_reporte, datos_completos } = dataGlobal;
 
@@ -30,16 +35,23 @@ export function exportToCSV(dataGlobal, tipo_reporte) {
 
     // Agregar datos
     datos_completos.forEach(row => {
-        const values = campos_reporte.map(field => {
-            // Primero formatea el valor
-            const formattedValue = formatNumber(row[field], false, field);
-            // Luego, remueve cualquier HTML en el valor formateado
-            const cleanValue = removeHTMLTags(formattedValue);
-            // Escapa el valor para CSV
-            const escaped = cleanValue.replace(/"/g, '""');
-            return `"${escaped}"`;
-        });
-        csvRows.push(values.join(','));
+        try {
+            const values = campos_reporte.map(field => {
+                // Manejo de valores no definidos
+                const cellValue = row[field] !== undefined ? row[field] : ''; // Valor por defecto
+
+                // Primero formatea el valor y elimina espacios
+                const formattedValue = formatNumber(cellValue, false, field).toString().trim();
+                // Asegurarse de que el valor formateado sea una cadena
+                const cleanValue = removeHTMLTags(formattedValue).trim(); // Convertir a cadena y eliminar espacios
+                // Escapa el valor para CSV
+                const escaped = cleanValue.replace(/"/g, '""');
+                return `"${escaped}"`;
+            });
+            csvRows.push(values.join(','));
+        } catch (error) {
+            console.error(`Error procesando la fila: ${JSON.stringify(row)}`, error);
+        }
     });
 
     const csvString = csvRows.join('\n');

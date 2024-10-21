@@ -157,7 +157,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         'vendedor', 'id_grupo_corporativo', 'grupo_corporativo', 'id_consignatario',
         'consignatario', 'CP', 'colonia', 'folio', 'RFC', 'UUID', 'serie',
         'clave_vendedor', 'nombre_vendedor', 'numero_mes', 'zona_vendedor',
-        'nombre_cliente', 'descripcion'
+        'nombre_cliente', 'descripcion', 'cliente', 'grupo'
     ]) {
 
     // Almacenar los datos globalmente
@@ -469,6 +469,10 @@ export function resetTabla() {
     thead.innerHTML = '';
     tabla.innerHTML = '';
 
+    // Limpiar datos para la grafica
+    dataGlobal = null;
+
+
     const theadHTML = `
         <tr>
             <th scope="col">#</th>
@@ -514,10 +518,13 @@ function buscadorResultadosReporte(datosParaBuscador) {
 
     // Filtrar los datos si es necesario
     const dataFiltered = datosParaBuscador.datos_completos.filter(fila => 
-        datosParaBuscador.campos_reporte.some(campo => 
-            fila[campo].toString().toLowerCase().includes(filter)
-        )
+        datosParaBuscador.campos_reporte.some(campo => {
+            const valorCampo = fila[campo];
+            // Verificar que valorCampo no sea null o undefined
+            return valorCampo && valorCampo.toString().toLowerCase().includes(filter);
+        })
     );
+
 
     // Renderizar los datos filtrados
     renderizarDatosEnTabla(

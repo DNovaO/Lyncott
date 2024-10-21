@@ -7,6 +7,7 @@ from informes.models import *
 from decimal import Decimal
 from django.db import connection
 
+#Corregir para que se agreguen las columnas de los meses dependiendo de la fecha inicial y final
 def consultaVentaPorClienteConsignatarioPorMes(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final):
     
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}, cliente_inicial: {cliente_inicial}, cliente_final: {cliente_final}, producto_inicial: {producto_inicial}, producto_final: {producto_final}, sucursal_inicial: {sucursal_inicial}, sucursal_final: {sucursal_final}")

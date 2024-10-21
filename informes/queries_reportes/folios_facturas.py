@@ -16,6 +16,19 @@ def consultaFoliosFacturas(fecha_inicial, fecha_final, sucursal_inicial, sucursa
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}, sucursal_inicial: {sucursal_inicial}, sucursal_final: {sucursal_final}")
     
     with connection.cursor() as cursor:
+        
+        if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+            sucursal_inicial = '1' 
+            sucursal_inicial = '20'
+            
+        if sucursal_inicial == 'ALL':
+            sucursal_inicial = '1'
+            sucursal_final = '20'
+            
+        if sucursal_final == 'ALL':
+            sucursal_inicial = '1'
+            sucursal_final = '20'
+        
         query = f"""
             DECLARE 
                 @fecha_inicial DATE = CONVERT(DATE, %s, 102),

@@ -64,7 +64,6 @@ export function mostrarGrafico(dataGlobal, tipo_reporte) {
                 <select class="custom-select" id="tipoGrafico">
                     <option value="bar">Barras</option>
                     <option value="line">Líneas</option>
-                    <option value="pie">Pastel</option>
                     <option value="scatter">Dispersión</option>
                 </select>
             </div>
@@ -144,6 +143,7 @@ function agregarGraficoATabla(ejeX, ejeY, tipoGrafico, datos) {
     graphContainer.style.justifyContent = 'center'; // Centrar horizontalmente
     graphContainer.style.width = '100%'; // Ajustar al 100% del contenedor padre
     graphContainer.style.height = '100vh';
+    graphContainer.style.overflow = 'auto'; // Permitir desbordamiento
     graphContainer.innerHTML = '<canvas id="chartCanvas" style="display: flex; justify-content:center;"></canvas>';
 
     tabla.insertAdjacentElement('afterend', graphContainer);
@@ -183,6 +183,7 @@ function agregarGraficoATabla(ejeX, ejeY, tipoGrafico, datos) {
             plugins: {
                 legend: { position: 'top' },
                 title: { display: true, text: `Gráfico generado` },
+                subtitle: {display:true, text: 'Nota: Los valores pueden ser activados o desactivados dando click en el color o en la leyenda'}
             },
             scales: { x: { beginAtZero: true }, y: { beginAtZero: true } },
         }
@@ -218,10 +219,9 @@ function obtenerColor(index, opacity = 0.8) {
     const colores = [
         'rgba(255, 82, 127, OP)', 
         'rgba(0, 153, 255, OP)',  
-        'rgba(255, 255, 0, OP)',  
+        'rgba(255, 136, 0, OP)',   
         'rgba(0, 230, 230, OP)',  
-        'rgba(178, 102, 255, OP)', 
-        'rgba(255, 136, 0, OP)'   
+        'rgba(178, 102, 255, OP)' 
     ];
     return colores[index % colores.length].replace('OP', opacity);
 }
