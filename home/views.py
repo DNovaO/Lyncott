@@ -88,10 +88,11 @@ def home_view(request):
         ],
 
         "Devoluciones": [
+            "Devoluciones a Clientes/Consignatarios por Mes",
             "Devoluciones por Fecha",
             "Devoluciones por Sucursal",
             "Devoluciones por Zona en Kilogramos",
-            "Devoluciones por Zona en Pesos"
+            "Devoluciones por Zona en Pesos",
         ],
 
     }

@@ -61,55 +61,60 @@ document.addEventListener("DOMContentLoaded", function(){
     function recolectarValoresPorDefecto() {
         const valoresPorDefecto = {};
     
-        // Obtener todos los botones con el atributo 'data-type' y el atributo 'data-estado' igual a 'activo'
-        const botonesActivos = document.querySelectorAll('button[data-type][data-estado="activo"]');
+        // Obtener todos los botones con el atributo 'data-type'
+        const botones = document.querySelectorAll('button[data-type]');
     
-        botonesActivos.forEach(boton => {
+        botones.forEach(boton => {
             const dataType = boton.getAttribute('data-type');
             const buttonText = boton.innerText.trim();
     
-            try {
-                // Intentamos parsear el texto como JSON
-                const parsedText = JSON.parse(buttonText);
+            // Verificar si el botón está deshabilitado
+            if (boton.disabled) {
+                // Si el botón está deshabilitado, asignar comillas vacías al valor correspondiente
+                valoresPorDefecto[dataType] = ""; // Asigna comillas vacías
+                return; // Salir de la iteración actual sin procesar más
+            }
     
-                // Validar si alguno de los valores contiene "Buscar"
-                if (Object.values(parsedText).some(value => 
-                    typeof value === 'string' && value.startsWith('Buscar'))) {
-                    errorParametros(true,'Error, verifica que todos los campos estén seleccionados' )
-        
-                    throw new Error('Valor no válido');
+            // Solo procesar botones que están activos
+            if (boton.getAttribute('data-estado') === 'activo') {
+                try {
+                    // Intentamos parsear el texto como JSON
+                    const parsedText = JSON.parse(buttonText);
+    
+                    // Validar si alguno de los valores contiene "Buscar"
+                    if (Object.values(parsedText).some(value => 
+                        typeof value === 'string' && value.startsWith('Buscar'))) {
+                        errorParametros(true, 'Error, verifica que todos los campos estén seleccionados');
+                        throw new Error('Valor no válido');
+                    }
+    
+                    valoresPorDefecto[dataType] = [parsedText];
+                } catch (e) {
+                    // Si el parsing falla o hay un valor inválido, guardar como texto plano
+                    if (buttonText.startsWith('Buscar')) {
+                        errorParametros(true, 'Error, verifica que todos los campos estén seleccionados');
+                        throw new Error('Valor no válido');
+                    }
+    
+                    valoresPorDefecto[dataType] = [{ nombre: buttonText }];
                 }
-    
-                valoresPorDefecto[dataType] = [parsedText];
-            } catch (e) {
-                // Si el parsing falla o hay un valor inválido, guardar como texto plano
-                if (buttonText.startsWith('Buscar')) {
-                    errorParametros(true, 'Error, verifica que todos los campos estén seleccionados');
-        
-                    throw new Error('Valor no válido');
-                }
-    
-                valoresPorDefecto[dataType] = [{ nombre: buttonText }];
             }
         });
     
         // Añadir las fechas pero antes comparar que la fecha_inicial no sea mayor a la fecha_final
         if (fechaInicialInput.value > fechaFinalInput.value) {
             errorParametros(true, 'Error la fecha inicial no puede ser mayor a la fecha final');
-
             throw new Error('Fecha inicial mayor a fecha final');
-        }else {
+        } else {
             errorParametros(false, 'Parámetros por defecto aplicados');
-
             valoresPorDefecto['fecha_inicial'] = fechaInicialInput.value;
             valoresPorDefecto['fecha_final'] = fechaFinalInput.value;
         }
-
-
     
         console.log('Valores por defecto:', valoresPorDefecto);
         return valoresPorDefecto;
     }
+    
     
     // Evento cuando se presiona el botón de generar informe
     if (btnGenerarInforme) {
@@ -135,6 +140,11 @@ document.addEventListener("DOMContentLoaded", function(){
                 tablaFooter.innerHTML = '';
             }
 
+            const valoresMostrados = document.getElementById('resultadosPorPagina');
+            if (parseInt(valoresMostrados.value, 10) > 10) {
+                valoresMostrados.value = 10;  // Si es mayor a 10, cambiarlo a 10
+            }
+            
             // Deshabilitar el botón
             this.disabled = true;
     
@@ -270,3 +280,19 @@ export function resetFormulario() {
     parametrosInforme = {};
 
 }
+
+
+function toggleGrupoCorporativoVisibility() {
+    const checkbox = document.getElementById('toggleGrupoCorporativo');
+    const grupoCorporativoButton = document.getElementById('desplegar_GrupoCorporativo');
+    
+    if(checkbox.checked) {
+        grupoCorporativoButton.disabled = true;
+    }
+    else {
+        grupoCorporativoButton.disabled = false;
+    }
+
+}
+
+window.toggleGrupoCorporativoVisibility = toggleGrupoCorporativoVisibility;

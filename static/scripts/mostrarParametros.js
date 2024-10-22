@@ -66,6 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "Por Producto (con Refacturación)": 10,
     "Ventas Sin Cargo": 10,
     "Ventas a Clientes/Consignatarios por Mes": 10,
+    
 
     // Familia 11
     "Por Producto": 11,
@@ -125,6 +126,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "Ventas Sin Cargo por Zona según el Mes": 28,
 
     "Análisis de Ventas por Vendedor": 29,
+
+    "Devoluciones a Clientes/Consignatarios por Mes": 30,
   };
 
   const FAMILIA = {
@@ -298,6 +301,18 @@ document.addEventListener("DOMContentLoaded", function () {
     28: ["fecha_inicial", "fecha_final"],
 
     29: ["fecha_inicial", "fecha_final", "producto_inicial", "producto_final", "cliente_inicial", "cliente_final", "vendedor_inicial", "vendedor_final", "sucursal"],
+
+    30: [
+      "sucursal_inicial",
+      "sucursal_final",
+      "fecha_inicial",
+      "fecha_final",
+      "cliente_inicial",
+      "cliente_final",
+      "producto_inicial",
+      "producto_final",
+      "grupoCorporativo",
+    ],
 
   };
 

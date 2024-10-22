@@ -592,6 +592,13 @@
                   <!-- Novena fila -->
                   <div class="col-md-3 contenedor-div">
                     <div class="grupoCorporativo parametro form-group mb-1">
+                      {% if tipo_reporte == "Devoluciones a Clientes/Consignatarios por Mes" %}
+                        <div class="form-group mb-1">
+                            <input type="checkbox" id="toggleGrupoCorporativo" onchange="toggleGrupoCorporativoVisibility()">
+                            <label for="toggleGrupoCorporativo">Desactivar Grupo Corporativo</label>
+                        </div>
+                      {% endif %}
+
                       <label for="grupoCorporativo" style="font-weight: 500"
                         >Grupo corporativo:</label
                       >
@@ -940,9 +947,10 @@
                   <label for="resultadosPorPagina" class="mr-2" style="font-size: 0.9em;">Mostrar datos:</label>
                   <select id="resultadosPorPagina" class="custom-select" onchange="cambiarResultadosPorPagina()">
                     <option value="10">10</option>
-                    <option value="20">20</option>
                     <option value="30">30</option>
-                    <option value="40">40</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
                     <option value="all">Todos</option>
                   </select>
                   <div id="search-reportes" class="search-container mt-2">

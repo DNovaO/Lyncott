@@ -40,5 +40,10 @@ function mostrarAlerta(mensaje) {
     const alertContainer = document.getElementById("alertContainer");
     alertContainer.style.display = "block";
     alertContainer.innerHTML = `<strong>Error:</strong> ${mensaje}`;
+
+    setTimeout(() => {
+        alertContainer.style.display = "none";
+        alertContainer.innerHTML = "";
+    }, 3000);
 }
   

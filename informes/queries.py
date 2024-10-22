@@ -66,6 +66,7 @@ from .queries_reportes.devoluciones_por_zona import *
 from .queries_reportes.devolucion_por_zona_en_kilos import *
 from .queries_reportes.ventas_foodservice_KAM import *
 from .queries_reportes.ventas_autoservice_KAM import *
+from .queries_reportes.devoluciones_a_clientes_consignatarios_por_mes import *
 
 def clasificarParametros(parametrosSeleccionados, tipo_reporte):
     filtros = {}
@@ -173,6 +174,7 @@ def ejecutarConsulta(filtros, tipo_reporte):
         "Ventas de Cadenas FoodService KAM": lambda: consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
         "Ventas de Cadenas AutoService KAM": lambda: consultaVentasAutoServiceKAM(fecha_inicial, fecha_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final),
         "Devoluciones por Zona en Kilogramos": lambda: consultaDevolucionPorZonaKilos(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final),
+        "Devoluciones a Clientes/Consignatarios por Mes": lambda: consultaDevolucionesPorClienteConsignatarioPorMes(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, grupoCorporativo),
     
     }
 

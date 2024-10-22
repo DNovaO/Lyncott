@@ -134,14 +134,17 @@ export function showLoaderTabla() {
 window.cambiarResultadosPorPagina = cambiarResultadosPorPagina;
 
 function cambiarResultadosPorPagina() {
-    // Obtener el valor seleccionado del select
     const selectElement = document.getElementById('resultadosPorPagina');
-    const pageSize = selectElement.value === 'all' ? dataGlobal.datos_completos.length : parseInt(selectElement.value, 10);
+    const pageSize = selectElement.value === 'all' 
+        ? dataGlobal.datos_completos.length 
+        : parseInt(selectElement.value, 10);
 
-    // Obtener la página actual (puedes almacenar esto globalmente si es necesario)
-    const currentPage = 1; // O el valor que tengas actualmente
+    const currentPage = 1;
 
-    // Volver a renderizar la tabla con el nuevo pageSize
+    // Guardar valores en sessionStorage
+    sessionStorage.setItem('pageSize', pageSize);
+    sessionStorage.setItem('currentPage', currentPage);
+
     renderizarDatosEnTabla(dataGlobal, 'dataType', currentPage, pageSize);
 }
 
@@ -453,9 +456,14 @@ function renderPaginadoTabla(paginationInfo, currentPage, dataType) {
 
 function cambiarPagina(pageNumber, dataType, event) {
     if (event) {
-        event.preventDefault(); // Prevenir que la página se desplace hacia arriba
+        event.preventDefault();
     }
-    renderizarDatosEnTabla(dataGlobal, dataType, pageNumber);
+
+    // Guardar la página actual en sessionStorage
+    sessionStorage.setItem('currentPage', pageNumber);
+
+    const pageSize = parseInt(sessionStorage.getItem('pageSize'), 10) || 10;
+    renderizarDatosEnTabla(dataGlobal, dataType, pageNumber, pageSize);
 }
 
 window.cambiarPagina = cambiarPagina;

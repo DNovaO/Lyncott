@@ -24,18 +24,25 @@ def generar_meses(fecha_inicial, fecha_final):
         fecha_actual = fecha_actual.replace(day=1)  # Reiniciar al día 1
     return meses
 
-def consultaVentaPorClienteConsignatarioPorMes(
+def consultaDevolucionesPorClienteConsignatarioPorMes(
     fecha_inicial, fecha_final, cliente_inicial, cliente_final, 
-    producto_inicial, producto_final, sucursal_inicial, sucursal_final
+    producto_inicial, producto_final, sucursal_inicial, sucursal_final, grupoCorporativo
 ):
-    print(f"Fecha inicial: {fecha_inicial}, Fecha final: {fecha_final}")
+    print(f"Fecha inicial: {fecha_inicial}, Fecha final: {fecha_final}, grupo corporativo: {grupoCorporativo}")
+
+    # Definir la cláusula del grupo corporativo dependiendo de su valor
+    grupoCorporativoClause = ''
+    if grupoCorporativo == 'ALL':
+        grupoCorporativoClause = "AND KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
+    elif grupoCorporativo:  # Esto captura cualquier valor que no sea None o vacío
+        grupoCorporativoClause = "AND KDUD.C66 BETWEEN '7 ELEV' AND ''"
 
     # Generar los nombres de los meses para el rango proporcionado
     meses_rango = generar_meses(fecha_inicial, fecha_final)
 
     # Crear las columnas dinámicas para cada mes
     columnas_meses = ", ".join([
-        f"SUM(CASE WHEN MONTH(KDIJ.C10) = {mes_num} THEN KDIJ.C14 ELSE 0 END) AS {mes_nombre}"
+        f"SUM(CASE WHEN MONTH(KDIJ.C10) = {mes_num} THEN KDIJ.C14 ELSE 0 END) AS devoluciones_{mes_nombre}"
         for mes_num, mes_nombre in meses_rango
     ])
 
@@ -49,7 +56,8 @@ def consultaVentaPorClienteConsignatarioPorMes(
                 @producto_inicial VARCHAR(20) = %s,
                 @producto_final VARCHAR(20) = %s,
                 @sucursal_inicial VARCHAR(20) = %s,
-                @sucursal_final VARCHAR(20) = %s;
+                @sucursal_final VARCHAR(20) = %s,
+                @grupo_corporativo VARCHAR(20) = %s;
             
             SELECT 
                 LTRIM(RTRIM(KDIJ.C1)) AS sucursal,
@@ -58,7 +66,7 @@ def consultaVentaPorClienteConsignatarioPorMes(
                 LTRIM(RTRIM(KDM1.C181)) AS clave_consignatario,
                 LTRIM(RTRIM(KDVDIREMB.C3)) AS consignatario,
                 {columnas_meses},  -- Columnas de meses dinámicas
-                SUM(KDIJ.C14) AS total_general
+                SUM(KDIJ.C14) AS total_devoluciones
             FROM KDIJ
             INNER JOIN KDII ON KDIJ.C3 = KDII.C1
             INNER JOIN KDUD ON KDIJ.C15 = KDUD.C2
@@ -75,19 +83,16 @@ def consultaVentaPorClienteConsignatarioPorMes(
                 AND KDIJ.C10 BETWEEN @fecha_inicial AND @fecha_final
                 AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
                 AND KDUD.C2 BETWEEN @cliente_inicial AND @cliente_final
+                {grupoCorporativoClause}  -- Aquí se añade la cláusula del grupo corporativo
                 AND KDIJ.C16 NOT IN (
                     '902', '903', '904', '905', '906', '907', '908', '909', '910', 
                     '911', '912', '913', '914', '915', '916', '917', '918', '919', 
                     '920', '921', '922', '923', '924'
                 )
-                AND KDIJ.C4 = 'U'
+                AND KDIJ.C4 = 'N'
                 AND KDIJ.C5 = 'D'
-                AND KDIJ.C6 IN ('5', '45')
-                AND KDIJ.C7 IN (
-                    '1', '2', '3', '4', '5', '6', '18', '19', '20', '21', '22', 
-                    '25', '26', '71', '72', '73', '74', '75', '76', '77', '78', 
-                    '79', '80', '81', '82', '86', '87', '88', '94', '96', '97'
-                )
+                AND KDIJ.C6 IN ('25')
+                AND KDIJ.C7 IN ('12')
             GROUP BY 
                 KDIJ.C1, KDUD.C66, KDUD.C2, KDM1.C181, KDVDIREMB.C3;
         """
@@ -97,9 +102,11 @@ def consultaVentaPorClienteConsignatarioPorMes(
             fecha_inicial, fecha_final, 
             cliente_inicial, cliente_final, 
             producto_inicial, producto_final, 
-            sucursal_inicial, sucursal_final
+            sucursal_inicial, sucursal_final,
+            grupoCorporativo if grupoCorporativo else None  # Pasar None si es vacío
         ]
 
+        print(f"Parámetros de consulta: {params}")  # Imprimir los parámetros para depuración
         cursor.execute(query, params)
         columns = [col[0] for col in cursor.description]
         result = [dict(zip(columns, row)) for row in cursor.fetchall()]
