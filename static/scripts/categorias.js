@@ -9,6 +9,9 @@
     
 */ 
 
+window.addEventListener('pageshow', () => {
+  updateTiposReporte();
+});
 
 function updateTiposReporte() {
   const categoriaSelect = document.getElementById("categoriaReporte");

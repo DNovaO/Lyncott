@@ -472,14 +472,11 @@ export function resetTabla() {
     const tabla = document.querySelector('.table tbody');
     const thead = document.querySelector('.table thead');
     const tablaFooter = document.getElementById('genericTablaPagination');
-
+    const graphContainer = document.getElementById('tablaGraphContainer');
+    
     // Limpiar encabezado y cuerpo de la tabla
     thead.innerHTML = '';
     tabla.innerHTML = '';
-
-    // Limpiar datos para la grafica
-    dataGlobal = null;
-
 
     const theadHTML = `
         <tr>
@@ -492,11 +489,15 @@ export function resetTabla() {
     tablaFooter.innerHTML = '';
 
     // Limpiar la gráfica
-    const graphContainer = document.getElementById('tablaGraphContainer');
     if (graphContainer) {
         graphContainer.remove(); // Eliminar el contenedor de la gráfica
     }
+
+    // Limpiar los datos globales
+    window.datos = []; // Limpiar los datos del reporte
+    window.dataGlobal = []; // Limpiar los datos globales para gráficos
 }
+
 
 
 function debouncedReportes(func, wait) {
@@ -508,8 +509,14 @@ function debouncedReportes(func, wait) {
 }
 
 function buscadorResultadosReporte(datosParaBuscador) {
-    let input = document.getElementById("inputBusquedaReportes");
+    let input = document.getElementById("inputBusquedaReportes"); 
+    let graphContainer = document.getElementById('tablaGraphContainer');
     
+    // Limpiar la gráfica
+    if (graphContainer) {
+        graphContainer.remove(); // Eliminar el contenedor de la gráfica
+    }
+
     if (!input) {
         console.error("No se encontró el elemento de input");
         return;
