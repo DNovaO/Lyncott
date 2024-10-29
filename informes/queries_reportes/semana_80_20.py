@@ -10,8 +10,14 @@ from django.db import connection
 def consultaSemana8020(fecha_inicial, fecha_final, sucursal):
     print(f"Consulta de semana 80/20 desde {fecha_inicial} hasta {fecha_final}, sucursal: {sucursal}")
 
+    if sucursal == 'ALL':
+        filtro_sucursal = f"KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"KDIJ.C1 = '{sucursal}'"
+        
+
     with connection.cursor() as cursor:
-        query = """
+        query = f"""
             SELECT 
                 ISNULL(A.CODIGO, B.CODIGO) AS 'clave_producto',
                 ISNULL(A.PRODUCTO, B.PRODUCTO) AS 'producto',
@@ -52,7 +58,7 @@ def consultaSemana8020(fecha_inicial, fecha_final, sucursal):
                                     INNER JOIN KDMS ON KDMS.C1 = KDIJ.C1
                                     INNER JOIN KDII ON KDII.C1 = KDIJ.C3
                                 WHERE	
-                                        KDIJ.C1 IN (%s) /*Sucursal*/
+                                    {filtro_sucursal}
                                     AND KDIJ.C10 >= CONVERT(DATETIME,  %s, 102) /*FInicial*/
                                     AND KDIJ.C10 <= CONVERT(DATETIME,  %s, 102) /*FFinal*/
                                     --AND KDIJ.C2   IN ('145','718','143','122','448','624','119','108','171','525','197','58','622','63','170','184','855','112','173','183')
@@ -92,7 +98,7 @@ def consultaSemana8020(fecha_inicial, fecha_final, sucursal):
                                     INNER JOIN KDMS ON KDMS.C1 = KDIJ.C1 
                                     INNER JOIN KDII ON KDII.C1 = KDIJ.C3
                                 WHERE	
-                                        KDIJ.C1 IN (%s) /*Sucursal*/
+                                    {filtro_sucursal}
                                     AND KDIJ.C10 >= CONVERT(DATETIME,  %s, 102) /*FInicial*/
                                     AND KDIJ.C10 <= CONVERT(DATETIME,  %s, 102) /*FFinal*/
                                     --AND KDIJ.C2   IN ('145','718','143','122','448','624','119','108','171','525','197','58','622','63','170','184','855','112','173','183')
@@ -122,7 +128,7 @@ def consultaSemana8020(fecha_inicial, fecha_final, sucursal):
                                     INNER JOIN KDMS ON KDMS.C1 = KDIJ.C1 
                                     INNER JOIN KDII ON KDII.C1 = KDIJ.C3
                                 WHERE	
-                                    KDIJ.C1 IN (%s) /*sucursal*/
+                                    {filtro_sucursal}
                                     AND KDIJ.C10 >= CONVERT(DATETIME,  %s, 102) /*FInicial*/
                                     AND KDIJ.C10 <= CONVERT(DATETIME,  %s, 102) /*FFinal*/
                                     --AND KDIJ.C2   IN ('145','718','143','122','448','624','119','108','171','525','197','58','622','63','170','184','855','112','173','183')
@@ -139,9 +145,9 @@ def consultaSemana8020(fecha_inicial, fecha_final, sucursal):
         """
 
         params = [
-            sucursal, fecha_inicial, fecha_final,
-            sucursal, fecha_inicial, fecha_final,
-            sucursal, fecha_inicial, fecha_final,
+            fecha_inicial, fecha_final,
+            fecha_inicial, fecha_final,
+            fecha_inicial, fecha_final,
         ]
 
         cursor.execute(query, params)

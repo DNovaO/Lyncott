@@ -22,6 +22,12 @@ def consultaConsignatariosPorFamilia(fecha_inicial, fecha_final, cliente_inicial
     # Formatear las familias para la cláusula PIVOT
     familias_formateadas = ', '.join(f'[{familia[:128]}]' for familia in families)  # Truncar a 128 caracteres si es necesario
 
+    if sucursal == "ALL":
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 = '{sucursal}'" 
+
+
     # Construir la consulta SQL con las familias formateadas
     query = f"""
         DECLARE @fecha_inicial DATETIME = %s,
@@ -51,7 +57,7 @@ def consultaConsignatariosPorFamilia(fecha_inicial, fecha_final, cliente_inicial
                 AND KDIJ.C10 <= @fecha_final
                 AND KDIJ.C15 >= @cliente_inicial
                 AND KDIJ.C15 <= @cliente_final
-                AND KDIJ.C1 = @sucursal
+                {filtro_sucursal}
                 AND KDIJ.C4 = 'U' 
                 AND KDIJ.C5 = 'D' 
                 AND KDIJ.C6 IN ('5', '45')

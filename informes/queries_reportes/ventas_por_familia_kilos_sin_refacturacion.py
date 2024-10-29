@@ -13,7 +13,15 @@ from informes.f_DifDiasTotales import *
 def consutlaVentasPorFamiliaKilosSinRefacturacion(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, producto_inicial, producto_final, familia_inicial, familia_final):
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}, sucursal_inicial: {sucursal_inicial}, sucursal_final: {sucursal_final}, producto_inicial: {producto_inicial}, producto_final: {producto_final}, familia_inicial: {familia_inicial}, familia_final: {familia_final}")
     
-    
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+
     # Obtener los valores tanto de f_DifDias como de f_DifDiasTotales
     dif_dias = f_DifDias(fecha_inicial, fecha_final, [])
     dif_dias_totales = f_DifDiasTotales(fecha_inicial, fecha_final, [])
@@ -61,7 +69,7 @@ def consutlaVentasPorFamiliaKilosSinRefacturacion(fecha_inicial, fecha_final, su
                 WHERE 
                     KDII.C1 BETWEEN @producto_inicial AND @producto_final
                     AND KDIJ.C10 BETWEEN CONVERT(DATETIME, @fecha_inicial_year_anterior, 102) AND CONVERT(DATETIME, @fecha_final_year_anterior, 102)
-                    AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
+                    {filtro_sucursal}
                     AND KDIF.C1 BETWEEN @familia_inicial AND @familia_final
                     AND KDIJ.C16 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
                     AND KDIJ.C4 = 'U'
@@ -85,7 +93,7 @@ def consutlaVentasPorFamiliaKilosSinRefacturacion(fecha_inicial, fecha_final, su
                 WHERE 
                     KDII.C1 BETWEEN @producto_inicial AND @producto_final
                     AND KDIJ.C10 BETWEEN CONVERT(DATETIME, @fecha_inicial, 102) AND CONVERT(DATETIME, @fecha_final, 102)
-                    AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
+                    {filtro_sucursal}
                     AND KDIF.C1 BETWEEN @familia_inicial AND @familia_final
                     AND KDIJ.C16 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
                     AND KDIJ.C4 = 'U'

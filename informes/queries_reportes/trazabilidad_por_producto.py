@@ -11,6 +11,11 @@ from django.db import connection
 def consultaTrazabilidadPorProducto(fecha_inicial, fecha_final, producto_inicial, producto_final, status, sucursal):
     print(f"Consulta de trazabilidad por producto de: {fecha_inicial} a: {fecha_final}, del producto: {producto_inicial} al {producto_final}, con status {status} y de la sucursal {sucursal}")
 
+    if sucursal == 'ALL':
+        filtro_sucursal = f"KDPORD.C19 BETWEEN '01' AND '20'"
+    else:
+        filtro_sucursal = f"KDPORD.C19 = '{sucursal}'"
+
     # Si el status es "Todos", entonces buscamos tanto 'A' (Activo) como 'I' (Inactivo)
     if status == 'Activo':
         status_filter = "= 'A'"
@@ -54,7 +59,8 @@ def consultaTrazabilidadPorProducto(fecha_inicial, fecha_final, producto_inicial
                 FROM KL2020.dbo.KDPORD 
                 INNER JOIN KL2020.dbo.KDII ON KDPORD.C3 = KDII.C1
                 INNER JOIN KL2020.dbo.KDM1 ON KDPORD.C1 = KDM1.C11
-                WHERE KDPORD.C19 = '{sucursal}'  /*Sucursal*/
+                WHERE 
+                {filtro_sucursal}  /*Sucursal*/
                 AND KDPORD.C6 >= '{fecha_inicial}'  /*Fecha inicial*/
                 AND KDPORD.C6 <= '{fecha_final}'  /*Fecha final*/
                 AND KDPORD.C3 >= '{producto_inicial}'  /*Producto inicial*/

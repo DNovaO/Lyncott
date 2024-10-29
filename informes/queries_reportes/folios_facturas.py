@@ -15,19 +15,18 @@ from informes.f_DifDiasTotales import *
 def consultaFoliosFacturas(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final):
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}, sucursal_inicial: {sucursal_inicial}, sucursal_final: {sucursal_final}")
     
-    with connection.cursor() as cursor:
         
-        if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
-            sucursal_inicial = '1' 
-            sucursal_inicial = '20'
-            
-        if sucursal_inicial == 'ALL':
-            sucursal_inicial = '1'
-            sucursal_final = '20'
-            
-        if sucursal_final == 'ALL':
-            sucursal_inicial = '1'
-            sucursal_final = '20'
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDM1.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDM1.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDM1.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDM1.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+        
+    with connection.cursor() as cursor:
+
         
         query = f"""
             DECLARE 
@@ -61,8 +60,8 @@ def consultaFoliosFacturas(fecha_inicial, fecha_final, sucursal_inicial, sucursa
                     AND KDFECFDIVTA.C5 = KDM1.C5
                     AND KDFECFDIVTA.C6 = KDM1.C6
             WHERE
-                KDM1.C1 BETWEEN @sucursal_inicial AND @sucursal_final
-                AND KDM1.C9 BETWEEN @fecha_inicial AND @fecha_final
+                KDM1.C9 BETWEEN @fecha_inicial AND @fecha_final
+                {filtro_sucursal}
                 AND KDM1.c2 = 'U'
                 AND KDM1.c3 = 'D'
                 AND KDM1.c4 = '5'

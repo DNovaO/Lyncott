@@ -10,9 +10,29 @@ from informes.f_DifDias import *
 from informes.f_DifDiasTotales import *
 
 
-def consultaComparativoPreciosRealesvsTeoricos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal_inicial, sucursal_final, grupo_corporativo_inicial, grupo_corporativo_final):
+def consultaComparativoPreciosRealesvsTeoricos(fecha_inicial, fecha_final, cliente_inicial, cliente_final, sucursal_inicial, sucursal_final, grupoCorporativo_inicial, grupoCorporativo_final):
     
-    print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}, cliente_inicial: {cliente_inicial}, cliente_final: {cliente_final}, sucursal_inicial: {sucursal_inicial}, sucursal_final: {sucursal_final}, grupo_corporativo_inicial: {grupo_corporativo_inicial}, grupo_corporativo_final: {grupo_corporativo_final}")
+    print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}, cliente_inicial: {cliente_inicial}, cliente_final: {cliente_final}, sucursal_inicial: {sucursal_inicial}, sucursal_final: {sucursal_final}, grupo_corporativo_inicial: {grupoCorporativo_inicial}, grupo_corporativo_final: {grupoCorporativo_final}")
+    
+    
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+
+    
+    if grupoCorporativo_inicial == 'ALL' and grupoCorporativo_final == 'ALL':
+        filtro_grupoCorporativo = f"AND KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
+    elif grupoCorporativo_inicial == 'ALL':
+        filtro_grupoCorporativo = f"AND KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
+    elif grupoCorporativo_final == 'ALL':
+        filtro_grupoCorporativo = f"AND KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
+    else:
+        filtro_grupoCorporativo = f"AND KDUD.C66 BETWEEN '{grupoCorporativo_inicial}' AND '{grupoCorporativo_final}'"
     
     with connection.cursor() as cursor:
         query = f"""
@@ -86,12 +106,10 @@ def consultaComparativoPreciosRealesvsTeoricos(fecha_inicial, fecha_final, clien
                 WHERE 
                     KDIJ.C10 >= CONVERT(DATETIME, @fecha_inicial, 102) /* FInicial */
                     AND KDIJ.C10 <= CONVERT(DATETIME, @fecha_final, 102) /* FFinal */
-                    AND KDIJ.C1 >= @sucursal_inicial /* SInicial */
-                    AND KDIJ.C1 <= @sucursal_final /* SFinal */
+                    {filtro_sucursal}
                     AND KDUD.C2 >= @cliente_inicial /* CInicial */
                     AND KDUD.C2 <= @cliente_final /* CFinal */
-                    AND KDUD.C66 >= @grupo_corporativo_inicial /* GCorpInicial */
-                    AND KDUD.C66 <= @grupo_corporativo_final /* GCorpFinal */
+                    {filtro_grupoCorporativo}
                     AND KDIJ.C16 NOT IN (
                         '902', '903', '904', '905', '906', '907', '908', '909',
                         '910', '911', '912', '913', '914', '915', '917', '918',
@@ -134,12 +152,10 @@ def consultaComparativoPreciosRealesvsTeoricos(fecha_inicial, fecha_final, clien
                 WHERE 
                     KDIJ.C10 >= CONVERT(DATETIME, @fecha_inicial, 102)
                     AND KDIJ.C10 <= CONVERT(DATETIME, @fecha_final, 102)
-                    AND KDIJ.C1 >= @sucursal_inicial /* SInicial */
-                    AND KDIJ.C1 <= @sucursal_final /* SFinal */
+                    {filtro_sucursal}
                     AND KDUD.C2 >= @cliente_inicial /* CInicial */
                     AND KDUD.C2 <= @cliente_final /* CFinal */
-                    AND KDUD.C66 >= @grupo_corporativo_inicial /* GCorpInicial */
-                    AND KDUD.C66 <= @grupo_corporativo_final /* GCorpFinal */
+                    {filtro_grupoCorporativo}
                     AND KDIJ.C16 NOT IN (
                         '902', '903', '904', '905', '906', '907', '908', '909',
                         '910', '911', '912', '913', '914', '915', '917', '918',
@@ -171,7 +187,7 @@ def consultaComparativoPreciosRealesvsTeoricos(fecha_inicial, fecha_final, clien
                     fecha_inicial, fecha_final,
                     cliente_inicial, cliente_final,
                     sucursal_inicial, sucursal_final,
-                    grupo_corporativo_inicial, grupo_corporativo_final
+                    grupoCorporativo_inicial, grupoCorporativo_final
                 ]
         
         for param in params:

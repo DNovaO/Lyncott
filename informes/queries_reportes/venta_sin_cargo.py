@@ -13,6 +13,16 @@ from informes.f_DifDiasTotales import *
 def consultaVentaSinCargo(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final):
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}, cliente_inicial: {cliente_inicial}, cliente_final: {cliente_final}, producto_inicial: {producto_inicial}, producto_final: {producto_final}, sucursal_inicial: {sucursal_inicial}, sucursal_final: {sucursal_final}")
     
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDM2.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDM2.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDM2.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDM2.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+
+    
     with connection.cursor() as cursor:
         query = f"""
             DECLARE 
@@ -51,8 +61,7 @@ def consultaVentaSinCargo(fecha_inicial, fecha_final, cliente_inicial, cliente_f
                     AND KDM2.C8 <= @producto_final
                     AND KDM2.C32 >= CONVERT(DATETIME, @fecha_inicial, 102)
                     AND KDM2.C32 <= CONVERT(DATETIME, @fecha_final, 102)
-                    AND KDM2.C1 >= @sucursal_inicial
-                    AND KDM2.C1 <= @sucursal_final
+                    {filtro_sucursal}
                     AND KDM2.C25 >= @cliente_inicial
                     AND KDM2.C25 <= @cliente_final
                     AND KDM2.C2 = 'U'

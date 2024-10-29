@@ -13,14 +13,24 @@ def consultaConsignatariosPorSegmento(fecha_inicial, fecha_final, cliente_inicia
     
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}")    
 
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDM1.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDM1.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDM1.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDM1.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+
     query = f"""
-                DECLARE @fecha_inicial DATETIME = %s,
-                @fecha_final DATETIME = %s,
-                @cliente_inicial VARCHAR(20) = %s,
-                @cliente_final VARCHAR(20) = %s,
-                @sucursal_inicial VARCHAR(20) = %s,
-                @sucursal_final VARCHAR(20) = %s;
-        
+        DECLARE 
+            @fecha_inicial DATETIME = %s,
+            @fecha_final DATETIME = %s,
+            @cliente_inicial VARCHAR(20) = %s,
+            @cliente_final VARCHAR(20) = %s,
+            @sucursal_inicial VARCHAR(20) = %s,
+            @sucursal_final VARCHAR(20) = %s;
+    
         SELECT  
             ISNULL(A.SEGMENTACION, 'vacío') AS 'segmento',
             COUNT(*) AS 'cantidad' 
@@ -37,8 +47,7 @@ def consultaConsignatariosPorSegmento(fecha_inicial, fecha_final, cliente_inicia
             WHERE 
                 KDM1.C9 >= CONVERT(DATETIME, @fecha_inicial, 102)
                 AND KDM1.C9 <= CONVERT(DATETIME, @fecha_final, 102)
-                AND KDM1.C1 >= @sucursal_inicial
-                AND KDM1.C1 <= @sucursal_final
+                {filtro_sucursal}
                 AND KDM1.C10 >= @cliente_inicial
                 AND KDM1.C10 <= @cliente_final
                 AND KDM1.C12 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
@@ -47,7 +56,8 @@ def consultaConsignatariosPorSegmento(fecha_inicial, fecha_final, cliente_inicia
                 AND KDM1.C4 IN ('5', '45')
                 AND KDM1.C5 IN ('1', '2', '3', '4', '5', '6', '18', '19', '20', '21', '22', '25', '26', '71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '86', '87', '88', '94', '96', '97')
         ) AS A
-        GROUP BY A.SEGMENTACION;
+        GROUP BY A.SEGMENTACION
+        ORDER BY A.SEGMENTACION;
     """
 
     params = [

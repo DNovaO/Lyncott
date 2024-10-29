@@ -12,6 +12,25 @@ from informes.f_DifDiasTotales import *
 
 def consultaVentaClienteGrupoConsignatarioProducto(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, grupoCorporativo_inicial, grupoCorporativo_final):
     
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+
+    if grupoCorporativo_inicial == 'ALL' and grupoCorporativo_final == 'ALL':
+        filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
+    elif grupoCorporativo_inicial == 'ALL':
+        filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
+    elif grupoCorporativo_final == 'ALL':
+        filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
+    else:
+        filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '{grupoCorporativo_inicial}' AND '{grupoCorporativo_final}'"
+    
+    
     with connection.cursor() as cursor:
         query = f"""
             DECLARE 
@@ -25,8 +44,8 @@ def consultaVentaClienteGrupoConsignatarioProducto(fecha_inicial, fecha_final, s
             WITH ClientesFiltrados AS (
                 SELECT C2, C66 
                 FROM KDUD 
-                WHERE C66 >= @grupoCorporativo_inicial 
-                AND C66 <= @grupoCorporativo_final
+                WHERE 
+                {filtro_grupoCorporativo}
             )
             SELECT 
                 LTRIM(RTRIM(KDIJ.C1)) + ' - ' + LTRIM(RTRIM(KDMS.C2)) AS 'sucursal',
@@ -66,7 +85,7 @@ def consultaVentaClienteGrupoConsignatarioProducto(fecha_inicial, fecha_final, s
                 INNER JOIN ClientesFiltrados CF ON KDUD.C2 = CF.C2
             WHERE  
                 KDIJ.C10 BETWEEN @fecha_inicial AND @fecha_final
-                AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
+                {filtro_sucursal}
                 AND KDIJ.C16 NOT IN (
                     '902', '903', '904', '905', '906', '907', '908', '909', '910', '911', 
                     '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', 
@@ -83,7 +102,9 @@ def consultaVentaClienteGrupoConsignatarioProducto(fecha_inicial, fecha_final, s
             GROUP BY 
                 KDII.C1, KDII.C2, KDII.C11, KDIF.C1, KDIF.C2, KDII.C12, KDM1.C181, KDIJ.C1, 
                 KDUD.C66, KDCORPO.C2, KDUD.C2, KDUD.C3, KDVDIREMB.C3, KDMS.C2, KDUD.C33, 
-                KDSEGMENTACION.C2;
+                KDSEGMENTACION.C2
+            ORDER BY
+                KDM1.C181, KDII.C1;
 
         """
 

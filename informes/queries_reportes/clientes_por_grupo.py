@@ -10,6 +10,20 @@ from django.db import connection
 def consultaClientesPorGrupo(grupoCorporativo_inicial, grupoCorporativo_final):
     print(f"Consulta de clientes por grupo corporativo desde {grupoCorporativo_inicial} hasta {grupoCorporativo_final}")
 
+
+    if grupoCorporativo_inicial == 'ALL' and grupoCorporativo_final == 'ALL':
+        grupoCorporativo_inicial = '7 ELEV'
+        grupoCorporativo_final = 'POSAD'
+    elif grupoCorporativo_inicial == 'ALL':
+        grupoCorporativo_inicial = '7 ELEV'
+        grupoCorporativo_final = 'POSAD'
+    elif grupoCorporativo_final == 'ALL':
+        grupoCorporativo_inicial = '7 ELEV'
+        grupoCorporativo_final = 'POSAD'
+    else:
+        pass
+    
+
     # Query principal
     queryClientesporGrupo = Kdud.objects.filter(
         clave_corporativo__gte=grupoCorporativo_inicial,

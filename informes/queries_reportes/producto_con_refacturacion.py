@@ -10,6 +10,18 @@ from django.db import connection
 def consultaVentasPorProductoConRefacturacion(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final):
     print(f"Consulta de ventas por productos desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}, sucursal inicial: {sucursal_inicial} y sucursal final: {sucursal_final}")
     
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        sucursal_inicial = '02'
+        sucursal_final = '20'
+    elif sucursal_inicial == 'ALL':
+        sucursal_inicial = '02'
+        sucursal_final = '20'
+    elif sucursal_final == 'ALL':
+        sucursal_inicial = '02'
+        sucursal_final = '20'
+    else:
+        pass
+
     kdii_subquery = Kdii.objects.filter(
         clave_producto=OuterRef('clave_producto')
     ).values(

@@ -14,6 +14,14 @@ def consultaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_fina
     
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}, cliente_inicial: {cliente_inicial}, cliente_final: {cliente_final}, producto_inicial: {producto_inicial}, producto_final: {producto_final}, sucursal_inicial: {sucursal_inicial}, sucursal_final: {sucursal_final}")
 
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 between '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 between '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
 
     with connection.cursor() as cursor:
         query = f"""
@@ -51,7 +59,7 @@ def consultaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_fina
                 WHERE 
                     KDII.C1 BETWEEN @producto_inicial AND @producto_final
                     AND KDIJ.C10 BETWEEN CONVERT(DATETIME, @fecha_inicial, 102) AND CONVERT(DATETIME, @fecha_final, 102)
-                    AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
+                    {filtro_sucursal}
                     AND KDUD.C2 BETWEEN @cliente_inicial AND @cliente_final
                     AND KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
                     AND KDIJ.C4 = 'U'
@@ -70,7 +78,7 @@ def consultaPorCliente(fecha_inicial, fecha_final, cliente_inicial, cliente_fina
                 WHERE 
                     KDII.C1 BETWEEN @producto_inicial AND @producto_final
                     AND KDIJ.C10 BETWEEN CONVERT(DATETIME, @fecha_inicial, 102) AND CONVERT(DATETIME, @fecha_final, 102)
-                    AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
+                    {filtro_sucursal}
                     AND KDUD.C2 BETWEEN @cliente_inicial AND @cliente_final
                     AND KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
                     AND KDIJ.C4 = 'U'

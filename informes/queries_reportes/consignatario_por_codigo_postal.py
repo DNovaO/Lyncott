@@ -14,6 +14,11 @@ def consultaConsignatarioPorCodigoPostal(fecha_inicial, fecha_final, sucursal):
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}, sucursal: {sucursal}")
 
 
+    if sucursal == "ALL":
+        filtro_sucursal = f"AND KDM1.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDM1.C1 = '{sucursal}'" 
+
     with connection.cursor() as cursor:
         query = f"""
             DECLARE
@@ -40,7 +45,7 @@ def consultaConsignatarioPorCodigoPostal(fecha_inicial, fecha_final, sucursal):
                 WHERE 
                     KDM1.C9 >= CONVERT(DATETIME, @fecha_inicial, 102)
                     AND KDM1.C9 <= CONVERT(DATETIME, @fecha_final, 102)
-                    AND KDM1.C1 = @sucursal
+                    {filtro_sucursal}
                     AND KDM1.C12 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
                     AND KDM1.C2 = 'U'
                     AND KDM1.C3 = 'D'

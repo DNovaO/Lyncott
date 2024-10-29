@@ -18,6 +18,15 @@ def consultaComparativoVentasProductoSinRefacturacion(fecha_inicial, fecha_final
     actual_year = str(fecha_inicial.year)
     last_year = str(fecha_inicial.year - 1)
     
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+    
     with connection.cursor() as cursor:
         query = f"""
             DECLARE 
@@ -59,7 +68,7 @@ def consultaComparativoVentasProductoSinRefacturacion(fecha_inicial, fecha_final
                 WHERE 
                     KDII.C1 BETWEEN @producto_inicial AND @producto_final
                     AND KDIJ.C10 BETWEEN @fecha_inicial AND @fecha_final
-                    AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
+                    {filtro_sucursal}
                     AND KDUD.C2 BETWEEN @cliente_inicial AND @cliente_final
                     AND KDIJ.C16 NOT IN (
                         '902', '903', '904', '905', '906', '907', '908', '909', '910', 
@@ -92,7 +101,7 @@ def consultaComparativoVentasProductoSinRefacturacion(fecha_inicial, fecha_final
                 WHERE 
                     KDII.C1 BETWEEN @producto_inicial AND @producto_final
                     AND KDIJ.C10 BETWEEN @fecha_inicial_year_anterior AND @fecha_final_year_anterior
-                    AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
+                    {filtro_sucursal}
                     AND KDUD.C2 BETWEEN @cliente_inicial AND @cliente_final
                     AND KDIJ.C16 NOT IN (
                         '902', '903', '904', '905', '906', '907', '908', '909', '910', 

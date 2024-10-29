@@ -45,6 +45,15 @@ def consultaDevolucionesPorClienteConsignatarioPorMes(
         f"SUM(CASE WHEN MONTH(KDIJ.C10) = {mes_num} THEN KDIJ.C14 ELSE 0 END) AS devoluciones_{mes_nombre}"
         for mes_num, mes_nombre in meses_rango
     ])
+    
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
 
     with connection.cursor() as cursor:
         query = f"""
@@ -81,7 +90,7 @@ def consultaDevolucionesPorClienteConsignatarioPorMes(
             WHERE 
                 KDII.C1 BETWEEN @producto_inicial AND @producto_final
                 AND KDIJ.C10 BETWEEN @fecha_inicial AND @fecha_final
-                AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
+                {filtro_sucursal}
                 AND KDUD.C2 BETWEEN @cliente_inicial AND @cliente_final
                 {grupoCorporativoClause}  -- Aquí se añade la cláusula del grupo corporativo
                 AND KDIJ.C16 NOT IN (

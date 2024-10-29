@@ -12,6 +12,15 @@ from informes.f_DifDiasTotales import *
 def consultaDevolucionesPorZona(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final):
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}")
     
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+    
     with connection.cursor() as cursor:
         query = f"""
             DECLARE
@@ -63,10 +72,9 @@ def consultaDevolucionesPorZona(fecha_inicial, fecha_final, sucursal_inicial, su
                 FROM KDIJ
                 INNER JOIN KDUV ON KDIJ.C16 = KDUV.C2
                 WHERE
-                    KDIJ.C1 >= @sucursal_inicial
-                    AND KDIJ.C1 <= @sucursal_final
-                    AND KDIJ.C10 >= @fecha_inicial
+                    KDIJ.C10 >= @fecha_inicial
                     AND KDIJ.C10 <= @fecha_final
+                    {filtro_sucursal}
                     AND KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
                     AND (
                         (KDIJ.C4 = 'U' AND KDIJ.C5 = 'D' AND KDIJ.C6 IN ('5', '45') AND KDIJ.C7 IN ('1', '2', '3', '4', '5', '6', '18', '19', '20', '21', '22', '25', '26'))
@@ -86,10 +94,9 @@ def consultaDevolucionesPorZona(fecha_inicial, fecha_final, sucursal_inicial, su
                 FROM KDIJ
                 INNER JOIN KDUV ON KDIJ.C2 = KDUV.C24 AND KDIJ.C1 = KDUV.C1
                 WHERE
-                    KDIJ.C1 >= @sucursal_inicial
-                    AND KDIJ.C1 <= @sucursal_final
-                    AND KDIJ.C10 >= @fecha_inicial
+                    KDIJ.C10 >= @fecha_inicial
                     AND KDIJ.C10 <= @fecha_final
+                    {filtro_sucursal}
                     AND KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
                     AND (KDIJ.C4 = 'N' AND KDIJ.C5 = 'D' AND KDIJ.C6 = '25' AND KDIJ.C7 = '12')
                 GROUP BY KDIJ.C1, KDUV.C22
@@ -106,10 +113,9 @@ def consultaDevolucionesPorZona(fecha_inicial, fecha_final, sucursal_inicial, su
                 FROM KDIJ
                 INNER JOIN KDUV ON KDIJ.C16 = KDUV.C2
                 WHERE
-                    KDIJ.C1 >= @sucursal_inicial
-                    AND KDIJ.C1 <= @sucursal_final
-                    AND KDIJ.C10 >= @fecha_inicial
+                    KDIJ.C10 >= @fecha_inicial
                     AND KDIJ.C10 <= @fecha_final
+                    {filtro_sucursal}
                     AND KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
                     AND (
                         (KDIJ.C4 = 'U' AND KDIJ.C5 = 'D' AND KDIJ.C6 IN ('5', '45') AND KDIJ.C7 IN ('1', '2', '3', '4', '5', '6', '18', '19', '20', '21', '22', '25', '26'))
@@ -129,10 +135,9 @@ def consultaDevolucionesPorZona(fecha_inicial, fecha_final, sucursal_inicial, su
                 FROM KDIJ
                 INNER JOIN KDUV ON KDIJ.C2 = KDUV.C24 AND KDIJ.C1 = KDUV.C1
                 WHERE
-                    KDIJ.C1 >= @sucursal_inicial
-                    AND KDIJ.C1 <= @sucursal_final
-                    AND KDIJ.C10 >= @fecha_inicial
+                    KDIJ.C10 >= @fecha_inicial
                     AND KDIJ.C10 <= @fecha_final
+                    {filtro_sucursal}
                     AND KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
                     AND (KDIJ.C4 = 'N' AND KDIJ.C5 = 'D' AND KDIJ.C6 = '25' AND KDIJ.C7 = '12')
                 GROUP BY KDIJ.C1, KDUV.C22

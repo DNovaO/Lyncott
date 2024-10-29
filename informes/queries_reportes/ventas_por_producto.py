@@ -10,6 +10,16 @@ from django.db import connection
 def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, cliente_final, producto_inicial, producto_final, sucursal_inicial, sucursal_final, familia_inicial, familia_final):
     print(f"Consulta de ventas por producto desde {fecha_inicial} hasta {fecha_final}, cliente inicial: {cliente_inicial} y cliente final: {cliente_final}, producto inicial: {producto_inicial} y producto final: {producto_final}, sucursal inicial: {sucursal_inicial} y sucursal final: {sucursal_final}, familia inicial: {familia_inicial} y familia final: {familia_final}")
 
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+
+
     with connection.cursor() as cursor:
         # Construcción dinámica de la consulta SQL
         query = """
@@ -33,13 +43,12 @@ def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, clien
         if sucursal_inicial == '02' and sucursal_final == '02':
             query += "INNER JOIN dbo.KDUV ON dbo.KDIJ.C16 = dbo.KDUV.C2 "
 
-        query += """
+        query += f"""
             WHERE dbo.KDIF.C1 >= %s -- Familia Inicial
             AND dbo.KDIF.C1 <= %s -- Familia Final
             AND dbo.KDII.C1 >= %s -- Producto Inicial
             AND dbo.KDII.C1 <= %s -- Producto Final
-            AND dbo.KDIJ.C1 >= %s -- Sucursal Inicial
-            AND dbo.KDIJ.C1 <= %s -- Sucursal Final
+            {filtro_sucursal}
             AND dbo.KDIJ.C10 >= %s -- Fecha Inicial
             AND dbo.KDIJ.C10 <= %s -- Fecha Final
             AND dbo.KDUD.C2 >= %s -- Cliente Inicial
@@ -63,7 +72,7 @@ def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, clien
         # Parámetros para la consulta
         params = [
             familia_inicial, familia_final, producto_inicial, producto_final, 
-            sucursal_inicial, sucursal_final, fecha_inicial, fecha_final, 
+            fecha_inicial, fecha_final, 
             cliente_inicial, cliente_final
         ]
 

@@ -20,6 +20,15 @@ def consultaVentasCadenaFoodService(fecha_inicial, fecha_final, producto_inicial
     actual_year = str(fecha_inicial.year)
     last_year = str(fecha_inicial.year - 1)
 
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+
     with connection.cursor() as cursor:
         query = f"""
             DECLARE 
@@ -44,7 +53,7 @@ def consultaVentasCadenaFoodService(fecha_inicial, fecha_final, producto_inicial
                 WHERE 
                     KDII.C1 BETWEEN @producto_inicial AND @producto_final
                     AND KDIJ.C10 BETWEEN @fecha_inicial AND @fecha_final
-                    AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
+                    {filtro_sucursal}
                     AND KDUD.C66 IN ('GALS01','GLIV','GCMR01','GTO01','GPOS01','GRIU01','GHPR01','GHNH01','GSEV01','GGOM01')
                     AND KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '917', '918', '919', '920', '921', '922', '923', '924')
                     AND KDIJ.C4 = 'U'
@@ -63,7 +72,7 @@ def consultaVentasCadenaFoodService(fecha_inicial, fecha_final, producto_inicial
                 WHERE 
                     KDII.C1 BETWEEN @producto_inicial AND @producto_final
                     AND KDIJ.C10 BETWEEN @fecha_inicial_year_anterior AND @fecha_final_year_anterior
-                    AND KDIJ.C1 BETWEEN @sucursal_inicial AND @sucursal_final
+                    {filtro_sucursal}
                     AND KDUD.C66 IN ('GALS01','GLIV','GCMR01','GTO01','GPOS01','GRIU01','GHPR01','GHNH01','GSEV01','GGOM01')
                     AND KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '917', '918', '919', '920', '921', '922', '923', '924')
                     AND KDIJ.C4 = 'U'

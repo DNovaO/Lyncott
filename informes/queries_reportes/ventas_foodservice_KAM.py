@@ -25,6 +25,16 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
     actual_year = str(fecha_inicial.year)
     last_year = str(fecha_inicial.year - 1)
     
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+
+    
     with connection.cursor() as cursor:
         query = f"""
             SET LANGUAGE Español;
@@ -68,7 +78,7 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                             CASE 
                                 WHEN KDUD.C66 IN ('GAER', 'GIHG', 'GTIHO', 'GVIN', 'GLHS', 'GCALY', 'GCAFF', 'CAFFENIO', 'GHHIL', 'GFRU', 'GHCE01', 'GHPR01', 'GPAL', 'BOS01', 'GDIE', 'GPOS01', 'GSHE', 'VM01', 'GPS', 'GPANB', 'GACCO', 'GACOR') 
                                     THEN 'KAM1 - FOODSERVICE'
-                                WHEN KDUD.C66 IN ('GSIX', 'GNGRI', 'GQUA', 'GTH01', 'GDEN', 'CAFFENIO', 'GCMR01', 'GHNH01', 'GAREA', 'GCM', 'GHKR', 'GHCR01', 'GLVA') 
+                                WHEN KDUD.C66 IN ('GSIX', 'GNGRI', 'GQUA', 'GTH01', 'GDEN', 'CAFFENIO', 'GCMR01', 'GHNH01', 'GAREA', 'GCM', 'GHKR', 'GHCR01', 'GLVA','GPS01') 
                                     THEN 'KAM2 - FOODSERVICE'
                                 WHEN KDUD.C66 IN ('GLPIZ') 
                                     THEN 'KAM2 - SUCURSALES'
@@ -112,8 +122,7 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                             AND KDII.C1 <= @producto_final
                             AND KDIJ.C10 >= @fecha_inicial
                             AND KDIJ.C10 <= @fecha_final
-                            AND KDIJ.C1 >= @sucursal_inicial
-                            AND KDIJ.C1 <= @sucursal_final
+                            {filtro_sucursal}
                             AND KDUD.C66 IN (
                                 'GCMR01', 'GFRU', 'GHCE01', 'GHNH01', 'GHPR01', 'GPAL', 
                                 'GTH01', 'GAER', 'GTIHO', 'GVIN', 'GQUA', 'GNGRI', 'GDEN', 
@@ -122,7 +131,7 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                                 'GRCOS', 'GALB', 'GGOM01', 'MACD', 'GOXO01', 'GSEV01', 'GSIX', 
                                 'GBIM', 'GPACI', 'GOAG', 'GIHOP', 'GLPIZ', 'GHOTS', 'GCALL', 
                                 'GLHS', 'GCALY', 'GPRIS', 'GPES01', 'GCAFF', 'CAFFENIO', 
-                                'GIHG', 'GPS', 'GPANB', 'GACCO', 'GACOR'
+                                'GIHG', 'GPS', 'GPANB', 'GACCO', 'GACOR','GPS01'
                             )
                             AND KDIJ.C16 NOT IN (
                                 '902', '903', '904', '905', '906', '907', '908', 
@@ -153,8 +162,7 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                         AND KDII.C1 <= @producto_final
                         AND KDIJ.C10 >= @fecha_inicial_year_anterior
                         AND KDIJ.C10 <= @fecha_final_year_anterior
-                        AND KDIJ.C1 >= @sucursal_inicial
-                        AND KDIJ.C1 <= @sucursal_final
+                        {filtro_sucursal}
                         AND KDUD.C66 IN (
                             'GCMR01', 'GFRU', 'GHCE01', 'GHNH01', 'GHPR01', 'GPAL', 
                             'GTH01', 'GAER', 'GTIHO', 'GVIN', 'GQUA', 'GNGRI', 'GDEN', 
@@ -163,7 +171,7 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                             'GRCOS', 'GALB', 'GGOM01', 'MACD', 'GOXO01', 'GSEV01', 'GSIX', 
                             'GBIM', 'GPACI', 'GOAG', 'GIHOP', 'GLPIZ', 'GHOTS', 'GCALL', 
                             'GLHS', 'GCALY', 'GPRIS', 'GPES01', 'GCAFF', 'CAFFENIO', 
-                            'GIHG', 'GPS', 'GPANB', 'GACCO', 'GACOR'
+                            'GIHG', 'GPS', 'GPANB', 'GACCO', 'GACOR','GPS01'
                         )
                         AND KDIJ.C16 NOT IN (
                             '902', '903', '904', '905', '906', '907', '908', 
@@ -204,8 +212,7 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                         AND KDII.C1 <= @producto_final
                         AND KDIJ.C10 >= @fecha_inicial_year_anterior
                         AND KDIJ.C10 <= @fecha_final_year_anterior
-                        AND KDIJ.C1 >= @sucursal_inicial
-                        AND KDIJ.C1 <= @sucursal_final
+                        {filtro_sucursal}
                         AND KDIJ.C3 = '0559'
                         AND KDIJ.C16 NOT IN (
                             '902', '903', '904', '905', '906', '907', '908', 
@@ -240,8 +247,7 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                             AND KDII.C1 <= @producto_final
                             AND KDIJ.C10 >= @fecha_inicial
                             AND KDIJ.C10 <= @fecha_final
-                            AND KDIJ.C1 >= @sucursal_inicial
-                            AND KDIJ.C1 <= @sucursal_final
+                            {filtro_sucursal}
                             AND KDIJ.C3 = '0559'
                             AND KDIJ.C16 NOT IN (
                                 '902', '903', '904', '905', '906', '907', '908', 
@@ -273,8 +279,7 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                         AND KDII.C1 <= @producto_final
                         AND KDIJ.C10 >= @fecha_inicial_year_anterior
                         AND KDIJ.C10 <= @fecha_final_year_anterior
-                        AND KDIJ.C1 >= @sucursal_inicial
-                        AND KDIJ.C1 <= @sucursal_final 
+                        {filtro_sucursal} 
                         AND KDII.C1 = '0559'
                         AND KDIJ.C16 NOT IN (
                             '902', '903', '904', '905', '906', '907', '908', 
@@ -310,8 +315,7 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                             AND KDII.C1 <= @producto_final
                             AND KDIJ.C10 >= @fecha_inicial
                             AND KDIJ.C10 <= @fecha_final
-                            AND KDIJ.C1 >= @sucursal_inicial
-                            AND KDIJ.C1 <= @sucursal_final
+                            {filtro_sucursal}
                             AND KDII.C1 = '0559'
                             AND KDIJ.C16 NOT IN (
                                 '902', '903', '904', '905', '906', '907', '908', 

@@ -19,6 +19,23 @@ def consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, s
     actual_year = str(fecha_inicial.year)
     last_year = str(fecha_inicial.year - 1)
 
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"KDM1.C1 >= '02' AND KDM1.C1 <= '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"KDM1.C1 >= '02' AND KDM1.C1 <= '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"KDM1.C1 >= '02' AND KDM1.C1 <= '20'"
+    else:
+        filtro_sucursal = f"KDM1.C1 >= {sucursal_inicial} AND KDM1.C1 <= {sucursal_final}"
+
+    if grupoCorporativo_inicial == 'ALL' and grupoCorporativo_final == 'ALL':
+        filtro_grupoCorporativo = "AND KDCORPO.C1 >= '7 ELEV' AND KDCORPO.C1 <= 'POSAD'"
+    elif grupoCorporativo_inicial == 'ALL':
+        filtro_grupoCorporativo = "AND KDCORPO.C1 >= '7 ELEV' AND KDCORPO.C1 <= 'POSAD'"
+    elif grupoCorporativo_final == 'ALL':
+        filtro_grupoCorporativo = "AND KDCORPO.C1 >= '7 ELEV' AND KDCORPO.C1 <= 'POSAD'"
+    else:
+        filtro_grupoCorporativo = f"AND KDCORPO.C1 >= '{grupoCorporativo_inicial}' AND KDCORPO.C1 <= '{grupoCorporativo_final}'"
     
     with connection.cursor() as cursor:
         query = f"""
@@ -72,10 +89,10 @@ def consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, s
                     INNER JOIN KDUD ON KDM1.C10 = KDUD.C2
                     INNER JOIN KDCORPO ON KDUD.C66 = KDCORPO.C1
                     WHERE
-                        KDM1.C1 >= @sucursal_inicial AND KDM1.C1 <= @sucursal_final
+                        {filtro_sucursal}
                         AND KDM1.C9 >= CONVERT(DATETIME, @fecha_inicial, 102)
                         AND KDM1.C9 <= CONVERT(DATETIME, @fecha_final, 102)
-                        AND KDCORPO.C1 >= @grupoCorporativo_inicial AND KDCORPO.C1 <= @grupoCorporativo_final
+                        {filtro_grupoCorporativo}
                         AND KDM1.C2 = 'U' AND KDM1.C3 = 'D'
                         AND KDM1.C4 IN ('5', '45')
                         AND KDM1.C5 IN ('1', '2', '3', '4', '5', '6', '18', '19', '20', '21', '22', '25', '26')
@@ -109,10 +126,10 @@ def consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, s
                     INNER JOIN KDUD ON KDUD.C2 = KDM1.C10
                     INNER JOIN KDCORPO ON KDCORPO.C1 = KDUD.C66
                     WHERE
-                        KDM1.C1 >= @sucursal_inicial AND KDM1.C1 <= @sucursal_final
+                        {filtro_sucursal}
                         AND KDM1.C9 >= CONVERT(DATETIME, @fecha_inicial_year_anterior, 102)
                         AND KDM1.C9 <= CONVERT(DATETIME, @fecha_final_year_anterior, 102)
-                        AND KDCORPO.C1 >= @grupoCorporativo_inicial AND KDCORPO.C1 <= @grupoCorporativo_final
+                        {filtro_grupoCorporativo}
                         AND KDM1.C2 = 'N' AND KDM1.C3 = 'D'
                         AND KDM1.C4 = '25' AND KDM1.C5 = '12'
                         AND KDM1.C12 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
@@ -136,10 +153,10 @@ def consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, s
                 INNER JOIN KDUD ON KDUD.C2 = KDM1.C10
                 INNER JOIN KDCORPO ON KDCORPO.C1 = KDUD.C66
                 WHERE
-                    KDM1.C1 >= @sucursal_inicial AND KDM1.C1 <= @sucursal_final
+                    {filtro_sucursal}
                     AND KDM1.C9 >= CONVERT(DATETIME, @fecha_inicial_year_anterior, 102)
                     AND KDM1.C9 <= CONVERT(DATETIME, @fecha_final_year_anterior, 102)
-                    AND KDCORPO.C1 >= @grupoCorporativo_inicial AND KDCORPO.C1 <= @grupoCorporativo_final
+                    {filtro_grupoCorporativo}
                     AND KDM1.C2 = 'U' AND KDM1.C3 = 'D'
                     AND KDM1.C4 IN ('5', '45')
                     AND KDM1.C5 IN ('1', '2', '3', '4', '5', '6', '18', '19', '20', '21', '22', '25', '26')
@@ -161,10 +178,10 @@ def consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, s
                     INNER JOIN KDUD ON KDUD.C2 = KDM1.C10
                     INNER JOIN KDCORPO ON KDCORPO.C1 = KDUD.C66
                     WHERE
-                        KDM1.C1 >= @sucursal_inicial AND KDM1.C1 <= @sucursal_final
+                        {filtro_sucursal}
                         AND KDM1.C9 >= CONVERT(DATETIME, @fecha_inicial, 102)
                         AND KDM1.C9 <= CONVERT(DATETIME, @fecha_final, 102)
-                        AND KDCORPO.C1 >= @grupoCorporativo_inicial AND KDCORPO.C1 <= @grupoCorporativo_final
+                        {filtro_grupoCorporativo}
                         AND KDM1.C2 = 'U' AND KDM1.C3 = 'D'
                         AND KDM1.C4 IN ('5', '45')
                         AND KDM1.C5 IN ('1', '2', '3', '4', '5', '6', '18', '19', '20', '21', '22', '25', '26')
@@ -186,10 +203,10 @@ def consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, s
                     INNER JOIN KDUD ON KDUD.C2 = KDM1.C10
                     INNER JOIN KDCORPO ON KDCORPO.C1 = KDUD.C66
                     WHERE
-                        KDM1.C1 >= @sucursal_inicial AND KDM1.C1 <= @sucursal_final
+                        {filtro_sucursal}
                         AND KDM1.C9 >= CONVERT(DATETIME, @fecha_inicial_year_anterior, 102)
                         AND KDM1.C9 <= CONVERT(DATETIME, @fecha_final_year_anterior, 102)
-                        AND KDCORPO.C1 >= @grupoCorporativo_inicial AND KDCORPO.C1 <= @grupoCorporativo_final
+                        {filtro_grupoCorporativo}
                         AND KDM1.C2 = 'N' AND KDM1.C3 = 'D'
                         AND KDM1.C4 = '25' AND KDM1.C5 = '12'
                         AND KDM1.C12 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
@@ -206,10 +223,10 @@ def consultaVentasVsDevoluciones(fecha_inicial, fecha_final, sucursal_inicial, s
                 INNER JOIN KDUD ON KDUD.C2 = KDM1.C10
                 INNER JOIN KDCORPO ON KDCORPO.C1 = KDUD.C66
                 WHERE
-                    KDM1.C1 >= @sucursal_inicial AND KDM1.C1 <= @sucursal_final
+                    {filtro_sucursal}
                     AND KDM1.C9 >= CONVERT(DATETIME, @fecha_inicial_year_anterior , 102)
                     AND KDM1.C9 <= CONVERT(DATETIME, @fecha_final_year_anterior, 102)
-                    AND KDCORPO.C1 >= @grupoCorporativo_inicial AND KDCORPO.C1 <= @grupoCorporativo_final
+                    {filtro_grupoCorporativo}
                     AND KDM1.C2 = 'U' AND KDM1.C3 = 'D'
                     AND KDM1.C4 IN ('5', '45')
                     AND KDM1.C5 IN ('1', '2', '3', '4', '5', '6', '18', '19', '20', '21', '22', '25', '26')

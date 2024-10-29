@@ -25,6 +25,16 @@ def consultaVentasAutoServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
     actual_year = str(fecha_inicial.year)
     last_year = str(fecha_inicial.year - 1)
     
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+
+    
     with connection.cursor() as cursor:
         query = f"""
             SET LANGUAGE Español;
@@ -97,8 +107,7 @@ def consultaVentasAutoServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                         AND KDII.C1 <=  @producto_final
                         AND KDIJ.C10 >= @fecha_inicial
                         AND KDIJ.C10 <= @fecha_final
-                        AND KDIJ.C1 >= @sucursal_inicial
-                        AND KDIJ.C1 <= @sucursal_final
+                        {filtro_sucursal}
                         AND KDUD.C2 IN (
                             'CAU01', 'CCF04', 'PCM01', 'TCH01', 'OFU01', 'TSO01', 
                             'TSO03', 'TSO04', 'SIH01', 'TSO02', 'GOAG', 'MACD', 
@@ -143,8 +152,7 @@ def consultaVentasAutoServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                     AND KDII.C1 <= @producto_final
                     AND KDIJ.C10 >= @fecha_inicial_year_anterior
                     AND KDIJ.C10 <= @fecha_final_year_anterior
-                    AND KDIJ.C1 >= @sucursal_inicial
-                    AND KDIJ.C1 <= @sucursal_final
+                    {filtro_sucursal}
                     AND KDUD.C2 IN (
                         'CAU01', 'CCF04', 'PCM01', 'TCH01', 'OFU01', 'TSO01', 
                         'TSO03', 'TSO04', 'SIH01', 'TSO02', 'GOAG', 'MACD', 

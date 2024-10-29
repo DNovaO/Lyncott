@@ -10,8 +10,13 @@ from django.db import connection
 def consultaPresupuestoVsVentas(sucursal, year):
     print(f"Consulta de ventas por sucursal: {sucursal} y el año {year}")
 
+    if sucursal == 'ALL':
+        filtro_sucursal = f"kdv.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"kdv.C1 = '{sucursal}'"
+
     with connection.cursor() as cursor:
-        query = """
+        query = f"""
             SELECT
                 kdv.C1 AS "clave_sucursal",
                 kdms.C2 AS "sucursal",
@@ -63,11 +68,11 @@ def consultaPresupuestoVsVentas(sucursal, year):
             JOIN
                 KDMS kdms ON kdv.C1 = kdms.C1
             WHERE
-                kdv.C1 = %s -- CLAVE SUCURSAL 
+                {filtro_sucursal} 
                 AND kdv.C3 = %s; -- YEAR DE LOS DATOS
         """
 
-        params = [sucursal, year]
+        params = [year]
 
         cursor.execute(query, params)
         columns = [col[0] for col in cursor.description]

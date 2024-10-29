@@ -13,7 +13,15 @@ from informes.f_DifDiasTotales import *
 def consutlaVentasPorFamiliaPesosSinRefacturacion(fecha_inicial, fecha_final, sucursal_inicial, sucursal_final, producto_inicial, producto_final, familia_inicial, familia_final):
     print(f"fecha_inicial: {fecha_inicial}, fecha_final: {fecha_final}, sucursal_inicial: {sucursal_inicial}, sucursal_final: {sucursal_final}, producto_inicial: {producto_inicial}, producto_final: {producto_final}, familia_inicial: {familia_inicial}, familia_final: {familia_final}")
     
-    
+    if sucursal_inicial == 'ALL' and sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_inicial == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    elif sucursal_final == 'ALL':
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '02' AND '20'"
+    else:
+        filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
+
     # Obtener los valores tanto de f_DifDias como de f_DifDiasTotales
     dif_dias = f_DifDias(fecha_inicial, fecha_final, [])
     dif_dias_totales = f_DifDiasTotales(fecha_inicial, fecha_final, [])
@@ -59,61 +67,59 @@ def consutlaVentasPorFamiliaPesosSinRefacturacion(fecha_inicial, fecha_final, su
                 ISNULL(aut.KG, 0) AS "venta_kg_{actual_year}"
             FROM (
                 SELECT 
-                    KL2020.dbo.KDIF.C1 AS CLAVE,
-                    KL2020.dbo.KDIF.C2 AS GRUPO,
-                    SUM(KL2020.dbo.KDIJ.C11 * KL2020.dbo.KDII.C13) AS KG,
-                    SUM(KL2020.dbo.KDIJ.C11) AS UNI,
-                    SUM(KL2020.dbo.KDIJ.C14) AS VENTA,
-                    SUM(KL2020.dbo.KDIJ.C14) / COUNT(KL2020.dbo.KDIJ.C14) AS PROMEDIO
+                    KDIF.C1 AS CLAVE,
+                    KDIF.C2 AS GRUPO,
+                    SUM(KDIJ.C11 * KDII.C13) AS KG,
+                    SUM(KDIJ.C11) AS UNI,
+                    SUM(KDIJ.C14) AS VENTA,
+                    SUM(KDIJ.C14) / COUNT(KDIJ.C14) AS PROMEDIO
                 FROM 
-                    KL2020.dbo.KDIJ
-                    INNER JOIN KL2020.dbo.KDII ON KL2020.dbo.KDIJ.C3 = KL2020.dbo.KDII.C1
-                    INNER JOIN KL2020.dbo.KDIF ON KL2020.dbo.KDII.C82 = KL2020.dbo.KDIF.C1
+                    KDIJ
+                    INNER JOIN KDII ON KDIJ.C3 = KDII.C1
+                    INNER JOIN KDIF ON KDII.C82 = KDIF.C1
                 WHERE 
-                    KL2020.dbo.KDII.C1 >= @producto_inicial
-                    AND KL2020.dbo.KDII.C1 <= @producto_final
-                    AND KL2020.dbo.KDIJ.C10 >= CONVERT(DATETIME, @fecha_inicial_year_anterior, 102)
-                    AND KL2020.dbo.KDIJ.C10 <= CONVERT(DATETIME, @fecha_final_year_anterior, 102)
-                    AND KL2020.dbo.KDIJ.C1 >= @sucursal_inicial
-                    AND KL2020.dbo.KDIJ.C1 <= @sucursal_final
-                    AND KL2020.dbo.KDIF.C1 >= @familia_inicial
-                    AND KL2020.dbo.KDIF.C1 <= @familia_final
-                    AND KL2020.dbo.KDIJ.C4 = 'U'
-                    AND KL2020.dbo.KDIJ.C5 = 'D'
-                    AND KL2020.dbo.KDIJ.C6 IN ('5', '45')
-                    AND KL2020.dbo.KDIJ.C7 IN ('1', '2', '3', '4', '5', '6', '18', '19', '21', '22', '25', '26', '71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '86', '87', '88', '94', '96', '97')
-                    AND KL2020.dbo.KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
+                    KDII.C1 >= @producto_inicial
+                    AND KDII.C1 <= @producto_final
+                    AND KDIJ.C10 >= CONVERT(DATETIME, @fecha_inicial_year_anterior, 102)
+                    AND KDIJ.C10 <= CONVERT(DATETIME, @fecha_final_year_anterior, 102)
+                    {filtro_sucursal}
+                    AND KDIF.C1 >= @familia_inicial
+                    AND KDIF.C1 <= @familia_final
+                    AND KDIJ.C4 = 'U'
+                    AND KDIJ.C5 = 'D'
+                    AND KDIJ.C6 IN ('5', '45')
+                    AND KDIJ.C7 IN ('1', '2', '3', '4', '5', '6', '18', '19', '21', '22', '25', '26', '71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '86', '87', '88', '94', '96', '97')
+                    AND KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
                 GROUP BY 
-                    KL2020.dbo.KDIF.C1, KL2020.dbo.KDIF.C2
+                    KDIF.C1, KDIF.C2
             ) X
             FULL JOIN (
                 SELECT 
-                    KL2020.dbo.KDIF.C1 AS CLAVE,
-                    KL2020.dbo.KDIF.C2 AS GRUPO,
-                    SUM(KL2020.dbo.KDIJ.C11 * KL2020.dbo.KDII.C13) AS KG,
-                    SUM(KL2020.dbo.KDIJ.C11) AS UNI,
-                    SUM(KL2020.dbo.KDIJ.C14) AS VENTA
+                    KDIF.C1 AS CLAVE,
+                    KDIF.C2 AS GRUPO,
+                    SUM(KDIJ.C11 * KDII.C13) AS KG,
+                    SUM(KDIJ.C11) AS UNI,
+                    SUM(KDIJ.C14) AS VENTA
                 FROM 
-                    KL2020.dbo.KDIJ
-                    INNER JOIN KL2020.dbo.KDII ON KL2020.dbo.KDIJ.C3 = KL2020.dbo.KDII.C1
-                    INNER JOIN KL2020.dbo.KDIF ON KL2020.dbo.KDII.C82 = KL2020.dbo.KDIF.C1
-                    INNER JOIN KL2020.dbo.KDUV ON KL2020.dbo.KDIJ.C16 = KDUV.C2
+                    KDIJ
+                    INNER JOIN KDII ON KDIJ.C3 = KDII.C1
+                    INNER JOIN KDIF ON KDII.C82 = KDIF.C1
+                    INNER JOIN KDUV ON KDIJ.C16 = KDUV.C2
                 WHERE 
-                    KL2020.dbo.KDII.C1 >= @producto_inicial
-                    AND KL2020.dbo.KDII.C1 <= @producto_final
-                    AND KL2020.dbo.KDIJ.C10 >= CONVERT(DATETIME, @fecha_inicial, 102)
-                    AND KL2020.dbo.KDIJ.C10 <= CONVERT(DATETIME, @fecha_final, 102)
-                    AND KL2020.dbo.KDIJ.C1 >= @sucursal_inicial
-                    AND KL2020.dbo.KDIJ.C1 <= @sucursal_final
-                    AND KL2020.dbo.KDIF.C1 >= @familia_inicial
-                    AND KL2020.dbo.KDIF.C1 <= @familia_final
-                    AND KL2020.dbo.KDIJ.C4 = 'U'
-                    AND KL2020.dbo.KDIJ.C5 = 'D'
-                    AND KL2020.dbo.KDIJ.C6 IN ('5', '45')
-                    AND KL2020.dbo.KDIJ.C7 IN ('1', '2', '3', '4', '5', '6', '18', '19', '21', '22', '25', '26', '71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '86', '87', '88', '94', '96', '97')
-                    AND KL2020.dbo.KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
+                    KDII.C1 >= @producto_inicial
+                    AND KDII.C1 <= @producto_final
+                    AND KDIJ.C10 >= CONVERT(DATETIME, @fecha_inicial, 102)
+                    AND KDIJ.C10 <= CONVERT(DATETIME, @fecha_final, 102)
+                    {filtro_sucursal}
+                    AND KDIF.C1 >= @familia_inicial
+                    AND KDIF.C1 <= @familia_final
+                    AND KDIJ.C4 = 'U'
+                    AND KDIJ.C5 = 'D'
+                    AND KDIJ.C6 IN ('5', '45')
+                    AND KDIJ.C7 IN ('1', '2', '3', '4', '5', '6', '18', '19', '21', '22', '25', '26', '71', '72', '73', '74', '75', '76', '77', '78', '79', '80', '81', '82', '86', '87', '88', '94', '96', '97')
+                    AND KDIJ.C16 NOT IN ('902', '903', '904', '905', '906', '907', '908', '909', '910', '911', '912', '913', '914', '915', '916', '917', '918', '919', '920', '921', '922', '923', '924')
                 GROUP BY 
-                    KL2020.dbo.KDIF.C1, KL2020.dbo.KDIF.C2
+                    KDIF.C1, KDIF.C2
             ) aut ON aut.CLAVE = X.CLAVE
             ORDER BY aut.CLAVE;
         """
