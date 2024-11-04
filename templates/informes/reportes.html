@@ -15,6 +15,9 @@
     <!-- Handlebars.js -->
     <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.min.js"></script>
 
+    <!-- Driver.js -->
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/> 
 
     <!-- Estilos locales -->
     <link rel="stylesheet" href="{% static 'styles/styleReportes.css' %}" />
@@ -84,6 +87,7 @@
               Usuario: {{ user.username }}
             </h1>
           </div>
+          
           <div class="d-flex align-items-center justify-content-center mt-3">
             {% if user.is_authenticated %}
             <!-- Formulario para volver a home -->
@@ -135,7 +139,7 @@
             <div class="card-header">
               <strong>Parámetros de reporte</strong>
             </div>
-            <div class="card-body">
+            <div class="card-body" id="parametros-individuales">
               <h6style="font-weight: 500"><strong>Nota:</strong> Los campos invertidos no generarán un reporte.</h6>
               <form method="post">
                 {% csrf_token %}
@@ -1129,5 +1133,6 @@
     <script src="{% static 'scripts/mostrarParametros.js' %}"></script>
     <script  type="module" src="{% static 'scripts/modulos/main.js' %}"></script>
     <script src="{% static 'scripts/obtenerDataType.js' %}"></script>
+    <script src="{% static 'scripts/manual.js' %}"></script>    
   </body>
 </html>

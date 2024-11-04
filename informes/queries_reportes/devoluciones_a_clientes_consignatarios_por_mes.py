@@ -32,10 +32,11 @@ def consultaDevolucionesPorClienteConsignatarioPorMes(
 
     # Definir la cláusula del grupo corporativo dependiendo de su valor
     grupoCorporativoClause = ''
-    if grupoCorporativo == 'ALL':
+    if not grupoCorporativo or grupoCorporativo == 'ALL':  # Si es None, vacío, o 'ALL'
         grupoCorporativoClause = "AND KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
-    elif grupoCorporativo:  # Esto captura cualquier valor que no sea None o vacío
-        grupoCorporativoClause = "AND KDUD.C66 BETWEEN '7 ELEV' AND ''"
+    else:
+        grupoCorporativoClause = f"AND KDUD.C66 = '{grupoCorporativo}'"  # Para cualquier otro valor específico
+
 
     # Generar los nombres de los meses para el rango proporcionado
     meses_rango = generar_meses(fecha_inicial, fecha_final)

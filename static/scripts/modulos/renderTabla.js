@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 mostrarGrafico(dataGlobal, tipo_reporte);
             } catch (error) {
                 mensajeError = "No hay datos para mostrar en el gráfico."
-                mostrarAlertaHTML(error.message);
+                mostrarAlertaHTML(mensajeError);
             }
         });
     }
