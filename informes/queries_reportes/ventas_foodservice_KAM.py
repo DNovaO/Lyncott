@@ -82,7 +82,7 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                                     THEN 'KAM2 - FOODSERVICE'
                                 WHEN KDUD.C66 IN ('GLPIZ') 
                                     THEN 'KAM2 - SUCURSALES'
-                                WHEN KDUD.C66 IN ('GIHOP', 'GALS01', 'GLIV', 'MACD', 'GOAG', 'GALB') 
+                                WHEN KDUD.C66 IN ('GIHOP', 'GALS01', 'GLIV', 'MACD', 'GOAG', 'GALB', 'GAL01', 'GAL02', 'GAL03', 'GAL04') 
                                     THEN 'KAM3 - FOODSERVICE'
                                 WHEN KDUD.C66 IN ('GTO01', 'GBIM', 'GGOM01', 'GSG', 'GSEV01', 'GOXO01', 'GRCOS', 'GPACI', 'GPRIS', 'GHOTS', 'GPES01', 'GCALL') 
                                     THEN 'KAM4 - FOODSERVICE'
@@ -131,7 +131,8 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                                 'GRCOS', 'GALB', 'GGOM01', 'MACD', 'GOXO01', 'GSEV01', 'GSIX', 
                                 'GBIM', 'GPACI', 'GOAG', 'GIHOP', 'GLPIZ', 'GHOTS', 'GCALL', 
                                 'GLHS', 'GCALY', 'GPRIS', 'GPES01', 'GCAFF', 'CAFFENIO', 
-                                'GIHG', 'GPS', 'GPANB', 'GACCO', 'GACOR','GPS01'
+                                'GIHG', 'GPS', 'GPANB', 'GACCO', 'GACOR','GPS01', 
+                                'GAL01', 'GAL02', 'GAL03', 'GAL04'
                             )
                             AND KDIJ.C16 NOT IN (
                                 '902', '903', '904', '905', '906', '907', '908', 
@@ -171,7 +172,8 @@ def consultaVentasFoodServiceKAM(fecha_inicial, fecha_final, producto_inicial, p
                             'GRCOS', 'GALB', 'GGOM01', 'MACD', 'GOXO01', 'GSEV01', 'GSIX', 
                             'GBIM', 'GPACI', 'GOAG', 'GIHOP', 'GLPIZ', 'GHOTS', 'GCALL', 
                             'GLHS', 'GCALY', 'GPRIS', 'GPES01', 'GCAFF', 'CAFFENIO', 
-                            'GIHG', 'GPS', 'GPANB', 'GACCO', 'GACOR','GPS01'
+                            'GIHG', 'GPS', 'GPANB', 'GACCO', 'GACOR','GPS01',
+                            'GAL01', 'GAL02', 'GAL03', 'GAL04'
                         )
                         AND KDIJ.C16 NOT IN (
                             '902', '903', '904', '905', '906', '907', '908', 

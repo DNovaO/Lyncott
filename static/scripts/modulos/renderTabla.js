@@ -17,6 +17,7 @@ import { btnExportarCSV , btnExportarExcel, btnImprimir, btnMostrarGrafico, tipo
 import { mostrarGrafico } from "./graficas.js";
 import { currentPage } from './main.js';
 import { datosParaBuscador } from './apiHandler.js';
+import { setCancelFetch } from './breaker.js';
 
 let debouncedBuscadorReportes;
 let totalesPagina = {};
@@ -79,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (btnMostrarGrafico) {
         btnMostrarGrafico.addEventListener('click', function (e) {
             try {
-                if (!dataGlobal || dataGlobal.length === 0) {
+                if (!datos || datos.length === 0) {
                     throw new Error("No hay datos para mostrar en el gráfico.");
                 }
                 mostrarGrafico(dataGlobal, tipo_reporte);
@@ -477,6 +478,9 @@ export function resetTabla() {
     // Limpiar encabezado y cuerpo de la tabla
     thead.innerHTML = '';
     tabla.innerHTML = '';
+
+    // Establecer la variable de control para cancelar cualquier fetch en proceso
+    setCancelFetch(true);
 
     const theadHTML = `
         <tr>

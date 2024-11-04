@@ -16,6 +16,7 @@ import { showLoaderTabla, renderizarDatosEnTabla } from './renderTabla.js';
 import { categoria_reporte, tipo_reporte } from './config.js';
 import { cache } from './main.js';
 import { getCookie } from './utils.js';
+import { setCancelFetch, cancelFetch } from './breaker.js';
 
 export let datosParaBuscador = [];
 
@@ -75,9 +76,12 @@ export function sendParametersToServer(parametrosInforme, currentPageTable, tipo
     const cacheKey = `${tipoReporte}_${currentPageTable}`;
 
     showLoaderTabla();
+    setCancelFetch(false); // Reinicia el control antes de iniciar la petición
 
     fetchData(endpointURL, body, cacheKey)
         .then(data => {
+            // Verifica si se activó la cancelación antes de renderizar
+            if (cancelFetch) return;
             renderizarDatosEnTabla(data, tipoReporte);
             datosParaBuscador = data;
         })
@@ -88,4 +92,4 @@ export function sendParametersToServer(parametrosInforme, currentPageTable, tipo
                 btnGenerarInforme.disabled = false;
             }
         });
-}
+}   
