@@ -290,3 +290,8 @@ label {
   }
 }
 
+@media (max-width: 992px) {
+  .navbar {
+    background-color: rgba(255, 200, 200, 0.9) !important; 
+  }
+}

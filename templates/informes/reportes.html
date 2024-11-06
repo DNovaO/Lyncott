@@ -63,70 +63,53 @@
           <img
             src="{% static 'resources/logo-lyncott.png' %}"
             alt="Lyncott"
-            class="img-fluid"
+            class="img-fluid mt-3"
             style="max-width: 150px"
           />
         </a>
 
         <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-          <div class="d-flex align-items-center justify-content-center mt-3" style="width:100%">
-            <div id="alertContainer" class="alert alert-danger mt-3" style="display: none;"></div>
-
-              <select class="mt-2 border-2 border-dark form-select" id="categoriaReporte" name="categoria_reporte" onchange="updateTiposReporte()" style="width:30%;">
-                <option value="" class="opacity-50">
-                  Seleccione una categoría
-                </option>
-                {% for categoria in categorias_reporte %}
-                <option value="{{ categoria }}">{{ categoria }}</option>
-                {% endfor %}
-              </select>
-
-              <select class="mt-2 border-2 border-dark form-select" id="tipoReporte" name="tipo_reporte" style="width:30%;">
-                <option value="" class="opacity-50">
-                  Seleccione un tipo
-                </option>
-              </select>
-
-            <form method="post" class="d-inline mr-2">
+          <div class="d-flex flex-column flex-lg-row align-items-center justify-content-center mt-3 w-100">
+            
+        
+            <select class="border-2 border-dark form-select me-lg-3 mb-2 mb-lg-0 w-100" id="categoriaReporte" name="categoria_reporte" onchange="updateTiposReporte()">
+              <option value="" class="opacity-50">Seleccione una categoría</option>
+            </select>
+            
+            <!-- Select para el tipo de reporte -->
+            <select class="border-2 border-dark form-select me-lg-3 mb-2 mb-lg-0 w-100" id="tipoReporte" name="tipo_reporte">
+              <option value="" class="opacity-50">Seleccione un tipo</option>
+            </select>
+        
+            <form id="formBuscarReporte" method="get" class="d-inline mb-2 mb-lg-0 me-2 w-100">
               {% csrf_token %}
-              <button type="submit" class="btn btn-danger custom-btn w-80 text-center" style="font-weight:500" id ="btnBuscarReporte" onclick="return validarFormulario()">
+              <button type="submit" style="background-color: #00aae9; border-color: #00aae9; font-weight:500;" class="btn btn-danger custom-btn w-100 text-center me-2" style="font-weight:500" id="btnBuscarReporte" onclick="return validarFormulario()">
                 Buscar reporte
               </button>
             </form>
-
+        
             {% if user.is_authenticated %}
-            <!-- Formulario para volver a home -->
-            <form method="get" action="{% url 'home' %}" class="d-inline">
-              <button
-                type="submit"
-                class="btn btn-danger custom-btn w-80 text-center me-2"
-                style="font-weight: 500"
-              >
+            <form method="get" action="{% url 'home' %}" class="d-inline mb-2 mb-lg-0 me-2 w-100">
+              <button type="submit" class="btn btn-danger custom-btn w-100 text-center me-2" style="font-weight: 500">
                 Volver a inicio
               </button>
             </form>
-
-            <!-- Formulario para cerrar sesión -->
-            <form method="post" action="{% url 'logout' %}" class="d-inline">
+        
+            <form method="post" action="{% url 'logout' %}" class="d-inline w-100 me-2">
               {% csrf_token %}
-              <button
-                type="submit"
-                class="btn btn-danger custom-btn w-80 text-center"
-                style="font-weight: 500"
-              >
+              <button type="submit" class="btn btn-danger custom-btn w-100 text-center me-2" style="font-weight: 500">
                 Cerrar Sesión
               </button>
             </form>
@@ -135,29 +118,23 @@
         </div>
       </div>
     </nav>
-      
-    <div class="mx-auto">
-      <h1
-        class="mb-0 text-center font-weight-normal"
-        style="font-size: 1.5rem; font-weight: bold"
-      >
+
+    <div id="alertContainer" class="alert alert-danger mt-3 w-50 mx-auto text-center" style="display: none;"></div>
+
+    <div class="text-center mx-auto mt-3">
+      <h1 class="mb-2 font-weight-bold" style="font-size: 1.5rem;">
         Usuario: {{ user.username }}
       </h1>
+      
+      <h2 class="mb-0 font-weight-bold" style="font-size: 1rem;">
+        Categoría de reporte: 
+        <span class="font-weight-normal" id="categoria_reporte">{{ categoria_reporte }}</span> 
+        <br>
+        Tipo de reporte: 
+        <span class="font-weight-normal" id="tipo_reporte">{{ tipo_reporte }}</span>
+      </h2>
     </div>
-
-    <h1
-      class="mb-0 text-center font-weight-normal"
-      style="font-size: 1.5rem; font-weight: bold"
-    >
-      Categoría de reporte:
-      <span style="font-weight: normal" id="categoria_reporte"
-        >{{ categoria_reporte }}</span
-      >
-      Tipo de reporte:
-      <span style="font-weight: normal" id="tipo_reporte"
-        >{{ tipo_reporte }}</span
-      >
-    </h1>
+    
 
     <div class="content-wrapper pb-auto p-3">
       <div class="row">
@@ -976,17 +953,17 @@
             <div class="card-header d-flex justify-content-between align-items-center">
               <strong>Resultados del reporte {{ tipo_reporte }}</strong>
                 <div class="form-group mb-1">
-                  <label for="resultadosPorPagina" class="mr-2" style="font-size: 0.9em;">Mostrar datos:</label>
-                  <select id="resultadosPorPagina" class="custom-select" onchange="cambiarResultadosPorPagina()">
-                    <option value="10">10</option>
-                    <option value="30">30</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                    <option value="200">200</option>
-                    <option value="all">Todos</option>
-                  </select>
-                  <div id="search-reportes" class="search-container mt-2">
-                      <input style="margin-top: auto; margin-bottom: auto" class="rounded search-input" type="text" id="inputBusquedaReportes" onkeyup="debouncedBuscadorReportes()" placeholder="Buscar...">
+                  <label for="resultadosPorPagina" class="mr-2" style="font-size: 0.8em;">Mostrar datos:</label>
+                    <select id="resultadosPorPagina" class="custom-select" onchange="cambiarResultadosPorPagina()">
+                      <option value="10">10</option>
+                      <option value="30">30</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="200">200</option>
+                      <option value="all">Todos</option>
+                    </select>
+                  <div id="search-reportes" class="search-container mt-2 me-2 mr-2" style="width:100%;">
+                      <input style="margin-top: auto; margin-bottom: auto; width:100%;" class="rounded search-input" type="text" id="inputBusquedaReportes" onkeyup="debouncedBuscadorReportes()" placeholder="Buscar...">
                   </div>
 
                 </div>
@@ -1164,5 +1141,7 @@
     <script  type="module" src="{% static 'scripts/modulos/main.js' %}"></script>
     <script src="{% static 'scripts/obtenerDataType.js' %}"></script>
     <script src="{% static 'scripts/manual.js' %}"></script>    
+    <script src="{% static 'scripts/manejoSelectorNav.js' %}"></script>
+    <script src="{% static 'scripts/validarReportes.js' %}"></script>
   </body>
 </html>
