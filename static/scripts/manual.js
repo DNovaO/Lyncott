@@ -1,3 +1,13 @@
+// Manual.js
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 7/11/2024
+
+    Script que se encarga de guiar al usuario a través de los pasos necesarios para generar un reporte.
+    Se mostrarán los elementos necesarios para generar un reporte y se explicará su funcionamiento.  
+*/ 
+
 const driver = window.driver.js.driver;
 
 const driverObj = driver();

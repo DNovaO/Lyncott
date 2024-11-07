@@ -19,13 +19,13 @@ function validarFormulario() {
     alertContainer.innerHTML = "";
 
     if (categoriaSelect.value === "" && tipoSelect.value === "") {
-    mostrarAlerta("Por favor, selecciona una categoría de reporte y un tipo de reporte.");
-    return false;
+        mostrarAlerta("Por favor, selecciona una categoría de reporte y un tipo de reporte.");
+        return false;
     }
     
     if (categoriaSelect.value === "") {
-    mostrarAlerta("Por favor, selecciona una categoría de reporte.");
-    return false;
+        mostrarAlerta("Por favor, selecciona una categoría de reporte.");
+        return false;
     }
 
     if (tipoSelect.value === "") {

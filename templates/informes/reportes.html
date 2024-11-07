@@ -93,10 +93,10 @@
               <option value="" class="opacity-50">Seleccione un tipo</option>
             </select>
         
-            <form id="formBuscarReporte" method="get" class="d-inline mb-2 mb-lg-0 me-2 w-100">
+            <form id="formBuscarReporte" method="post" class="d-inline mb-2 mb-lg-0 me-2 w-100">
               {% csrf_token %}
-              <button type="submit" style="background-color: #00aae9; border-color: #00aae9; font-weight:500;" class="btn btn-danger custom-btn w-100 text-center me-2" style="font-weight:500" id="btnBuscarReporte" onclick="return validarFormulario()">
-                Buscar reporte
+              <button type="submit" style="background-color: #00aae9; border-color: #00aae9; font-weight:500;" class="btn btn-danger custom-btn w-100 text-center me-2" style="font-weight:500" id="btnBuscarReporte">
+                  Buscar reporte
               </button>
             </form>
         
@@ -1138,10 +1138,9 @@
     <!-- Scripts personalizados -->
     <script src="{% static 'scripts/formatoFecha.js' %}"></script>
     <script src="{% static 'scripts/mostrarParametros.js' %}"></script>
-    <script  type="module" src="{% static 'scripts/modulos/main.js' %}"></script>
+    <script type="module" src="{% static 'scripts/modulos/main.js' %}"></script>
     <script src="{% static 'scripts/obtenerDataType.js' %}"></script>
     <script src="{% static 'scripts/manual.js' %}"></script>    
     <script src="{% static 'scripts/manejoSelectorNav.js' %}"></script>
-    <script src="{% static 'scripts/validarReportes.js' %}"></script>
   </body>
 </html>

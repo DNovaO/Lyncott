@@ -1,4 +1,13 @@
-// Definir las categorías y tipos de reporte
+// Manejo de la barra de navegación
+
+/*
+    Diego Nova Olguín
+    Ultima modificación: 7/11/2024
+
+    Script que se encarga de manejar los cambios de categoría y tipo de reporte en la página de reportes.
+    Provocando un redireccionamiento a la página de reportes con los nuevos parámetros del reporte seleccionado
+    .  
+*/ 
 
 const categoriasReporte = {
     "Ventas": [
@@ -68,6 +77,11 @@ const categoriasReporte = {
     ],
 };
 
+window.addEventListener('pageshow', () => {
+    cargarCategorias();
+    updateTiposReporte();
+});
+
 // Función para generar las categorías en el primer select
 function cargarCategorias() {
     const categoriaSelect = document.getElementById('categoriaReporte');
@@ -107,68 +121,78 @@ function updateTiposReporte() {
     }
 }
 
-function cambiarReportes() {
+document.addEventListener("DOMContentLoaded", function() {
     const btnBuscarReporte = document.getElementById('btnBuscarReporte');
-
     const categoriaSelect = document.getElementById('categoriaReporte');
     const tipoSelect = document.getElementById('tipoReporte');
-
+    const alertContainer = document.getElementById("alertContainer");
+  
     let currentPage = 0;
     let categoria_reporte = document.getElementById("categoria_reporte").textContent.trim();
     let tipo_reporte = document.getElementById("tipo_reporte").textContent.trim();
     
-    if (btnBuscarReporte) {
-        btnBuscarReporte.addEventListener('click', async (e) => {
-            // Prevenir el comportamiento por defecto del formulario
-            e.preventDefault();
+    // Limpiar cualquier alerta previa
+    alertContainer.style.display = "none";
+    alertContainer.innerHTML = "";
 
-            // Recoger los valores seleccionados
-            const categoriaValue = categoriaSelect.value;
-            const tipoValue = tipoSelect.value;
-            const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPage}`;
+    btnBuscarReporte.addEventListener('click', async (e) => {
+        e.preventDefault();  // Evitar que el formulario se envíe y recargue la página
+        // Verificar que se haya seleccionado una categoría y tipo
+        const categoriaValue = categoriaSelect.value;
+        const tipoValue = tipoSelect.value;
 
-            // Crear el cuerpo de la solicitud JSON con los nuevos valores
-            const body = JSON.stringify({
-                nuevo_tipo: tipoValue,
-                nueva_categoria: categoriaValue,
-                cambio: true,
+        if (categoriaValue === "" && tipoValue === "") {
+            mostrarAlerta("Por favor, selecciona una categoría de reporte y un tipo de reporte.");
+            return false;
+        }
+        
+        if (categoriaValue === "") {
+            mostrarAlerta("Por favor, selecciona una categoría de reporte.");
+            return false;
+        }
+    
+        if (tipoValue === "") {
+          mostrarAlerta("Por favor, selecciona un tipo de reporte.");
+          return false;
+        }
+
+        // Construir la URL del endpoint
+        const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPage}`;
+
+        // Construir el cuerpo de la solicitud
+        const body = {
+            nuevo_tipo: tipoValue,
+            nueva_categoria: categoriaValue,
+            page: currentPage,
+            cambio: true,
+        };
+
+        try {
+            const response = await fetch(endpointURL, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken"),
+                },
+                body: JSON.stringify(body),
             });
-
-            // Verificar los datos antes de enviarlos con console.log
-            console.log("Datos enviados en el cuerpo JSON:", body);
-
-            try {
-                // Hacer la solicitud fetch al backend con los nuevos valores
-                const response = await fetch(endpointURL, {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": getCookie("csrftoken"),
-                    },
-                    body: body,  // Enviar el cuerpo con los nuevos valores
-                });
-
-                // Si la respuesta es exitosa, actualizar la URL
-                if (response.ok) {
-                    // Obtener la nueva URL con los parámetros desde la respuesta o construirla
-                    const updatedURL = `/report/?categoria_reporte=${encodeURIComponent(categoriaValue)}&tipo_reporte=${encodeURIComponent(tipoValue)}`;
-
-                    // Actualizar la URL para reflejar los nuevos parámetros
-                    window.history.pushState({}, '', updatedURL);
-
-                    // Recargar la página para mostrar los nuevos valores
-                    location.reload();
+       
+            if (response.ok) {
+                // Verificar si la respuesta incluye una URL de redirección
+                const result = await response.json();
+                if (result.redirect_url) {
+                    window.location.href = result.redirect_url;  // Redirige a la URL recibida
                 } else {
-                    console.error('Hubo un error con la solicitud');
+                    mostrarAlerta("No se pudo redirigir a la página de reportes.");
                 }
-            } catch (error) {
-                console.error('Error en la solicitud fetch:', error);
+            } else {
+                throw new Error('La respuesta de la red no fue satisfactoria');
             }
-        });
-    }
-}
-
-
+        } catch (error) {
+            console.error('Error en la solicitud fetch:', error);
+        }
+    });
+});
 
 function getCookie(name) {
     let cookieValue = null;
@@ -183,6 +207,17 @@ function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+function mostrarAlerta(mensaje) {
+    const alertContainer = document.getElementById("alertContainer");
+    alertContainer.style.display = "block";
+    alertContainer.innerHTML = `<strong>Error:</strong> ${mensaje}`;
+
+    setTimeout(() => {
+        alertContainer.style.display = "none";
+        alertContainer.innerHTML = "";
+    }, 3000);
 }
 
 // Cargar las categorías cuando la página se cargue
