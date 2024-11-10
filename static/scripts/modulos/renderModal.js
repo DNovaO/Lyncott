@@ -17,6 +17,10 @@ import { fullItemsArray, parametrosSeleccionados } from './main.js';
 let currentModalPage = 1;
 const modalPageSize = 10; // Tamaño de página para el modal
 
+document.querySelector('#genericModal .close').addEventListener('click', function () {
+    $('#genericModal').modal('hide');
+});
+
 // Muestra un loader en el modal
 export function showLoaderModal() {
     modalContent.innerHTML = `

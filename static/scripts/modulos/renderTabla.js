@@ -26,7 +26,7 @@ let dataGlobal;
 let mensajeError;
 
 document.addEventListener("DOMContentLoaded", function () {
-    
+
     debouncedBuscadorReportes = debouncedReportes(() => {
         buscadorResultadosReporte(datosParaBuscador);
     }, 300);
@@ -35,14 +35,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (btnExportarCSV) {
         btnExportarCSV.addEventListener('click', function (e) {
+            const datosNoDisponiblesElement = document.getElementById("datos-no-disponibles");
+            const datosNoDisponiblesText = datosNoDisponiblesElement ? datosNoDisponiblesElement.textContent : null;
+
             try {
-                if (!datos || datos.length === 0) {
+                if (!datos || datos.length === 0 || datos === '') {
+                    throw new Error("No hay un reporte disponible para exportar a CSV.");
+                }
+                if (datosNoDisponiblesText === 'No hay datos disponibles') {
                     throw new Error("No hay un reporte disponible para exportar a CSV.");
                 }
                 console.log('Exportando a CSV', datos);
                 exportToCSV(datos, tipo_reporte);
             } catch (error) {
-                mensajeError = "No hay un reporte disponible para exportar a CSV."
+                mensajeError = "No hay un reporte disponible para exportar a CSV.";
                 mostrarAlertaHTML(mensajeError);
             }
         });
@@ -50,14 +56,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (btnExportarExcel) {
         btnExportarExcel.addEventListener('click', function (e) {
+            const datosNoDisponiblesElement = document.getElementById("datos-no-disponibles");
+            const datosNoDisponiblesText = datosNoDisponiblesElement ? datosNoDisponiblesElement.textContent : null;
+
             try {
                 if (!datos || datos.length === 0) {
+                    throw new Error("No hay un reporte disponible para exportar a Excel.");
+                }
+                if (datosNoDisponiblesText === 'No hay datos disponibles') {
                     throw new Error("No hay un reporte disponible para exportar a Excel.");
                 }
                 console.log('Exportando a Excel', datos);
                 exportToExcel(datos, tipo_reporte);
             } catch (error) {
-                mensajeError = "No hay un reporte disponible para exportar a Excel."
+                mensajeError = "No hay un reporte disponible para exportar a Excel.";
                 mostrarAlertaHTML(mensajeError);
             }
         });
@@ -65,13 +77,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (btnImprimir) {
         btnImprimir.addEventListener('click', function (e) {
+            const datosNoDisponiblesElement = document.getElementById("datos-no-disponibles");
+            const datosNoDisponiblesText = datosNoDisponiblesElement ? datosNoDisponiblesElement.textContent : null;
+
             try {
                 if (!datos || datos.length === 0) {
                     throw new Error("No hay información para imprimir.");
                 }
+                if (datosNoDisponiblesText === 'No hay datos disponibles') {
+                    throw new Error("No hay información para imprimir.");
+                }
                 imprimirInformacion(datos, tipo_reporte);
             } catch (error) {
-                mensajeError = "No hay un reporte para imprimir."
+                mensajeError = "No hay un reporte para imprimir.";
                 mostrarAlertaHTML(mensajeError);
             }
         });
@@ -79,13 +97,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (btnMostrarGrafico) {
         btnMostrarGrafico.addEventListener('click', function (e) {
+            const datosNoDisponiblesElement = document.getElementById("datos-no-disponibles");
+            const datosNoDisponiblesText = datosNoDisponiblesElement ? datosNoDisponiblesElement.textContent : null;
+
             try {
                 if (!datos || datos.length === 0) {
                     throw new Error("No hay datos para mostrar en el gráfico.");
                 }
+                if (datosNoDisponiblesText === 'No hay datos disponibles') {
+                    throw new Error("No hay datos para mostrar en el gráfico.");
+                }
                 mostrarGrafico(dataGlobal, tipo_reporte);
             } catch (error) {
-                mensajeError = "No hay datos para mostrar en el gráfico."
+                mensajeError = "No hay datos para mostrar en el gráfico.";
                 mostrarAlertaHTML(mensajeError);
             }
         });
@@ -274,7 +298,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
 
     } else {
         // Mostrar mensaje de "No hay datos disponibles"
-        tabla.innerHTML = `<tr><td colspan="${dataGlobal.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td></tr>`;
+        tabla.innerHTML = `<tr><td id="datos-no-disponibles"x colspan="${dataGlobal.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td></tr>`;
     }
 }
 

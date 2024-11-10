@@ -56,6 +56,10 @@ export function mostrarGrafico(dataGlobal, tipo_reporte) {
         </div>
     `;
 
+    document.querySelector('#genericModal .close').addEventListener('click', function () {
+        $('#genericModal').modal('hide');
+    });
+
     // Crear HTML para la selección del tipo de gráfico
     const tipoGraficoHTML = `
         <div class="form-container">

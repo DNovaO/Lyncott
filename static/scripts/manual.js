@@ -29,6 +29,8 @@ setTimeout(() => {
           
           { element: '#btnGenerarInforme', popover: { title: 'Guía de reportes', description: 'Una vez completado el llenado de todos los parámetros haz click en el botón de generar reporte. Esto te permitirá generar el reporte deseado.' } },
           
+          { element: '#navbar-reportes', popover: { title: 'Guía de reportes', description: 'En la barra de navegación, se puede cambiar el reporte dentro de la misma página sin necesidad de volver al inicio. Asi como cerrar sesión y volver al menú inicial.' } },
+
           { element: '#resultado-reporte', popover: { title: 'Guía de reportes', description: 'En esta sección se generan los reportes. Ten en cuenta que, aunque los botones relacionados con el reporte estarán visibles, no podrás utilizarlos hasta haber generado uno.' } },
           
           { element: '#resultadosPorPagina', popover: { title: 'Guía de reportes', description: 'Después de generar un reporte, puedes modificar la cantidad de datos que se van a mostrar en una página del reporte.' } },
