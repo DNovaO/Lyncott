@@ -5,8 +5,7 @@
     Ultima modificación: 7/11/2024
 
     Script que se encarga de manejar los cambios de categoría y tipo de reporte en la página de reportes.
-    Provocando un redireccionamiento a la página de reportes con los nuevos parámetros del reporte seleccionado
-    .  
+    Provocando un redireccionamiento a la página de reportes con los nuevos parámetros del reporte seleccionado.  
 */ 
 
 const categoriasReporte = {
@@ -136,7 +135,8 @@ document.addEventListener("DOMContentLoaded", function() {
     alertContainer.innerHTML = "";
 
     btnBuscarReporte.addEventListener('click', async (e) => {
-        e.preventDefault();  // Evitar que el formulario se envíe y recargue la página
+        e.preventDefault(); 
+        
         // Verificar que se haya seleccionado una categoría y tipo
         const categoriaValue = categoriaSelect.value;
         const tipoValue = tipoSelect.value;

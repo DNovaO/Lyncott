@@ -295,3 +295,23 @@ label {
     background-color: rgba(255, 200, 200, 0.9) !important; 
   }
 }
+
+.card-header {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-help {
+  background-color: #007bff; /* Cambia el color según prefieras */
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  position: absolute;
+  right: 10px; /* Ajusta según la distancia que desees */
+}
