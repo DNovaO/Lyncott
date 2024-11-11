@@ -78,7 +78,9 @@ function iniciarGuia() {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-    localStorage.removeItem('hasSeenGuide');
+    // localStorage.removeItem('hasSeenGuide'); // Descomentar para mostrar la guía nuevamente cada vez que se recargue la página
+
+    // Verificar si el usuario ya ha visto la guía
     if (!localStorage.getItem('hasSeenGuide')) {
         iniciarGuia();
         localStorage.setItem('hasSeenGuide', 'true');

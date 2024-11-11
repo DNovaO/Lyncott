@@ -304,9 +304,9 @@ label {
 }
 
 .btn-help {
-  background-color: #007bff; /* Cambia el color según prefieras */
+  background-color: #00aae9; /* Cambia el color según prefieras */
   color: white;
-  border: none;
+  border: 1px solid #000; /* Borde del mismo color */
   border-radius: 50%;
   width: 30px;
   height: 30px;
