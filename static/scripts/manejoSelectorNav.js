@@ -95,6 +95,12 @@ function cargarCategorias() {
         option.textContent = categoria;
         categoriaSelect.appendChild(option);
     }
+
+    // Restaurar selección previa si existe en localStorage
+    const categoriaGuardada = localStorage.getItem('categoriaSeleccionada');
+    if (categoriaGuardada) {
+        categoriaSelect.value = categoriaGuardada;
+    }
 }
 
 // Función que actualiza los tipos de reporte en el segundo select
@@ -120,46 +126,33 @@ function updateTiposReporte() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', function() {
     const btnBuscarReporte = document.getElementById('btnBuscarReporte');
     const categoriaSelect = document.getElementById('categoriaReporte');
     const tipoSelect = document.getElementById('tipoReporte');
     const alertContainer = document.getElementById("alertContainer");
   
     let currentPage = 0;
-    let categoria_reporte = document.getElementById("categoria_reporte").textContent.trim();
-    let tipo_reporte = document.getElementById("tipo_reporte").textContent.trim();
-    
-    // Limpiar cualquier alerta previa
-    alertContainer.style.display = "none";
-    alertContainer.innerHTML = "";
+
+    // Guardar la selección del selector en localStorage al cambiar
+    categoriaSelect.addEventListener('change', () => {
+        localStorage.setItem('categoriaSeleccionada', categoriaSelect.value);
+        updateTiposReporte();
+    });
 
     btnBuscarReporte.addEventListener('click', async (e) => {
         e.preventDefault(); 
         
-        // Verificar que se haya seleccionado una categoría y tipo
         const categoriaValue = categoriaSelect.value;
         const tipoValue = tipoSelect.value;
 
-        if (categoriaValue === "" && tipoValue === "") {
-            mostrarAlerta("Por favor, selecciona una categoría de reporte y un tipo de reporte.");
-            return false;
-        }
-        
-        if (categoriaValue === "") {
-            mostrarAlerta("Por favor, selecciona una categoría de reporte.");
-            return false;
-        }
-    
-        if (tipoValue === "") {
-          mostrarAlerta("Por favor, selecciona un tipo de reporte.");
-          return false;
+        if (categoriaValue === "" || tipoValue === "") {
+            mostrarAlerta("Por favor, selecciona una categoría y un tipo de reporte.");
+            return;
         }
 
-        // Construir la URL del endpoint
-        const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoria_reporte)}&tipo_reporte=${encodeURIComponent(tipo_reporte)}&page=${currentPage}`;
+        const endpointURL = `/report/?categoria_reporte=${encodeURIComponent(categoriaValue)}&tipo_reporte=${encodeURIComponent(tipoValue)}&page=${currentPage}`;
 
-        // Construir el cuerpo de la solicitud
         const body = {
             nuevo_tipo: tipoValue,
             nueva_categoria: categoriaValue,
@@ -176,17 +169,16 @@ document.addEventListener("DOMContentLoaded", function() {
                 },
                 body: JSON.stringify(body),
             });
-       
+
             if (response.ok) {
-                // Verificar si la respuesta incluye una URL de redirección
                 const result = await response.json();
                 if (result.redirect_url) {
-                    window.location.href = result.redirect_url;  // Redirige a la URL recibida
+                    window.location.href = result.redirect_url;
                 } else {
                     mostrarAlerta("No se pudo redirigir a la página de reportes.");
                 }
             } else {
-                throw new Error('La respuesta de la red no fue satisfactoria');
+                throw new Error('Error en la respuesta del servidor');
             }
         } catch (error) {
             console.error('Error en la solicitud fetch:', error);

@@ -17,6 +17,8 @@ import { categoria_reporte, tipo_reporte } from './config.js';
 import { cache } from './main.js';
 import { getCookie } from './utils.js';
 import { setCancelFetch, cancelFetch } from './breaker.js';
+import { mostrarAlertaHTML } from './renderTabla.js';
+
 
 export let datosParaBuscador = [];
 
@@ -47,6 +49,7 @@ export async function fetchData(endpoint, body, cacheKey, prefetch = false) {
     } catch (error) {
         console.error("Error:", error);
         if (!prefetch) throw error;
+        mostrarAlertaHTML('No se pudo obtener los datos, por favor intenta de nuevo más tarde');
     }
 }
 
@@ -85,7 +88,12 @@ export function sendParametersToServer(parametrosInforme, currentPageTable, tipo
             renderizarDatosEnTabla(data, tipoReporte);
             datosParaBuscador = data;
         })
-        .catch(error => console.error("Error:", error))
+        .catch(error => {
+            // Manejo del error
+            mostrarAlertaHTML('No se pudo obtener los datos, por favor intenta de nuevo más tarde');
+            console.error("Error:", error);
+
+        })
         .finally(() => {
             // Habilitar el botón después de completar la petición
             if (btnGenerarInforme) {

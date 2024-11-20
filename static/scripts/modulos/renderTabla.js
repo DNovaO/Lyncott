@@ -115,31 +115,47 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Función para mostrar alerta personalizada en HTML
-    function mostrarAlertaHTML(mensaje) {
-        const tabla = document.querySelector('.table tbody');
-        
-        if (!tabla) {
-            console.error('No hay datos disponibles');
-            return;
-        }
-    
-        // Crear la fila de alerta
-        const alertaFila = document.createElement('tr');
-        alertaFila.innerHTML = `
-            <td colspan="50%" class="text-center alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 15px; font-weight: bold;">
-                ${mensaje}
-            </td>
-        `;
-    
-        // Insertar la alerta en la tabla
-        tabla.insertBefore(alertaFila, tabla.firstChild);
-    
-        // Remover la alerta automáticamente después de 3 segundos
-        setTimeout(() => alertaFila.remove(), 3000);
-    }
     
 });
+
+// Función para mostrar alerta personalizada en HTML
+export function mostrarAlertaHTML(mensaje) {
+    const tabla = document.querySelector('.table tbody');
+    const loader = document.querySelector('.lds-ellipsis');
+    
+    if (!tabla) {
+        console.error('No hay datos disponibles');
+        return;
+    }
+
+    // Crear la fila de alerta
+    const alertaFila = document.createElement('tr');
+    
+    // Limpiar el loader si existe
+    if (loader) {
+        loader.innerHTML = ''; 
+    }
+
+    alertaFila.innerHTML = ` 
+        <td colspan="50%" class="text-center alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 15px; font-weight: bold;">
+            ${mensaje}
+        </td>
+    `;
+
+    // Insertar la alerta en la tabla
+    tabla.insertBefore(alertaFila, tabla.firstChild);
+
+    // Remover la alerta automáticamente después de 3 segundos
+    setTimeout(() => {
+        alertaFila.remove();
+        
+        // Verifica si no hay más datos en la tabla y muestra un mensaje si es el caso
+        if (tabla.rows.length === 1) { // Solo hay la fila de alerta
+            tabla.innerHTML = `<tr><td colspan="50%" class="text-center" id="datos-no-disponibles">No hay datos disponibles</td></tr>`;
+        }
+    }, 3000);
+}
+
 
 
 export function showLoaderTabla() {
