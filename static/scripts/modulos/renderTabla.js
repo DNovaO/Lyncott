@@ -208,6 +208,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
     dataGlobal = data;
     window.datos = dataGlobal;
 
+    const separadoresHabilitados = (dataGlobal.campos_reporte.includes("zona"));
     const tabla = document.querySelector('.table tbody');
     const thead = document.querySelector('.table thead');
     const tablaFooter = document.getElementById('genericTablaPagination');
@@ -236,86 +237,131 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         return parseFloat(value) || 0; // Convertir a número o devolver 0 si no es válido
     }
 
-    // Paginar los datos completos
     const paginatedData = paginarDatos(dataGlobal.datos_completos, pageSize, currentPage);
 
-    // Inicializar objetos para almacenar los totales de las columnas
+    if (!paginatedData.length) {
+        tabla.innerHTML = `<tr><td id="datos-no-disponibles" colspan="${dataGlobal.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td></tr>`;
+        return;
+    }
 
+    let zonaActual = ""; // Zona procesada actualmente
+    let totalesPorZona = {};
+    let totalesPagina = {};
+    let totalesGlobales = {};
 
     // Inicializar los totales solo para las columnas que se deben sumar
     dataGlobal.campos_reporte.forEach(campo => {
         if (!columnasNoSumar.includes(campo)) {
             totalesPagina[campo] = 0;  // Totales de la página actual
-            totalesGlobales[campo] = 0;  // Totales globales (de todos los datos)
+            totalesGlobales[campo] = 0;  // Totales globales
+            totalesPorZona[campo] = 0;  // Totales por zona
         }
     });
 
-    // Renderizar datos en el cuerpo de la tabla (tbody)
-    if (paginatedData.length > 0) {
-        const tbodyHTML = paginatedData.map((fila, index) => {
-            const filaHTML = `
-                <tr>
-                    <th scope="row" class="numero-tabla">${(currentPage - 1) * pageSize + index + 1}</th>
-                    ${dataGlobal.campos_reporte.map(campo => {
-                        const value = limpiarYConvertir(fila[campo]);  // Usar la función personalizada
-                        if (!isNaN(value) && !columnasNoSumar.includes(campo)) {
-                            totalesPagina[campo] += value;
-                        }
-                        return `<td class="datos-tabla">${formatNumber(fila[campo], false, campo)}</td>`;
-                    }).join('')}
+    // Función para generar fila de totales por zona
+    function generarTotalesZona(zona) {
+        return `
+            <tr class="total-zona" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">
+                <th class="separador-zona" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">Total: ${transformHeader(zona)}</th>
+                ${dataGlobal.campos_reporte.map(campo => {
+                    const totalValueZona = (!isNaN(totalesPorZona[campo]) && totalesPorZona[campo] !== 0)
+                        ? formatNumber(totalesPorZona[campo], false, campo)
+                        : '';
+                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5);"><strong>${totalValueZona}</strong></td>`;
+                }).join('')}
+            </tr>
+        `;
+    }
+    
+
+    const tbodyHTML = paginatedData.map((fila, index) => {
+        let separadorZona = "";
+        let totalesZonaFila = "";
+
+        // Detectar cambio de zona
+        if (separadoresHabilitados && fila.zona !== zonaActual) {
+            if (zonaActual) {
+                totalesZonaFila = generarTotalesZona(zonaActual);
+            }
+
+            separadorZona = `
+                <tr class="separador-zona" style="background-color: rgba(112, 224, 0, 1);">
+                    <th colspan="${dataGlobal.campos_reporte.length + 1}" style="justify-content:left; font-weight:500; background-color: rgba(112, 224, 0, 0.8);">
+                        Zona: ${fila.zona}
+                    </th>
                 </tr>
             `;
-            return filaHTML;
-        }).join('');
-        tabla.innerHTML = tbodyHTML;
-
-        // Calcular totales globales para **todos los datos**, no solo los visibles
-        dataGlobal.datos_completos.forEach(fila => {
+        
+            zonaActual = fila.zona;
             dataGlobal.campos_reporte.forEach(campo => {
-                const value = limpiarYConvertir(fila[campo]);  // Usar la función personalizada
-                if (!isNaN(value) && !columnasNoSumar.includes(campo)) {
-                    totalesGlobales[campo] += value;
+                if (!columnasNoSumar.includes(campo)) {
+                    totalesPorZona[campo] = 0;
                 }
             });
+        }
+
+        dataGlobal.campos_reporte.forEach(campo => {
+            const value = limpiarYConvertir(fila[campo]);
+            if (!isNaN(value) && !columnasNoSumar.includes(campo)) {
+                totalesPorZona[campo] += value;
+                totalesPagina[campo] += value;
+            }
         });
 
-        // Crear la fila de totales para la página actual
-        const filaTotalPaginaHTML = `
-            <tr id="total-pagina">
-                <th scope="row" class="numero-tabla" style="background-color: rgba(0, 170, 233, 0.5);" colspan="1">Total Página</th>
+        const filaHTML = `
+            <tr>
+                <th scope="row" class="numero-tabla">${(currentPage - 1) * pageSize + index + 1}</th>
                 ${dataGlobal.campos_reporte.map(campo => {
-                    const totalValuePagina = (!isNaN(totalesPagina[campo]) && totalesPagina[campo] !== 0)
-                        ? formatNumber(totalesPagina[campo], false, campo) : '';
-                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5);"><strong>${totalValuePagina}</strong></td>`;
+                    return `<td class="datos-tabla">${formatNumber(fila[campo], false, campo)}</td>`;
                 }).join('')}
             </tr>
         `;
 
-        // Crear la fila de totales globales (de todas las páginas)
-        const filaTotalGlobalHTML = `
-            <tr id="total-pagina-global">
-                <th scope="row" class="numero-tabla" style="background-color: rgba(0, 170, 233, 0.5);" colspan="1">Total Global</th>
-                ${dataGlobal.campos_reporte.map(campo => {
-                    const totalValueGlobal = (!isNaN(totalesGlobales[campo]) && totalesGlobales[campo] !== 0)
-                        ? formatNumber(totalesGlobales[campo], false, campo) : '';
-                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5);"><strong>${totalValueGlobal}</strong></td>`;
-                }).join('')}
-            </tr>
-        `;
+        return totalesZonaFila + separadorZona + filaHTML;
+    }).join('');
 
-        // Agregar ambas filas de totales al final de la tabla
-        tabla.innerHTML += filaTotalPaginaHTML + filaTotalGlobalHTML;
+    dataGlobal.datos_completos.forEach(fila => {
+        dataGlobal.campos_reporte.forEach(campo => {
+            const value = limpiarYConvertir(fila[campo]);
+            if (!isNaN(value) && !columnasNoSumar.includes(campo)) {
+                totalesGlobales[campo] += value;
+            }
+        });
+    });
 
-        // Renderizar paginación
-        tablaFooter.innerHTML = renderPaginadoTabla({
-            totalPages: Math.ceil(dataGlobal.datos_completos.length / pageSize),
-            currentPage: currentPage
-        }, currentPage, dataType);
+    const totalesUltimaZona = generarTotalesZona(zonaActual);
 
+    const filaTotalPaginaHTML = `
+        <tr id="total-pagina" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">
+            <th colspan="1" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">Total Página</th>
+            ${dataGlobal.campos_reporte.map(campo => {
+                const totalValuePagina = (!isNaN(totalesPagina[campo]) && totalesPagina[campo] !== 0)
+                    ? formatNumber(totalesPagina[campo], false, campo) : '';
+                return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;"><strong>${totalValuePagina}</strong></td>`;
+            }).join('')}
+        </tr>
+    `;
+
+    const filaTotalGlobalHTML = `
+        <tr id="total-global" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">
+            <th colspan="1" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">Total Global</th>
+            ${dataGlobal.campos_reporte.map(campo => {
+                const totalValueGlobal = (!isNaN(totalesGlobales[campo]) && totalesGlobales[campo] !== 0)
+                    ? formatNumber(totalesGlobales[campo], false, campo) : '';
+                return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;"><strong>${totalValueGlobal}</strong></td>`;
+            }).join('')}
+        </tr>
+    `;
+
+    if (separadoresHabilitados){
+        tabla.innerHTML += tbodyHTML + totalesUltimaZona + filaTotalPaginaHTML + filaTotalGlobalHTML;
     } else {
-        // Mostrar mensaje de "No hay datos disponibles"
-        tabla.innerHTML = `<tr><td id="datos-no-disponibles"x colspan="${dataGlobal.campos_reporte.length + 1}" class="text-center">No hay datos disponibles</td></tr>`;
+        tabla.innerHTML += tbodyHTML + filaTotalPaginaHTML + filaTotalGlobalHTML;
     }
+    tablaFooter.innerHTML = renderPaginadoTabla({
+        totalPages: Math.ceil(dataGlobal.datos_completos.length / pageSize),
+        currentPage: currentPage
+    }, currentPage, dataType);
 }
 
 // Función para paginar los datos

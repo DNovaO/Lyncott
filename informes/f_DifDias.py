@@ -17,7 +17,7 @@ def f_DifDias(start_date: date, end_date: date, festivos: list) -> int:
 
     current_date = start_date
     while current_date < end_date:  # Verifica hasta el día anterior a end_date
-        if current_date.weekday() < 6:  # 0: lunes, 6: domingo
+        if current_date.weekday() < 6:  # 0: lunes, 6: sabado
             business_days += 1
         current_date += timedelta(days=1)
 

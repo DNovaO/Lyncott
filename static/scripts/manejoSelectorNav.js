@@ -56,7 +56,7 @@ const categoriasReporte = {
         "Consignatarios por Código Postal",
         "Consignatarios por Familia",
         "Consignatarios por Segmento",
-        "Consignatarios por Sucursal",
+        // "Consignatarios por Sucursal",
         "Ventas a Clientes/Consignatarios por Mes",
         "Ventas de Clientes por Grupo, Consignatario y Producto"
     ],
