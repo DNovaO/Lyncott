@@ -115,7 +115,47 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    
+    const thead = document.querySelector('thead');
+    if (thead) {
+        // Escucha eventos en el `thead`
+        thead.addEventListener('click', (event) => {
+            const button = event.target.closest('.btnPin'); // Busca el botón clicado
+            if (button) {
+                const columnIndex = button.dataset.columnIndex; // Índice de la columna
+                if (columnIndex === undefined) {
+                    console.error('No se encontró el índice de la columna.');
+                    return;
+                }
+
+                // Seleccionar tabla y filas
+                const table = document.querySelector('.table');
+                if (!table) {
+                    console.error('Tabla no encontrada.');
+                    return;
+                }
+
+                const rows = table.querySelectorAll('tr');
+                rows.forEach(row => {
+                    const cell = row.children[parseInt(columnIndex, 10) + 1]; // Ajustar índice
+                    if (cell) {
+                        cell.classList.toggle('pinned'); // Alternar clase
+                        // agregar margen a la celda
+                        if (cell.classList.contains('pinned')) {
+                            cell.style.margin = '0 5px';
+                        } else {
+                            cell.style.margin = '0';
+                        }
+                    }
+                });
+
+                // Alternar visualmente el botón
+                const pinIcon = button.querySelector('.pin-column-btn');
+                if (pinIcon) {
+                    pinIcon.classList.toggle('active');
+                }
+            }
+        });
+    }
 });
 
 // Función para mostrar alerta personalizada en HTML
@@ -213,20 +253,31 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
     const thead = document.querySelector('.table thead');
     const tablaFooter = document.getElementById('genericTablaPagination');
 
+
     // Limpiar tbody y thead antes de renderizar nuevos datos
     tabla.innerHTML = '';
     thead.innerHTML = '';
-
+    
     // Renderizar encabezados de tabla (thead)
     const theadHTML = `
         <tr>
             <th scope="col" class="numero-tabla">#</th>
-            ${dataGlobal.campos_reporte.map(campo => {
+            ${dataGlobal.campos_reporte.map((campo, index) => {
                 const transformedHeader = transformHeader(campo);
-                return `<th scope="col" class="datos-tabla">${transformedHeader}</th>`;
+                return `
+                    <th scope="col" class="datos-tabla">
+                        ${transformedHeader}
+                        <button type="submit" class="btnPin" data-column-index="${index}">
+                            <svg class="pin-column-btn" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M6.5 5C6.5 4.44772 6.94772 4 7.5 4H9H15H16.5C17.0523 4 17.5 4.44772 17.5 5C17.5 5.55228 17.0523 6 16.5 6H16.095L16.9132 15H19C19.5523 15 20 15.4477 20 16C20 16.5523 19.5523 17 19 17H16H13V22C13 22.5523 12.5523 23 12 23C11.4477 23 11 22.5523 11 22V17H8H5C4.44772 17 4 16.5523 4 16C4 15.4477 4.44772 15 5 15H7.08679L7.90497 6H7.5C6.94772 6 6.5 5.55228 6.5 5ZM9.91321 6L9.09503 15H12H14.905L14.0868 6H9.91321Z"/>
+                            </svg>
+                        </button>
+                    </th>
+                `;
             }).join('')}
         </tr>
     `;
+
     thead.innerHTML = theadHTML;
 
     // Función para eliminar separadores de miles y convertir a número

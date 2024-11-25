@@ -82,18 +82,18 @@ footer {
 }
 
 #tablaReportes {
-  overflow-x: auto; /* Habilita el desplazamiento horizontal si la tabla es demasiado ancha */
-  padding: 0; /* Elimina el padding para evitar espacio extra */
+  overflow-x: auto;
+  padding: 0;
 }
 
 .table {
   width: 100%; /* Asegura que la tabla ocupe todo el ancho disponible del contenedor */
 }
 
-.datos-tabla {
+/* .datos-tabla {
   width: 15vh;
   height: max-content;
-} 
+}  */
 
 .numero-tabla {
   width: 2vh;
@@ -358,4 +358,28 @@ label {
 
 .color-choice:hover {
   opacity: 0.8;
+}
+
+.table .pinned {
+  position: sticky;
+  left: 0;
+  background-color: #f9f9f9;
+  z-index: 0;
+}
+
+.btnPin {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.pin-column-btn {
+  fill: #000000;
+  transition: fill 0.3s ease;
+}
+
+.pin-column-btn.active {
+  fill: #ed1c24;
 }
