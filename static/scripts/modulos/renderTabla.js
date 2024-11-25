@@ -336,7 +336,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             <th colspan="1" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">Total Página</th>
             ${dataGlobal.campos_reporte.map(campo => {
                 const totalValuePagina = (!isNaN(totalesPagina[campo]) && totalesPagina[campo] !== 0)
-                    ? formatNumber(totalesPagina[campo], false, campo) : '';
+                    ? formatNumber(totalesPagina[campo].toFixed(2), false, campo) : '';
                 return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;"><strong>${totalValuePagina}</strong></td>`;
             }).join('')}
         </tr>
@@ -347,7 +347,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             <th colspan="1" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">Total Global</th>
             ${dataGlobal.campos_reporte.map(campo => {
                 const totalValueGlobal = (!isNaN(totalesGlobales[campo]) && totalesGlobales[campo] !== 0)
-                    ? formatNumber(totalesGlobales[campo], false, campo) : '';
+                    ? formatNumber(totalesGlobales[campo].toFixed(2), false, campo) : '';
                 return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;"><strong>${totalValueGlobal}</strong></td>`;
             }).join('')}
         </tr>

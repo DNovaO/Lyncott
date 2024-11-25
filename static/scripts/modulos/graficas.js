@@ -26,6 +26,7 @@ export function mostrarGrafico(dataGlobal, tipo_reporte) {
     const ejesHTML = `
         <div class="form-container">
             <div class="row">
+                <h6> <strong> Nota: </strong>Si la gráfica incluye una cantidad excesiva de datos, podría distorsionarse o volverse difícil de interpretar.</h6>
                 <div class="form-group col">
                     <div class="form-title">Selecciona la categoria (Eje X):</div>
                     <div class="row">
