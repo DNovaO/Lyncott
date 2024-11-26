@@ -265,7 +265,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             ${dataGlobal.campos_reporte.map((campo, index) => {
                 const transformedHeader = transformHeader(campo);
                 return `
-                    <th scope="col" class="datos-tabla">
+                    <th scope="col" class="datos-tabla" style="justify-content:left;">
                         ${transformedHeader}
                         <button type="submit" class="btnPin" data-column-index="${index}">
                             <svg class="pin-column-btn" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -312,13 +312,13 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
     // Función para generar fila de totales por zona
     function generarTotalesZona(zona) {
         return `
-            <tr class="total-zona" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">
+            <tr class="total-zona" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; justify-content:right;">
                 <th class="separador-zona" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">Total: ${transformHeader(zona)}</th>
                 ${dataGlobal.campos_reporte.map(campo => {
                     const totalValueZona = (!isNaN(totalesPorZona[campo]) && totalesPorZona[campo] !== 0)
                         ? formatNumber(totalesPorZona[campo], false, campo)
                         : '';
-                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5);"><strong>${totalValueZona}</strong></td>`;
+                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); justify-content:right;"><strong>${totalValueZona}</strong></td>`;
                 }).join('')}
             </tr>
         `;
@@ -363,11 +363,14 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             <tr>
                 <th scope="row" class="numero-tabla">${(currentPage - 1) * pageSize + index + 1}</th>
                 ${dataGlobal.campos_reporte.map(campo => {
-                    return `<td class="datos-tabla">${formatNumber(fila[campo], false, campo)}</td>`;
+                    // Comprobar si el campo requiere ser formateado y alinearlo a la derecha
+                    const valor = fila[campo];
+                    const esNumero = !isNaN(valor);  // Chequear si es un número para formatearlo
+                    return `<td class="datos-table" style="text-align: ${esNumero ? 'right' : 'left'};">${esNumero ? formatNumber(valor, false, campo) : valor}</td>`;
                 }).join('')}
             </tr>
         `;
-
+        
         return totalesZonaFila + separadorZona + filaHTML;
     }).join('');
 
@@ -388,7 +391,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             ${dataGlobal.campos_reporte.map(campo => {
                 const totalValuePagina = (!isNaN(totalesPagina[campo]) && totalesPagina[campo] !== 0)
                     ? formatNumber(totalesPagina[campo].toFixed(2), false, campo) : '';
-                return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;"><strong>${totalValuePagina}</strong></td>`;
+                return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; justify-content:right;"><strong>${totalValuePagina}</strong></td>`;
             }).join('')}
         </tr>
     `;
@@ -399,7 +402,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             ${dataGlobal.campos_reporte.map(campo => {
                 const totalValueGlobal = (!isNaN(totalesGlobales[campo]) && totalesGlobales[campo] !== 0)
                     ? formatNumber(totalesGlobales[campo].toFixed(2), false, campo) : '';
-                return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;"><strong>${totalValueGlobal}</strong></td>`;
+                return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500 justify-content:right;"><strong>${totalValueGlobal}</strong></td>`;
             }).join('')}
         </tr>
     `;

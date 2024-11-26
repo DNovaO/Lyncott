@@ -18,6 +18,7 @@ body {
   justify-content: center;
   flex: 1;
   margin: 0;
+  background-image: url("../resources/fondo-leche.jpg");
   padding-left: 2vh;
   padding-right: 2vh;
 }
@@ -45,56 +46,6 @@ body {
   text-align: center;
 } */
 
-.bg-gradient {
-  border-radius: 20px;
-  width: 100%;
-  padding: 0.2vh;
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 25px;
-}
-
-.bg-gradient::before,
-.bg-gradient::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 100%;
-  background: linear-gradient(to bottom, #00aae9, #ffffff);
-  z-index: -1;
-}
-
-.bg-gradient-manuales::before,
-.bg-gradient-manuales::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  background: linear-gradient(to right, #00aae9, #ffffff);
-  z-index: -1;
-}
-
-.bg-gradient-directorio::before,
-.bg-gradient-directorio::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-  background: linear-gradient(to right, #00aae9, #ffffff);
-  z-index: -1;
-}
-
-.bg-gradient::before {
-  top: 0;
-}
-
-.bg-gradient::after {
-  bottom: 0;
-}
-
 .card-inner {
   background: white;
   border-radius: 18px;
@@ -118,22 +69,44 @@ footer {
   padding: 0;
 }
 
-.hover-card {
-    transition: transform 0.8s ease, box-shadow 0.8s ease;
-}
-  
-.hover-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.card {
+  border: 2px solid #00AAE9; /* Borde azul por defecto */
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(145deg, #ffffff, #f3f3f3);
 }
 
-.hover-card:hover .hover-info {
-    display: block !important;
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 6px 12px rgba(227, 119, 57, 0.8); /* Sombra anaranjada */
+  border-color: #E37739; /* Cambia el borde a color anaranjado */
+  transition: transform 0.3s ease, box-shadow 0.5s ease, border-color 0.3s ease;
+}
 
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.card-text {
+  font-size: 1rem;
+  color: #555;
 }
 
 .hover-info {
-    display: none;
-    font-size: 0.9rem;
-    color: #6c757d;
+  font-size: 0.95rem;
+  color: #888;
+  transition: opacity 0.3s ease;
+}
+
+a.text-decoration-none {
+  text-decoration: none;
+  color: inherit;
 }
