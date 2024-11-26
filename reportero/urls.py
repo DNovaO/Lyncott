@@ -7,6 +7,7 @@ from home.views import *
 from informes.views import *
 from manualesKAM.views import *
 from directorios.views import *
+from linkHub.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Ruta para la administración de Django
@@ -15,6 +16,7 @@ urlpatterns = [
     path('report/', include('informes.urls')),  # URLs relacionadas con la aplicación informes
     path('KAM/', include('manualesKAM.urls')),  # URLs relacionadas con la aplicación manualesKAM
     path('directorio/', include('directorios.urls')),  # URLs relacionadas con la aplicación directorios
+    path('linkHub/', include('linkHub.urls')),  # URLs relacionadas con la aplicación linkHub
 ]
 
 urlpatterns += staticfiles_urlpatterns()  # Incluir las URLs estáticas para el manejo de archivos estáticos

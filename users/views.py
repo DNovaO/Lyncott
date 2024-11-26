@@ -8,7 +8,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
-            return redirect('home') 
+            return redirect('linkHub') 
     else:
         form = AuthenticationForm()
     return render(request, 'usuarios/login.html', {'form': form})

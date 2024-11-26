@@ -121,34 +121,21 @@ document.addEventListener("DOMContentLoaded", function () {
         thead.addEventListener('click', (event) => {
             const button = event.target.closest('.btnPin'); // Busca el botón clicado
             if (button) {
-                const columnIndex = button.dataset.columnIndex; // Índice de la columna
-                if (columnIndex === undefined) {
-                    console.error('No se encontró el índice de la columna.');
-                    return;
-                }
+                const columna = parseInt(button.dataset.columnIndex, 10); // Obtén el índice de la columna
+                const filas = document.querySelectorAll('.table tr');
 
-                // Seleccionar tabla y filas
-                const table = document.querySelector('.table');
-                if (!table) {
-                    console.error('Tabla no encontrada.');
-                    return;
-                }
-
-                const rows = table.querySelectorAll('tr');
-                rows.forEach(row => {
-                    const cell = row.children[parseInt(columnIndex, 10) + 1]; // Ajustar índice
+                // Alterna la clase `pinned` para las celdas de la columna
+                filas.forEach(row => {
+                    const cell = row.children[columna + 1]; // Ajusta al índice correcto
                     if (cell) {
-                        cell.classList.toggle('pinned'); // Alternar clase
-                        // agregar margen a la celda
-                        if (cell.classList.contains('pinned')) {
-                            cell.style.margin = '0 5px';
-                        } else {
-                            cell.style.margin = '0';
-                        }
+                        cell.classList.toggle('pinned');
                     }
                 });
 
-                // Alternar visualmente el botón
+                // Actualiza los desplazamientos de todas las columnas fijadas
+                actualizarColumnasFijadas();
+
+                // Alternar visualmente el botón (opcional)
                 const pinIcon = button.querySelector('.pin-column-btn');
                 if (pinIcon) {
                     pinIcon.classList.toggle('active');
@@ -157,6 +144,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
+// Función para actualizar las columnas fijadas
+function actualizarColumnasFijadas() {
+    const filas = document.querySelectorAll('.table tr');
+
+    filas.forEach(row => {
+        let acumuladoLeft = 0;
+        row.querySelectorAll('.pinned').forEach(cell => {
+            cell.style.left = `${acumuladoLeft}px`;
+            acumuladoLeft += cell.offsetWidth; // Sumar el ancho de la columna actual
+        });
+    });
+}
 
 // Función para mostrar alerta personalizada en HTML
 export function mostrarAlertaHTML(mensaje) {
