@@ -244,6 +244,15 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         'nombre_cliente', 'descripcion', 'cliente', 'grupo'
     ]) {
 
+    const keysToExcludeFromFormatting = ['clave_producto', 'descripcion_producto', 'producto','sucursal', 
+        'clave', 'clave_sucursal', 'numero_tipo_documento', 'grupo_movimiento',
+        'detalles_tipo_documento', 'almacen_correspondiente', 'moneda','zona',
+        'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
+        'termina_folio', 'nombre', 'zona', 'nombre_producto','UPC','linea',
+        'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia','clave_cliente', 'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente', 'clave_consignatario', 'producto', 'No', 'id_vendedor', 'id_almacen','vendedor','id_grupo_corporativo','grupo_corporativo',
+        'id_consignatario', 'consignatario', 'CP', 'colonia', 'cantidad','folio','RFC', 'UUID', 'serie','clave_vendedor','cliente', 'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente', 'descripcion'
+    ];
+    
     // Almacenar los datos globalmente
     dataGlobal = data;
     window.datos = dataGlobal;
@@ -363,10 +372,10 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             <tr>
                 <th scope="row" class="numero-tabla">${(currentPage - 1) * pageSize + index + 1}</th>
                 ${dataGlobal.campos_reporte.map(campo => {
-                    // Comprobar si el campo requiere ser formateado y alinearlo a la derecha
-                    const valor = fila[campo];
-                    const esNumero = !isNaN(valor);  // Chequear si es un número para formatearlo
-                    return `<td class="datos-table" style="text-align: ${esNumero ? 'right' : 'left'};">${esNumero ? formatNumber(valor, false, campo) : valor}</td>`;
+                    const isExcluded = keysToExcludeFromFormatting.includes(campo);  // Comprobar si el campo está en la lista de exclusión
+                    const alignmentClass = isExcluded ? '' : 'style="text-align: right;"'; // Si no está excluido, aplica el alineamiento a la derecha
+        
+                    return `<td class="datos-table" ${alignmentClass}>${formatNumber(fila[campo], false, campo)}</td>`;
                 }).join('')}
             </tr>
         `;

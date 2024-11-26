@@ -384,3 +384,7 @@ label {
 .pin-column-btn.active {
   fill: #ed1c24;
 }
+
+.align-right {
+  text-align: right;
+}

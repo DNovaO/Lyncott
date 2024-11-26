@@ -71,11 +71,11 @@ export function formatNumber(value, isCurrency = false, key = '') {
 
     // Si el valor es 0 , devolverlo en rojo y negrita
     if (numericValue === 0) {
-        return '<span style="color: red; font-weight: bold;"> 0 </span>';
+        return '<span style="color: red; font-weight: bold; text-align: right;" > 0 </span>';
     }
 
     if(numericValue < 0){
-        return '<span style="color: red; font-weight: bold;">' + numericValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</span>';
+        return '<span style="color: red; font-weight: bold; text-align: right;">' + numericValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</span>';
     }
 
 
