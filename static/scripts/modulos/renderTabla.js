@@ -250,7 +250,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
         'termina_folio', 'nombre', 'zona', 'nombre_producto','UPC','linea',
         'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia','clave_cliente', 'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente', 'clave_consignatario', 'producto', 'No', 'id_vendedor', 'id_almacen','vendedor','id_grupo_corporativo','grupo_corporativo',
-        'id_consignatario', 'consignatario', 'CP', 'colonia', 'cantidad','folio','RFC', 'UUID', 'serie','clave_vendedor','cliente', 'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente', 'descripcion'
+        'id_consignatario', 'consignatario', 'CP', 'colonia', 'cantidad','folio','RFC', 'UUID', 'serie','clave_vendedor','cliente', 'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente', 'descripcion', 'grupo'
     ];
     
     // Almacenar los datos globalmente
@@ -274,7 +274,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             ${dataGlobal.campos_reporte.map((campo, index) => {
                 const transformedHeader = transformHeader(campo);
                 return `
-                    <th scope="col" class="datos-tabla" style="justify-content:left;">
+                    <th scope="col" class="datos-tabla" style="justify-content:center; text-align:center;">
                         ${transformedHeader}
                         <button type="submit" class="btnPin" data-column-index="${index}">
                             <svg class="pin-column-btn" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -327,7 +327,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
                     const totalValueZona = (!isNaN(totalesPorZona[campo]) && totalesPorZona[campo] !== 0)
                         ? formatNumber(totalesPorZona[campo], false, campo)
                         : '';
-                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); justify-content:right;"><strong>${totalValueZona}</strong></td>`;
+                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); text-align:right;"><strong>${totalValueZona}</strong></td>`;
                 }).join('')}
             </tr>
         `;
@@ -400,7 +400,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             ${dataGlobal.campos_reporte.map(campo => {
                 const totalValuePagina = (!isNaN(totalesPagina[campo]) && totalesPagina[campo] !== 0)
                     ? formatNumber(totalesPagina[campo].toFixed(2), false, campo) : '';
-                return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; justify-content:right;"><strong>${totalValuePagina}</strong></td>`;
+                return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; text-align:right;"><strong>${totalValuePagina}</strong></td>`;
             }).join('')}
         </tr>
     `;
@@ -411,7 +411,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             ${dataGlobal.campos_reporte.map(campo => {
                 const totalValueGlobal = (!isNaN(totalesGlobales[campo]) && totalesGlobales[campo] !== 0)
                     ? formatNumber(totalesGlobales[campo].toFixed(2), false, campo) : '';
-                return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500 justify-content:right;"><strong>${totalValueGlobal}</strong></td>`;
+                return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; text-align:right;"><strong>${totalValueGlobal}</strong></td>`;
             }).join('')}
         </tr>
     `;

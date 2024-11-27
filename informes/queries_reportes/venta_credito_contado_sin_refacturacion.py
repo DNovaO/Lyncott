@@ -110,7 +110,8 @@ def consultaVentasDeCreditoContadoSinRefacturacion(fecha_inicial, fecha_final, c
             GROUP BY 
                 IEPS.Zona, 
                 IEPS.SUC, 
-                SUCURSAL.C2;
+                SUCURSAL.C2
+            ORDER BY Zona;
         """
 
         params = [
