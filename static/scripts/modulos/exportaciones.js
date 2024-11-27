@@ -11,6 +11,20 @@
 
 import { formatNumber, transformHeader } from "./utils.js";
 
+const columnasNoSumar = ['clave_producto', 'descripcion_producto', 'producto', 'sucursal',
+    'clave', 'clave_sucursal', 'numero_tipo_documento', 'grupo_movimiento',
+    'detalles_tipo_documento', 'almacen_correspondiente', 'moneda', 'zona',
+    'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
+    'termina_folio', 'nombre', 'zona', 'nombre_producto', 'UPC', 'linea',
+    'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia', 'clave_cliente',
+    'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente',
+    'clave_consignatario', 'producto', 'No', 'id_vendedor', 'id_almacen',
+    'vendedor', 'id_grupo_corporativo', 'grupo_corporativo', 'id_consignatario',
+    'consignatario', 'CP', 'colonia', 'folio', 'RFC', 'UUID', 'serie',
+    'clave_vendedor', 'nombre_vendedor', 'numero_mes', 'zona_vendedor',
+    'nombre_cliente', 'descripcion', 'cliente', 'grupo'
+]
+
 // Función para remover etiquetas HTML de los valores
 function removeHTMLTags(str) {
     if (typeof str === 'string') {
@@ -90,9 +104,7 @@ export function exportToExcel(dataGlobal, tipo_reporte) {
     XLSX.writeFile(wb, filename);
 }
 
-// Función para imprimir el informe
-// Función para imprimir el informe
-export async function imprimirInformacion(dataGlobal, tipo_reporte ) {
+export async function imprimirInformacion(dataGlobal, tipo_reporte) {
     const { campos_reporte, datos_completos } = dataGlobal;
     let filename = tipo_reporte;
 
@@ -107,9 +119,9 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte ) {
 
     // Obtener las filas de totales por ID
     const filaTotalPagina = document.getElementById('total-pagina');
-    const filaTotalGlobal = document.getElementById('total-pagina-global');
+    const filaTotalGlobal = document.getElementById('total-global');
     const graphCanvas = document.getElementById('chartCanvas'); // Obtener el canvas de la gráfica
-
+    const separadoresHabilitados = (dataGlobal.campos_reporte.includes("zona"));
     // Convertir las filas de totales a HTML
     const filaTotalPaginaHTML = filaTotalPagina ? filaTotalPagina.outerHTML : '';
     const filaTotalGlobalHTML = filaTotalGlobal ? filaTotalGlobal.outerHTML : '';
@@ -129,6 +141,15 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte ) {
         });
     }
 
+    // Agrupar los datos por zona
+    const datosPorZona = datos_completos.reduce((acc, row) => {
+        if (!acc[row.zona]) {
+            acc[row.zona] = [];
+        }
+        acc[row.zona].push(row);
+        return acc;
+    }, {});
+
     // Agregar título y estilos básicos para impresión
     printWindow.document.write(`
         <html>
@@ -138,7 +159,7 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte ) {
                 body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
                 h1 { text-align: center; margin-bottom: 20px; }
                 table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+                th, td { border: 1px solid #ddd; padding: 5px; text-align: left; }
                 th { background-color: #f2f2f2; }
                 tr:nth-child(even) { background-color: #f9f9f9; }
                 tr:hover { background-color: #f1f1f1; }
@@ -158,17 +179,63 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte ) {
                     </tr>
                 </thead>
                 <tbody>
-                    ${datos_completos.map((row, index) => `
-                        <tr>
-                            <th scope="row" class="numero-tabla">${index + 1}</th>  <!-- Número de fila -->
-                            ${campos_reporte.map(field => {
-                                // Formatear y limpiar los valores para impresión
-                                const formattedValue = formatNumber(row[field], false, field);
-                                const cleanValue = removeHTMLTags(formattedValue);
-                                return `<td>${cleanValue}</td>`;
-                            }).join('')}
-                        </tr>
-                    `).join('')}
+                    ${Object.keys(datosPorZona).map(zona => {
+                        const rows = datosPorZona[zona];
+                        let zonaTotal = campos_reporte.reduce((totals, field) => {
+                            // Comprobar si el campo está en la lista de columnas a no sumar
+                            if (columnasNoSumar.includes(field)) {
+                                // Si está en la lista, no sumarlo
+                                totals[field] = '';
+                            } else {
+                                // Si no está en la lista, sumar los valores
+                                totals[field] = rows.reduce((sum, row) => sum + (parseFloat(row[field]) || 0), 0);
+                            }
+                            return totals;
+                        }, {});
+                        
+
+                        let zonaHTML = rows.map((row, index) => {
+                            let separadorZona = "";
+                            let zonaActual = row.zona;
+
+                            // Aquí se detecta y agrega el separador por zona
+                            if (index === 0 || row.zona !== rows[index - 1].zona) {
+                                separadorZona = `
+                                    <tr class="separador-zona" style="background-color: rgba(112, 224, 0, 1);">
+                                        <th colspan="${campos_reporte.length + 1}" style="justify-content:left; font-weight:500; background-color: rgba(112, 224, 0, 0.8);">
+                                            Zona: ${zonaActual}
+                                        </th>
+                                    </tr>
+                                `;
+                            }
+
+                            return `
+                                ${separadorZona}
+                                <tr>
+                                    <th scope="row" class="numero-tabla">${index + 1}</th>
+                                    ${campos_reporte.map(field => {
+                                        // Formatear y limpiar los valores para impresión
+                                        const formattedValue = formatNumber(row[field], false, field);
+                                        const cleanValue = removeHTMLTags(formattedValue);
+                                        return `<td>${cleanValue}</td>`;
+                                    }).join('')}
+                                </tr>
+                            `;
+                        }).join('');
+
+                        // Agregar la fila de totales por zona
+                        let totalesZonaFila = `
+                            <tr class="total-zona" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; justify-content:right;">
+                                <th class="separador-zona" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">Total: ${transformHeader(zona)}</th>
+                                ${campos_reporte.map(field => {
+                                    const totalValue = formatNumber(zonaTotal[field], false, field);
+                                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); text-align:right;"><strong>${totalValue}</strong></td>`;
+                                }).join('')}
+                            </tr>
+                        `;
+
+                        return zonaHTML + totalesZonaFila;
+                    }).join('')}
                     
                     ${filaTotalPaginaHTML}  <!-- Agregar la fila de Totales de Página -->
                     ${filaTotalGlobalHTML}  <!-- Agregar la fila de Totales Globales -->
@@ -191,3 +258,4 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte ) {
         printWindow.close();
     }, 500); // Espera 500 ms
 }
+

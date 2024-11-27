@@ -8,6 +8,27 @@ body {
   background-size: cover;
 }
 
+.card-body {
+  position: relative; /* Necesario para que el pseudo-elemento se posicione correctamente */
+  margin: 0;
+  padding: 0;
+  z-index: 1; /* Asegura que el contenido del texto esté por encima de la imagen */
+}
+
+.card-body::before {
+  content: ""; /* Necesario para generar el pseudo-elemento */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("../resources/leche-boton.png");
+  background-size: cover; /* Asegura que la imagen cubra toda la tarjeta */
+  background-position: left; /* Centra la imagen */
+  opacity: 0.5; /* Ajusta la opacidad aquí */
+  z-index: -1; /* Asegura que la imagen quede detrás del contenido */
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -99,7 +120,7 @@ footer {
 
 .card-text {
   font-size: 1rem;
-  color: #555;
+  color: #0a0a0a;
 }
 
 .hover-info {

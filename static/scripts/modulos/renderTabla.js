@@ -304,7 +304,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         return;
     }
 
-    let zonaActual = ""; // Zona procesada actualmente
+    let zonaActual = "";
     let totalesPorZona = {};
     let totalesPagina = {};
     let totalesGlobales = {};
