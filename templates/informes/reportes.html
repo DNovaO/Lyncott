@@ -116,20 +116,6 @@
 
     <div id="alertContainer" class="alert alert-danger mt-3 w-50 mx-auto text-center" style="display: none;"></div>
 
-    <div class="text-center mx-auto mt-3">
-      <h1 class="mb-2 font-weight-bold" style="font-size: 1.5rem;">
-        Usuario: {{ user.username }}
-      </h1>
-      
-      <h2 class="mb-0 font-weight-bold" style="font-size: 1rem;">
-        Categoría de reporte: 
-        <span class="font-weight-normal" id="categoria_reporte">{{ categoria_reporte }}</span> 
-        <br>
-        Tipo de reporte: 
-        <span class="font-weight-normal" id="tipo_reporte">{{ tipo_reporte }}</span>
-      </h2>
-    </div>
-    
     <div id="settingsPanel" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="settingsPanelLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
           <div class="modal-content">
@@ -164,7 +150,16 @@
         <div class="col-md-12 pb-auto pt-3" id="parametros-reporte">
           <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-              <strong>Parámetros de reporte</strong>
+              <strong>Parámetros de reporte
+                <h2 class="mb-0" style="font-size: 1rem; font-weight:600;">
+                  Categoría de reporte: 
+                  <span class="font-weight-normal" id="categoria_reporte">{{ categoria_reporte }}</span> 
+                </h2>
+                <h2 class="mb-0" style="font-size: 1rem; font-weight:600;">
+                  Tipo de reporte: 
+                  <span style="font-weight:500;" id="tipo_reporte">{{ tipo_reporte }}</span>
+                </h2> 
+              </strong>
               <div class="button-group d-flex align-items-center">
                 <button id="configuracion-color" class="btn btn-settings me-4" title="Ajustes">
                   <img src="{% static 'resources/gear-ajustes.svg' %}" alt="Ajustes" class="icon-svg">

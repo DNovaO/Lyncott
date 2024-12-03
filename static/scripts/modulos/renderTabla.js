@@ -407,7 +407,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
 
     const filaTotalGlobalHTML = `
         <tr id="total-global" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">
-            <th colspan="1" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">Total Global</th>
+            <th colspan="1" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; text-align:left;">Total Global</th>
             ${dataGlobal.campos_reporte.map(campo => {
                 const totalValueGlobal = (!isNaN(totalesGlobales[campo]) && totalesGlobales[campo] !== 0)
                     ? formatNumber(totalesGlobales[campo].toFixed(2), false, campo) : '';

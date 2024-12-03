@@ -121,10 +121,22 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte) {
     const filaTotalPagina = document.getElementById('total-pagina');
     const filaTotalGlobal = document.getElementById('total-global');
     const graphCanvas = document.getElementById('chartCanvas'); // Obtener el canvas de la gráfica
-    const separadoresHabilitados = (dataGlobal.campos_reporte.includes("zona"));
-    // Convertir las filas de totales a HTML
-    const filaTotalPaginaHTML = filaTotalPagina ? filaTotalPagina.outerHTML : '';
-    const filaTotalGlobalHTML = filaTotalGlobal ? filaTotalGlobal.outerHTML : '';
+    const separadoresHabilitados = campos_reporte.includes("zona");  // Verificar si los separadores están habilitados
+    
+    // Obtener el HTML de la fila total global
+    let filaTotalGlobalHTML = filaTotalGlobal ? filaTotalGlobal.outerHTML : '';
+
+    console.log('Antes', filaTotalGlobalHTML);
+
+    // Modificar el estilo del <th> que contiene el texto "Total Global" para hacerlo negrita
+    filaTotalGlobalHTML = filaTotalGlobalHTML.replace(/(<th[^>]*>)(Total Global)(<\/th>)/, (match, p1, p2, p3) => {
+        // Aquí agregamos font-weight: bold solo al contenido del <th>
+        return `${p1}<span style="font-weight: bold; text-align:left; justify-content:left;">${p2}</span>${p3}`;
+    });
+
+    // También puedes hacer otros reemplazos si lo deseas
+    filaTotalGlobalHTML = filaTotalGlobalHTML.replace(/background-color: rgba\(0, 170, 233, 0.5\)/, 'background-color: rgba(255, 0, 0, 0.5)');
+    filaTotalGlobalHTML = filaTotalGlobalHTML.replace(/font-weight:500/, 'font-weight: bold');
 
     // Verificar que el canvas existe y convertirlo a imagen
     let graphImage = '';
@@ -159,8 +171,9 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte) {
                 body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
                 h1 { text-align: center; margin-bottom: 20px; }
                 table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                th, td { border: 1px solid #ddd; padding: 5px; text-align: left; }
-                th { background-color: #f2f2f2; }
+                #total-global td { text-align: left;}
+
+                th, td { border: 1px solid #ddd; padding: 2px; text-align:right; font-size: 12px; }
                 tr:nth-child(even) { background-color: #f9f9f9; }
                 tr:hover { background-color: #f1f1f1; }
                 img { display: block; margin: 0 auto; }
@@ -174,8 +187,8 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte) {
             <table>
                 <thead>
                     <tr>
-                        <th scope="col" class="numero-tabla">#</th>
-                        ${campos_reporte.map(field => `<th>${transformHeader(field)}</th>`).join('')}
+                        <th style="text-align:left;">#</th>
+                        ${campos_reporte.map(field => `<th style="text-align:center;">${transformHeader(field)}</th>`).join('')}
                     </tr>
                 </thead>
                 <tbody>
@@ -192,17 +205,16 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte) {
                             }
                             return totals;
                         }, {});
-                        
 
                         let zonaHTML = rows.map((row, index) => {
                             let separadorZona = "";
                             let zonaActual = row.zona;
 
-                            // Aquí se detecta y agrega el separador por zona
-                            if (index === 0 || row.zona !== rows[index - 1].zona) {
+                            // Aquí se detecta y agrega el separador por zona si está habilitado
+                            if (separadoresHabilitados && (index === 0 || row.zona !== rows[index - 1].zona)) {
                                 separadorZona = `
                                     <tr class="separador-zona" style="background-color: rgba(112, 224, 0, 1);">
-                                        <th colspan="${campos_reporte.length + 1}" style="justify-content:left; font-weight:500; background-color: rgba(112, 224, 0, 0.8);">
+                                        <th colspan="${campos_reporte.length + 1}" style="justify-content:left; text-align:left; font-weight: bold; background-color: rgba(112, 224, 0, 0.8);">
                                             Zona: ${zonaActual}
                                         </th>
                                     </tr>
@@ -212,7 +224,7 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte) {
                             return `
                                 ${separadorZona}
                                 <tr>
-                                    <th scope="row" class="numero-tabla">${index + 1}</th>
+                                    <th scope="row" style="text-align:left;" class="numero-tabla">${index + 1}</th>
                                     ${campos_reporte.map(field => {
                                         // Formatear y limpiar los valores para impresión
                                         const formattedValue = formatNumber(row[field], false, field);
@@ -223,22 +235,27 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte) {
                             `;
                         }).join('');
 
-                        // Agregar la fila de totales por zona
-                        let totalesZonaFila = `
-                            <tr class="total-zona" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; justify-content:right;">
-                                <th class="separador-zona" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">Total: ${transformHeader(zona)}</th>
-                                ${campos_reporte.map(field => {
-                                    const totalValue = formatNumber(zonaTotal[field], false, field);
-                                    return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); text-align:right;"><strong>${totalValue}</strong></td>`;
-                                }).join('')}
-                            </tr>
-                        `;
+                        // Agregar la fila de totales por zona si los separadores están habilitados
+                        let totalesZonaFila = '';
+                        if (separadoresHabilitados) {
+                            totalesZonaFila = `
+                                <tr class="total-zona" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; justify-content:right;">
+                                    <th class="separador-zona" style="background-color: rgba(0, 170, 233, 0.5); font-size:10px; text-align:left; font-weight:bold;">Total: ${transformHeader(zona)}</th>
+                                    ${campos_reporte.map(field => {
+                                        const totalValue = formatNumber(zonaTotal[field], false, field);
+                                        return `<td class="datos-tabla" style="background-color: rgba(0, 170, 233, 0.5); text-align:right;"><strong>${totalValue}</strong></td>`;
+                                    }).join('')}
+                                </tr>
+                            `;
+                        }
 
                         return zonaHTML + totalesZonaFila;
                     }).join('')}
-                    
-                    ${filaTotalPaginaHTML}  <!-- Agregar la fila de Totales de Página -->
-                    ${filaTotalGlobalHTML}  <!-- Agregar la fila de Totales Globales -->
+
+                    <!-- Agregar la fila de Totales de Página solo si los separadores están habilitados -->
+                    <!-- Agregar la fila de Totales Globales solo si los separadores están habilitados -->
+                    ${filaTotalGlobalHTML}
+                    ${console.log('Después', filaTotalGlobalHTML)}
                 </tbody>
             </table>
 
@@ -250,7 +267,6 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte) {
 
     // Espera un momento para cargar el contenido y luego lanza la impresión
     printWindow.document.close();
-    printWindow.focus();
 
     // Usar un timeout para asegurar que la gráfica esté completamente renderizada antes de imprimir
     setTimeout(() => {
@@ -258,4 +274,3 @@ export async function imprimirInformacion(dataGlobal, tipo_reporte) {
         printWindow.close();
     }, 500); // Espera 500 ms
 }
-
