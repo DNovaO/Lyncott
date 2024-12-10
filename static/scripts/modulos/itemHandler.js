@@ -48,4 +48,5 @@ export const handlers = {
     'zona': (data, dataType) => handleData(data, 'zonas', dataType),
     'region': (data, dataType) => handleData(data, 'regiones', dataType),
     'year':(data, dataType) => handleData(data, 'years', dataType),
+    'mes': (data, dataType) => handleData(data, 'meses', dataType),
 };

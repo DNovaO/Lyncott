@@ -298,6 +298,34 @@ def handle_resultado(request, data_type):
     response['Content-Encoding'] = 'gzip'
     return response
 
+def handle_mes(request, data_type):
+    meses = {
+        "01": "Enero", 
+        "02": "Febrero", 
+        "03": "Marzo", 
+        "04": "Abril", 
+        "05": "Mayo", 
+        "06": "Junio", 
+        "07": "Julio", 
+        "08": "Agosto", 
+        "09": "Septiembre", 
+        "10": "Octubre", 
+        "11": "Noviembre", 
+        "12": "Diciembre"
+    }
+    
+    meses_transformed = [{'clave_mes': clave, 'descripcion_mes': descripcion} for clave, descripcion in meses.items()]
+    
+    response_data = {
+        'data_type': data_type,
+        'meses': meses_transformed,
+    }
+    
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
+
+
 def handle_year(request, data_type):
     
     year = Kdvpresxsuc.objects.values('year').distinct().order_by('year')
@@ -311,8 +339,6 @@ def handle_year(request, data_type):
     response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
     response['Content-Encoding'] = 'gzip'
     return response
-
-
 
 def objPaginator(request, obj_to_paginate, data_type):
     
@@ -369,4 +395,5 @@ data_type_handlers = {
     'region': handle_region,
     'resultado': handle_resultado,
     'year': handle_year,
+    'mes': handle_mes,
 }

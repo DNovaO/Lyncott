@@ -128,6 +128,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "Análisis de Ventas por Vendedor": 29,
 
     "Devoluciones a Clientes/Consignatarios por Mes": 30,
+
+    "Devoluciones a Clientes/Consignatarios por Semana": 31,
   };
 
   const FAMILIA = {
@@ -312,6 +314,17 @@ document.addEventListener("DOMContentLoaded", function () {
       "producto_inicial",
       "producto_final",
       "grupoCorporativo",
+    ],
+
+    31: [ 
+      "producto_inicial",
+      "producto_final",
+      "sucursal_inicial",
+      "sucursal_final",
+      "cliente_inicial",
+      "cliente_final",
+      "year",
+      "mes",
     ],
 
   };

@@ -68,6 +68,7 @@ const categoriasReporte = {
         "Ventas por Familia por Región",
     ],
     "Devoluciones": [
+        "Devoluciones a Clientes/Consignatarios por Semana",
         "Devoluciones a Clientes/Consignatarios por Mes",
         "Devoluciones por Fecha",
         "Devoluciones por Sucursal",

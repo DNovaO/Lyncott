@@ -22,11 +22,29 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
+  opacity: 0.5; /* Ajusta la opacidad aquí */
+  z-index: -1; /* Asegura que la imagen quede detrás del contenido */
+}
+
+.fondo-1::before {
   background-image: url("../resources/leche-boton.png");
   background-size: cover; /* Asegura que la imagen cubra toda la tarjeta */
   background-position: left; /* Centra la imagen */
-  opacity: 0.5; /* Ajusta la opacidad aquí */
-  z-index: -1; /* Asegura que la imagen quede detrás del contenido */
+}
+.fondo-2::before {
+  background-image: url("../resources/leche-boton2.png");
+  background-size: cover; /* Asegura que la imagen cubra toda la tarjeta */
+  background-position: right; /* Centra la imagen */
+}
+.fondo-3::before {
+  background-image: url("../resources/leche-boton3.png");
+  background-size: auto; /* Asegura que la imagen cubra toda la tarjeta */
+  background-position: left; /* Centra la imagen */
+}
+.fondo-4::before {
+  background-image: url("../resources/leche-boton4.png");
+  background-size: auto; /* Asegura que la imagen cubra toda la tarjeta */
+  background-position: center; /* Centra la imagen */
 }
 
 body {
