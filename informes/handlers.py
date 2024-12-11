@@ -8,6 +8,7 @@
 # para obtener los datos correspondientes a ese parametro y enviarlos al frontend.
 
 
+from decimal import Decimal
 from .queries import clasificarParametros
 from django.http import JsonResponse
 from .models import *
@@ -340,6 +341,27 @@ def handle_year(request, data_type):
     response['Content-Encoding'] = 'gzip'
     return response
 
+def handle_tipoDocumento(request, data_type):
+    tipoDocumento = {
+        "ALL": "Todos",
+        "23": "CFDI CREDITO CON ADDENDA", 
+        "24": "CFDI CONTADO", 
+        "27": "PRODUCTO SIN CARGO",
+    }
+    
+    tipoDocumento_transformed = [{'clave_tipoDocumento': clave, 'descripcion_tipoDocumento': descripcion} for clave, descripcion in tipoDocumento.items()]
+    
+    print(tipoDocumento_transformed)
+    
+    response_data = {
+        'data_type': data_type,
+        'documentos': tipoDocumento_transformed,
+    }
+    
+    response = HttpResponse(gzip.compress(json.dumps(response_data).encode('utf-8')), content_type='application/json')
+    response['Content-Encoding'] = 'gzip'
+    return response
+
 def objPaginator(request, obj_to_paginate, data_type):
     
     if data_type == 'resultado':
@@ -396,4 +418,5 @@ data_type_handlers = {
     'resultado': handle_resultado,
     'year': handle_year,
     'mes': handle_mes,
+    'tipo_documento': handle_tipoDocumento,
 }

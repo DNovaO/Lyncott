@@ -49,4 +49,5 @@ export const handlers = {
     'region': (data, dataType) => handleData(data, 'regiones', dataType),
     'year':(data, dataType) => handleData(data, 'years', dataType),
     'mes': (data, dataType) => handleData(data, 'meses', dataType),
+    'tipo_documento': (data, dataType) => handleData(data, 'documentos', dataType),
 };

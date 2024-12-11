@@ -23,7 +23,7 @@ def home_view(request):
             "Cierre de Mes",
             "Comparativo de Ventas por Producto (Sin Refacturación)",
             "Comparativo Precios, Reales vs Teoricos y Venta Simulada",
-            # "Conciliación de Ventas" #EN STANDY BY,
+            "Conciliación de Ventas",
             "Lista de Precios por Producto y por Zonas",
             "Por Cliente",
             "Por Producto",

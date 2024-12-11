@@ -25,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Familia 2
     "Cierre de Mes": 2,
-    "Conciliación de Ventas": 2,
 
     // Familia 3
 
@@ -130,6 +129,8 @@ document.addEventListener("DOMContentLoaded", function () {
     "Devoluciones a Clientes/Consignatarios por Mes": 30,
 
     "Devoluciones a Clientes/Consignatarios por Semana": 31,
+
+    "Conciliación de Ventas": 32,
   };
 
   const FAMILIA = {
@@ -327,6 +328,16 @@ document.addEventListener("DOMContentLoaded", function () {
       "mes",
     ],
 
+    32:[
+      "sucursal",
+      "fecha_inicial",
+      "fecha_final",
+      "cliente_inicial",
+      "cliente_final",
+      "vendedor_inicial",
+      "vendedor_final",
+      "tipo_documento",
+    ]
   };
 
 
