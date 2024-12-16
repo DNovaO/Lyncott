@@ -241,7 +241,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         'vendedor', 'id_grupo_corporativo', 'grupo_corporativo', 'id_consignatario',
         'consignatario', 'CP', 'colonia', 'folio', 'RFC', 'UUID', 'serie',
         'clave_vendedor', 'nombre_vendedor', 'numero_mes', 'zona_vendedor',
-        'nombre_cliente', 'descripcion', 'cliente', 'grupo'
+        'nombre_cliente', 'descripcion', 'cliente', 'grupo','folio_facturas','tipo_documento', 'folio_documento', 'clave_vendedor', 'grupo_documento_anexado', 'tipo_documento_anexado', 'folio_documento_anexado', 'genero', 'naturaleza', 'referencia'
     ]) {
 
     const keysToExcludeFromFormatting = ['clave_producto', 'descripcion_producto', 'producto','sucursal', 
@@ -250,7 +250,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
         'termina_folio', 'nombre', 'zona', 'nombre_producto','UPC','linea',
         'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia','clave_cliente', 'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente', 'clave_consignatario', 'producto', 'No', 'id_vendedor', 'id_almacen','vendedor','id_grupo_corporativo','grupo_corporativo',
-        'id_consignatario', 'consignatario', 'CP', 'colonia', 'cantidad','folio','RFC', 'UUID', 'serie','clave_vendedor','cliente', 'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente', 'descripcion', 'grupo'
+        'id_consignatario', 'consignatario', 'CP', 'colonia', 'cantidad','folio','RFC', 'UUID', 'serie','clave_vendedor','cliente', 'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente', 'descripcion', 'grupo', 'folio_facturas','tipo_documento', 'folio_documento','clave_vendedor', 'grupo_documento_anexado', 'tipo_documento_anexado', 'folio_documento_anexado','naturaleza_documento_anexado', 'genero', 'naturaleza', 'referencia'
     ];
     
     // Almacenar los datos globalmente
@@ -274,7 +274,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             ${dataGlobal.campos_reporte.map((campo, index) => {
                 const transformedHeader = transformHeader(campo);
                 return `
-                    <th scope="col" class="datos-tabla" style="justify-content:center; text-align:center;">
+                    <th scope="col" class="datos-tabla" style="justify-content:center; text-align:left; display:table-cell; white-space:nowrap;">
                         ${transformedHeader}
                         <button type="submit" class="btnPin" data-column-index="${index}">
                             <svg class="pin-column-btn" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -372,10 +372,17 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
             <tr>
                 <th scope="row" class="numero-tabla">${(currentPage - 1) * pageSize + index + 1}</th>
                 ${dataGlobal.campos_reporte.map(campo => {
-                    const isExcluded = keysToExcludeFromFormatting.includes(campo);  // Comprobar si el campo está en la lista de exclusión
-                    const alignmentClass = isExcluded ? '' : 'style="text-align: right;"'; // Si no está excluido, aplica el alineamiento a la derecha
-        
-                    return `<td class="datos-table" ${alignmentClass}>${formatNumber(fila[campo], false, campo)}</td>`;
+                    let alignmentStyle = ''; // Inicializa la variable para el estilo adicional
+                    if (!keysToExcludeFromFormatting.includes(campo)) {
+                        alignmentStyle = 'text-align: right;'; // Aplica alineación centrada si no está excluido
+                    }
+
+                    const defaultStyle = 'display: table-cell; white-space: nowrap; text-align: center;'; // Estilo predeterminado
+
+                    return `
+                        <td class="datos-table" style="${defaultStyle} ${alignmentStyle}">
+                            ${formatNumber(fila[campo], false, campo)}
+                        </td>`;
                 }).join('')}
             </tr>
         `;
@@ -407,7 +414,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
 
     const filaTotalGlobalHTML = `
         <tr id="total-global" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500;">
-            <th colspan="1" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; text-align:left;">Total Global</th>
+            <th colspan="1" style="background-color: rgba(0, 170, 233, 0.5); font-weight:500; text-align:right;">Total Global</th>
             ${dataGlobal.campos_reporte.map(campo => {
                 const totalValueGlobal = (!isNaN(totalesGlobales[campo]) && totalesGlobales[campo] !== 0)
                     ? formatNumber(totalesGlobales[campo].toFixed(2), false, campo) : '';

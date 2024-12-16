@@ -21,90 +21,106 @@ def consultaConciliacionVentas(fecha_inicial, fecha_final,cliente_inicial, clien
    
     with connection.cursor() as cursor:
         query = f"""
-                        DECLARE
-                @fecha_inicial VARCHAR(20) = '2024-01-01',
-                @fecha_final VARCHAR(20) = '2024-1-31',
-                @cliente_inicial VARCHAR(20) =  '0000001',
-                @cliente_final VARCHAR(20) = 'ZVM01',
-                @vendedor_inicial VARCHAR(20) =  '101',
-                @vendedor_final VARCHAR(20) = '978';
-            
+            DECLARE
+                @sucursal VARCHAR(20) = %s,
+                @fecha_inicial VARCHAR(20) = %s,
+                @fecha_final VARCHAR(20) = %s,
+                @cliente_inicial VARCHAR(20) =  %s,
+                @cliente_final VARCHAR(20) = %s,
+                @vendedor_inicial VARCHAR(20) = %s,
+                @vendedor_final VARCHAR(20) = %s;
+
             SELECT 
-                ISNULL(LTRIM(RTRIM(FACTURA.tipo_documento)), '') AS tipo_documento,
-                ISNULL(LTRIM(RTRIM(FACTURA.folio_factura)), '') AS folio_factura,
-                ISNULL(LTRIM(RTRIM(CONVERT(VARCHAR, FACTURA.fecha_factura, 101))), '') AS fecha_factura,
-                ISNULL(LTRIM(RTRIM(FACTURA.vendedor_factura)), '') AS clave_vendedor,
-                ISNULL(LTRIM(RTRIM(FACTURA.cliente_factura)), '') AS clave_cliente,
-                ISNULL(LTRIM(RTRIM(NOMBRES.nombre_cliente)), '') AS nombre_cliente,
-                FORMAT(ISNULL(FACTURA.venta_factura, 0), 'N2') AS venta_factura,
-                
-                ISNULL(LTRIM(RTRIM(REMISION.tipo_documento_remision)), '') AS tipo_documento_remision,
-                ISNULL(LTRIM(RTRIM(REMISION.folio_remision)), '') AS folio_remision,
-                ISNULL(LTRIM(RTRIM(CONVERT(VARCHAR, REMISION.fecha_remision, 101))), '') AS fecha_remision,
-                ISNULL(LTRIM(RTRIM(REMISION.vendedor_remision)), '') AS clave_vendedor_remision,
-                ISNULL(LTRIM(RTRIM(REMISION.cliente_remision)), '') AS clave_cliente_remision,
-                ISNULL(LTRIM(RTRIM(NOMBRES_REM.nombre_cliente_remision)), '') AS nombre_cliente_remision,
-                FORMAT(ISNULL(REMISION.venta_remision, 0), 'N2') AS venta_remision
-            FROM (
-                SELECT
-                    KDM1.C5 AS tipo_documento,
-                    KDM1.C6 AS folio_factura,
-                    KDM1.C9 AS fecha_factura,
-                    KDM1.C12 AS vendedor_factura,
-                    KDM1.C10 AS cliente_factura,
-                    (KDM1.C16 - KDM1.C15) AS venta_factura
-                FROM KDM1
-                    INNER JOIN KDMS ON KDM1.C1 = KDMS.C1
-                    INNER JOIN KDUV ON KDM1.C12 = KDUV.C2
-                    INNER JOIN KDUD ON KDM1.C10 = KDUD.C2
-                WHERE
-                    KDM1.C9 BETWEEN @fecha_inicial AND @fecha_final
-                    AND KDM1.C2 = 'U'
-                    AND KDM1.C3 = 'D'
-                    AND KDM1.C4 = '5'
-                    AND KDM1.C5 IN ('23', '24', '27')
-                    AND KDUV.C2 BETWEEN @vendedor_inicial AND @vendedor_final
-                    AND KDMS.C1  = '20'
-                    AND KDUD.C2 BETWEEN @cliente_inicial AND @cliente_final
-                    AND KDUD.C2 != '9999999'
-                    AND KDM1.C12 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
-                GROUP BY KDM1.C5, KDM1.C6, KDM1.C9, KDM1.C12, KDM1.C10, KDM1.C16, KDM1.C15
-            ) AS FACTURA
-            LEFT JOIN FULL OUTER JOIN (
-                SELECT 
-                    KDM1.C5 AS tipo_documento_remision,
-                    KDM1.C6 AS folio_remision,
-                    KDM1.C9 AS fecha_remision,
-                    KDM1.C12 AS vendedor_remision,
-                    KDM1.C10 AS cliente_remision,
-                    (KDM1.C16 - KDM1.C15) AS venta_remision
-                FROM KDM1
-                    INNER JOIN KDMS ON KDM1.C1 = KDMS.C1
-                    INNER JOIN KDUV ON KDM1.C12 = KDUV.C2
-                    INNER JOIN KDUD ON KDM1.C10 = KDUD.C2
-                WHERE
-                    KDM1.C9 BETWEEN @fecha_inicial AND @fecha_final
-                    AND KDM1.C2 = 'U'
-                    AND KDM1.C3 = 'D'
-                    AND KDM1.C4 = '45'
-                    AND KDM1.C5 IN ('5', '6', '7')
-                    AND KDUV.C2 BETWEEN @vendedor_inicial AND @vendedor_final
-                    AND KDMS.C1 = '20'
-                    AND KDUD.C2 BETWEEN @cliente_inicial AND @cliente_final
-                    AND KDUD.C2 <> '9999999'
-                    AND KDM1.C12 NOT IN ('902','903','904','905','906','907','908','909','910','911','912','913','914','915','916','917','918','919','920','921','922','923','924')
-                GROUP BY KDM1.C5, KDM1.C6, KDM1.C9, KDM1.C12, KDM1.C10, KDM1.C16, KDM1.C15
-            ) AS REMISION ON FACTURA.folio_factura = REMISION.folio_remision
-            LEFT JOIN (
-                SELECT C2, C3 AS nombre_cliente FROM KDUD
-            ) AS NOMBRES ON NOMBRES.C2 = FACTURA.cliente_factura
-            LEFT JOIN (
-                SELECT C2, C3 AS nombre_cliente_remision FROM KDUD
-            ) AS NOMBRES_REM ON NOMBRES_REM.C2 = REMISION.cliente_remision
+                primeraSeleccion.C1 as 'sucursal',
+                primeraSeleccion.C2 as 'genero',
+                primeraSeleccion.C3 as 'naturaleza',
+                primeraSeleccion.C4 as 'grupo_movimiento',
+                primeraSeleccion.C5 as 'tipo_documento',
+                primeraSeleccion.C6 as 'folio_documento',
+                primeraSeleccion.C9 as 'fecha',
+                primeraSeleccion.C10 as 'clave_cliente',
+                nombreCliente.C3 as 'nombre_cliente',
+                primeraSeleccion.C12 as 'clave_vendedor',
+                primeraSeleccion.C11 as 'referencia',
+                primeraSeleccion.C36 as 'naturaleza_documento_anexado',
+                primeraSeleccion.C37 as 'grupo_documento_anexado',
+                primeraSeleccion.C38 as 'tipo_documento_anexado',
+                primeraSeleccion.C39 as 'folio_documento_anexado',
+
+                segundaSeleccion.C1 as 'sucursal1',
+                segundaSeleccion.C2 as 'genero1',
+                segundaSeleccion.C3 as 'naturaleza1',
+                segundaSeleccion.C4 as 'grupo_movimiento1',
+                segundaSeleccion.C5 as 'tipo_documento1',
+                segundaSeleccion.C6 as 'folio_documento1',
+                segundaSeleccion.C9 as 'fecha1',
+                segundaSeleccion.C10 as 'clave_cliente1',
+                segundaSeleccion.C11 as 'referencia1',
+                segundaSeleccion.C12 as 'clave_vendedor1',
+                segundaSeleccion.C36 as 'naturaleza_documento_anexado1',
+                segundaSeleccion.C37 as 'grupo_documento_anexado1',
+                segundaSeleccion.C38 as 'tipo_documento_anexado1',
+                segundaSeleccion.C39 as 'folio_documento_anexado1',
+                segundaSeleccion.C16 as 'importe1',
+
+                tercerSeleccion.C1 as 'sucursal2',
+                tercerSeleccion.C2 as 'genero2',
+                tercerSeleccion.C3 as 'naturaleza2',
+                tercerSeleccion.C4 as 'grupo_movimiento2',
+                tercerSeleccion.C5 as 'tipo_documento2',
+                tercerSeleccion.C6 as 'folio_documento2',
+                tercerSeleccion.C9 as 'fecha2',
+                tercerSeleccion.C10 as 'clave_cliente2',
+                tercerSeleccion.C11 as 'referencia2',
+                tercerSeleccion.C12 as 'clave_vendedor2',
+                tercerSeleccion.C36 as 'naturaleza_documento_anexado2',
+                tercerSeleccion.C37 as 'grupo_documento_anexado2',
+                tercerSeleccion.C38 as 'tipo_documento_anexado2',
+                tercerSeleccion.C39 as 'folio_documento_anexado2',
+                tercerSeleccion.C16 as 'PFD',
+
+                cuartaSeleccion.C14 as 'folio_facturas'
+            FROM KDM1 AS primeraSeleccion
+            LEFT JOIN KDM1 AS segundaSeleccion 
+                ON segundaSeleccion.C1 = primeraSeleccion.C1
+                AND segundaSeleccion.C2 = 'U'
+                AND segundaSeleccion.C3 = primeraSeleccion.C36
+                AND segundaSeleccion.C4 = primeraSeleccion.C37
+                AND segundaSeleccion.C5 = primeraSeleccion.C38
+                AND segundaSeleccion.C6 = primeraSeleccion.C39
+                and segundaSeleccion.C43 <> 'C'
+            LEFT JOIN KDM1 AS tercerSeleccion
+                ON tercerSeleccion.C1 = primeraSeleccion.C1
+                AND tercerSeleccion.C2 = 'U'
+                AND tercerSeleccion.C3 = 'D'
+                AND tercerSeleccion.C36 = primeraSeleccion.C3
+                AND tercerSeleccion.C37 = primeraSeleccion.C4
+                AND tercerSeleccion.C38 = primeraSeleccion.C5
+                AND tercerSeleccion.C39 = primeraSeleccion.C6
+                AND tercerSeleccion.C43 <> 'C'
+            INNER JOIN KDUD AS nombreCliente
+                ON nombreCliente.C2 = primeraSeleccion.C10
+            LEFT JOIN KDFECFDIVTA as cuartaSeleccion
+                ON cuartaSeleccion.C1 = primeraSeleccion.C1
+                AND cuartaSeleccion.C2 = primeraSeleccion.C2
+                AND cuartaSeleccion.C3 = primeraSeleccion.C3
+                AND cuartaSeleccion.C4 = primeraSeleccion.C4
+                AND cuartaSeleccion.C5 = primeraSeleccion.C5
+                AND cuartaSeleccion.C6 = primeraSeleccion.C6
+            WHERE
+                primeraSeleccion.C1 = @sucursal
+                AND primeraSeleccion.C2 = 'U'
+                AND primeraSeleccion.C3 = 'D'
+                AND primeraSeleccion.C4 = 5
+                AND primeraSeleccion.C9 BETWEEN @fecha_inicial AND @fecha_final
+                AND primeraSeleccion.C10 BETWEEN @cliente_inicial AND @cliente_final
+                AND primeraSeleccion.C12 BETWEEN @vendedor_inicial AND @vendedor_final
+            ORDER BY primeraSeleccion.C6;     
         """
         
         # Definir los parámetros para las fechas y filtros
         params = [
+            sucursal,
             fecha_inicial, fecha_final,
             cliente_inicial, cliente_final, 
             vendedor_inicial, vendedor_final
@@ -115,10 +131,13 @@ def consultaConciliacionVentas(fecha_inicial, fecha_final,cliente_inicial, clien
         columns = [col[0] for col in cursor.description]
         result = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
-        # Convertir Decimals a float para evitar problemas al mostrar los datos
-        for row in result:
-            for key, value in row.items():
-                if isinstance(value, Decimal):
-                    row[key] = float(value)
+    # Convertir Decimals a float y datetime a string para evitar problemas
+    for row in result:
+        for key, value in row.items():
+            if isinstance(value, Decimal):
+                row[key] = float(value)
+            elif isinstance(value, datetime):  # Verifica si es un objeto datetime
+                row[key] = value.strftime('%Y-%m-%d %H:%M:%S')  # Convierte a formato string
+
 
     return result
