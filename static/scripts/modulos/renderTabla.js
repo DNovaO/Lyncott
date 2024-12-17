@@ -250,7 +250,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
         'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
         'termina_folio', 'nombre', 'zona', 'nombre_producto','UPC','linea',
         'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia','clave_cliente', 'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente', 'clave_consignatario', 'producto', 'No', 'id_vendedor', 'id_almacen','vendedor','id_grupo_corporativo','grupo_corporativo',
-        'id_consignatario', 'consignatario', 'CP', 'colonia', 'cantidad','folio','RFC', 'UUID', 'serie','clave_vendedor','cliente', 'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente', 'descripcion', 'grupo', 'folio_facturas','tipo_documento', 'folio_documento','clave_vendedor', 'grupo_documento_anexado', 'tipo_documento_anexado', 'folio_documento_anexado','naturaleza_documento_anexado', 'genero', 'naturaleza', 'referencia'
+        'id_consignatario', 'consignatario', 'CP', 'colonia', 'cantidad','folio','RFC', 'UUID', 'serie','clave_vendedor','cliente', 'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente', 'descripcion', 'grupo', 'folio_facturas','tipo_documento', 'folio_documento','clave_vendedor', 'grupo_documento_anexado', 'tipo_documento_anexado', 'folio_documento_anexado','naturaleza_documento_anexado', 'genero', 'naturaleza', 'referencia', 'cadena', 'KAM'
     ];
     
     // Almacenar los datos globalmente
@@ -377,7 +377,7 @@ export function renderizarDatosEnTabla(data, dataType, currentPage = 1, pageSize
                         alignmentStyle = 'text-align: right;'; // Aplica alineación centrada si no está excluido
                     }
 
-                    const defaultStyle = 'display: table-cell; white-space: nowrap; text-align: center;'; // Estilo predeterminado
+                    const defaultStyle = 'display: table-cell; white-space: nowrap; text-align: left;'; // Estilo predeterminado
 
                     return `
                         <td class="datos-table" style="${defaultStyle} ${alignmentStyle}">

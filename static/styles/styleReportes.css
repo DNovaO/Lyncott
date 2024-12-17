@@ -10,6 +10,10 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background-image: url("../resources/leche-boton2.png");
+  background-size: auto; 
+  object-fit: fill;
+  height: max-content;
 }
 
 .custom-btn {

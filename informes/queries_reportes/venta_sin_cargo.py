@@ -67,7 +67,7 @@ def consultaVentaSinCargo(fecha_inicial, fecha_final, cliente_inicial, cliente_f
                     AND KDM2.C2 = 'U'
                     AND KDM2.C3 = 'D'
                     AND KDM2.C4 = '5'
-                    AND KDM2.C5 BETWEEN 71 AND 99
+                    AND KDM2.C5 IN (27, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99)
                 GROUP BY KDII.C1, KDII.C2, KDII.C11, KDII.C12
             ) AS DBKL2019;
         """
