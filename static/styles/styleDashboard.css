@@ -1,0 +1,287 @@
+html,
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-image: url("../resources/leche-boton2.png");
+    background-size: cover; 
+    object-fit: cover;
+    height: max-content;
+}
+
+.custom-btn {
+  display: block;
+  width: auto;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  margin: 0;
+  padding-left: 2vh;
+  padding-right: 2vh;
+}
+
+.content-wrapper-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  padding: 0;
+  margin: 0;
+}
+
+.btn-danger {
+  background-color: #ed1c24;
+  border-color: #ed1c24;
+  border-radius: 10px;
+  padding: 10px 50px;
+}
+
+/* Estilos personalizados para los encabezados de los cards */
+.card-header-custom-1 {
+    background-color: #78B956; /* Gama de verde */
+}
+
+.card-header-custom-2 {
+    background-color: #E37739; /* Gama de naranja */
+}
+
+.card-header-custom-3 {
+    background-color: #00AAE9; /* Gama de azul */
+}
+
+.card-header-custom-4 {
+    background-color: #BE332F; /* Gama de rojo */
+}
+
+.card-header-custom-5 {
+    background-color: #010000; /* Gama de negro */
+}
+
+.card-header-custom-6 {
+    background-color: #ED1C24; /* Gama de rojo intenso */
+}
+
+
+footer {
+  background-color: #ed1c24;
+  color: white;
+  margin-top: auto;
+  padding: 0;
+}
+
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.lds-ellipsis,
+.lds-ellipsis div {
+  justify-content: center;
+  box-sizing: border-box;
+}
+.lds-ellipsis {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ellipsis div {
+  position: absolute;
+  top: 33.33333px;
+  width: 13.33333px;
+  height: 13.33333px;
+  border-radius: 50%;
+  background: currentColor;
+  animation-timing-function: cubic-bezier(0, 1, 1, 0);
+}
+.lds-ellipsis div:nth-child(1) {
+  left: 8px;
+  animation: lds-ellipsis1 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(2) {
+  left: 8px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(3) {
+  left: 32px;
+  animation: lds-ellipsis2 0.6s infinite;
+}
+.lds-ellipsis div:nth-child(4) {
+  left: 56px;
+  animation: lds-ellipsis3 0.6s infinite;
+}
+@keyframes lds-ellipsis1 {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes lds-ellipsis3 {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+@keyframes lds-ellipsis2 {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(24px, 0);
+  }
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 55.5vh; /* Ocupa toda la altura del modal */
+  flex-direction: column; /* Para colocar el texto debajo del spinner */
+}
+
+.lds-ring,
+.lds-ring div {
+  box-sizing: border-box;
+}
+
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid currentColor;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: currentColor transparent transparent transparent;
+}
+
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader-wrapper {
+  display: flex;
+  flex-direction: column; /* Alinea el texto y el loader en columna */
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #010000; /* Cambiar según el diseño deseado */
+  margin-bottom: 10px; /* Espaciado entre el texto y el loader */
+}
+
+.loader-container {
+  animation: rotate 1s infinite;
+  height: 30px; 
+  width: 30px; 
+}
+
+.loader-container:before,
+.loader-container:after {
+  border-radius: 50%;
+  content: "";
+  display: block;
+  height: 12px;
+  width: 12px; 
+}
+.loader-container:before {
+  animation: ball1 1s infinite;
+  background-color: #010000;
+  box-shadow: 18px 0 0 #010000; 
+  margin-bottom: 6px; 
+}
+.loader-container:after {
+  animation: ball2 1s infinite;
+  background-color: #010000;
+  box-shadow: 18px 0 0 #010000;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg) scale(0.8) }
+  50% { transform: rotate(360deg) scale(1.2) }
+  100% { transform: rotate(720deg) scale(0.8) }
+}
+
+@keyframes ball1 {
+  0% {
+    box-shadow: 18px 0 0 #010000; 
+  }
+  50% {
+    box-shadow: 0 0 0 #010000;
+    margin-bottom: 0;
+    transform: translate(9px, 9px);
+  }
+  100% {
+    box-shadow: 18px 0 0 #010000;
+    margin-bottom: 6px;
+  }
+}
+
+@keyframes ball2 {
+  0% {
+    box-shadow: 18px 0 0 #010000; 
+  }
+  50% {
+    box-shadow: 0 0 0 #010000;
+    margin-top: -12px; 
+    transform: translate(9px, 9px);
+  }
+  100% {
+    box-shadow: 18px 0 0 #010000;
+    margin-top: 0;
+  }
+}

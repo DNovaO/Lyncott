@@ -1,0 +1,193 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="{% static 'resources/lyncott-logo.png' %}" alt="LyncottIcon" />
+    <title>Portal Lyncott</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static 'styles/styleDashboard.css' %}" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light" style="padding-left: 2vh; padding-right: 2vh">
+      <div class="container-fluid d-flex justify-content-between align-items-center">
+        <a class="navbar-brand" href="{% url 'linkHub' %}">
+          <img src="{% static 'resources/logo-lyncott.png' %}" alt="Lyncott" class="img-fluid" style="max-width: 150px" />
+        </a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <div class="mx-auto text-center">
+            <h1 class="mb-0 font-weight-normal justify-content-center text-center" style="font-size: 2.5rem; font-weight: bold">
+              Lyncott - Dashboard
+            </h1>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-center mt-1">
+            {% if user.is_authenticated %}
+            <form method="get" action="{% url 'home' %}" class="d-inline mb-2 mb-lg-0 me-2 w-100">
+              <button type="submit" class="btn btn-danger custom-btn w-100 text-center me-2" style="font-weight: 500">
+                Volver a inicio
+              </button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-flex pt-3 pl-3 pr-3">
+      <div class="content-wrapper">
+        <div id="loader" class="loader"></div>
+
+        <div class="container mt-4">
+          <div class="row g-4">
+            <!-- Centro de Notificaciones -->
+            <div class="col-md-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header card-header-custom-1 text-white">
+                  <h3 class="card-title mb-0">Centro de notificaciones</h3>
+                </div>
+                <div class="card-body">
+                  <div class="loader-wrapper"></div>
+                  <ul class="list-group list-group-flush">
+                    <!-- Aqui se deben de cargar las notificaciones de manera dinamica -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gráfica de Barras -->
+            <div class="col-md-8">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header card-header-custom-2 text-white">
+                  <h3 class="card-title mb-0">Gráfica de ventas</h3>
+                </div>
+                <div class="card-body">
+                  <div class="loader-wrapper"></div>
+                  <!-- En base a datos reportados de manera anual se debe de generar la gráfica -->
+                  <canvas id="barChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gráfica Circular -->
+            <div class="col-md-6">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header card-header-custom-3 text-white">
+                  <h3 class="card-title mb-0">Distribución de productos</h3>
+                </div>
+                <div class="card-body">
+                  <div class="loader-wrapper"></div>
+                  <!-- En base a datos reportados de manera anual se debe de generar la gráfica -->
+                  <canvas id="pieChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Estadísticas -->
+            <div class="col-md-6">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header card-header-custom-4 text-white">
+                  <h3 class="card-title mb-0">Estadísticas rápidas</h3>
+                </div>
+                <div class="card-body">
+                  <div class="loader-wrapper"></div>
+                  <ul class="list-group list-group-flush">
+                    <!-- En base a datos reportados de manera anual se deben de obtener las estadisticas mas rapidas como ventas, devoluciones, kilos vendidos, etc. Sin gráfica. -->
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Autorizaciones de Gastos -->
+            <div class="col-md-12 mb-5">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header card-header-custom-5 text-white">
+                  <h3 class="card-title mb-0">Autorizaciones de gastos</h3>
+                </div>
+                <div class="loader-wrapper">
+
+                </div>
+                <div class="card-body">
+                  <ul class="list-group list-group-flush">
+                    <!-- Autorizaciones de gastos -->
+                    <li class="list-group-item">
+                      <div class="d-flex justify-content-between">
+                        <div>
+                          <!--Aqui se cargaran las autorizaciones de gastos de manera dinamica-->
+                          <h5 class="mb-0">Gasto de $1,000.00</h5>
+                          <p class="mb-0">Concepto: Compra de insumos</p>
+                          <p class="mb-0">Fecha: 12/12/2024</p>
+
+                        </div>
+                        <div class="d-flex">
+                          <button type="button" class="btn" style="font-size: 1.2rem; padding: 0; color: #28a745;">
+                            <i class="fas fa-check-circle"></i> Autorizar
+                          </button>
+                          <button type="button" class="btn" style="font-size: 1.2rem; padding: 0; color: #dc3545; margin-left: 15px;">
+                            <i class="fas fa-times-circle"></i> Rechazar
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-wrapper-footer">
+      <footer class="bg-danger text-white">
+        <div class="container">
+          <div class="row align-items-start">
+            <div class="col-md-2">
+              <div class="d-flex align-items-start mt-4">
+                <img src="{% static 'resources/lyncott-80.png' %}" alt="LogoBlanco" class="img-fluid" style="max-height: 70px" />
+              </div>
+            </div>
+            <div class="col-md-7">
+              <div class="d-flex align-items-center">
+                <div class="contact-info">
+                  <p class="mb-1">Contáctanos</p>
+                  <p class="mb-1">
+                    Circuito El Marqués Sur #9, Parque Industrial El Marqués. Querétaro, México
+                  </p>
+                  <p class="mb-1">
+                    Email:
+                    <a href="mailto:atencion.clientes@lyncott.mx">atencion.clientes@lyncott.mx</a>
+                    | Teléfono: <a href="tel:8005962688">800-596-2688</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex justify-content-end">
+              <div>
+                <img src="{% static 'resources/certificaciones-lyncott-2019.png' %}" alt="Imagen Inferior Derecha" class="img-fluid" style="max-width: 100%" />
+                <div class="text-right">
+                  <p class="mb-0">
+                    &copy; 2024 Lyncott. Todos los derechos reservados.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="{% static 'scripts/scriptsDashboard/mainDashboard.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

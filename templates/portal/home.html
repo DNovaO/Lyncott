@@ -228,7 +228,7 @@
                 </div>
               </div>
 
-              {% comment %} <div class="col-md-12 d-flex flex-column">
+              <div class="col-md-12 d-flex flex-column">
                 <div
                   class="bg-gradient bg-gradient-manuales flex-grow-1 card-uniform"
                 >
@@ -247,7 +247,7 @@
                           {% if user.is_authenticated %}
                           <form
                             method="post"
-                            action="{% url 'manuales' %}"
+                            action="{% url 'dashboard' %}"
                             class="d-inline justify-content-center"
                           >
                             {% csrf_token %}
@@ -256,23 +256,22 @@
                               class="btn btn-dark custom-btn max-content d-flex justify-content-center"
                               style="width: 15rem;"
                             >
-                              <svg
-                                style="margin-top: auto; margin-bottom: auto"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2.25"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                class="lucide lucide-book"
-                              >
-                                <path
-                                  d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"
-                                />
-                              </svg>
+                            <svg 
+                              style="margin-top: auto; margin-bottom: auto"
+                              xmlns="http://www.w3.org/2000/svg" 
+                              width="24" 
+                              height="24" 
+                              viewBox="0 0 24 24" 
+                              fill="none" 
+                              stroke="currentColor" 
+                              stroke-width="2.25" 
+                              stroke-linecap="round" 
+                              stroke-linejoin="round" 
+                              class="lucide lucide-chart-network"
+                            >
+                            <path d="m13.11 7.664 1.78 2.672"/><path d="m14.162 12.788-3.324 1.424"/><path d="m20 4-6.06 1.515"/>
+                            <path d="M3 3v16a2 2 0 0 0 2 2h16"/><circle cx="12" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="9" cy="15" r="2"/>
+                            </svg>
                               <p
                                 style="
                                   padding: 0;
@@ -293,7 +292,7 @@
                     </div>
                   </div>
                 </div>
-              </div> {% endcomment %}
+              </div>
 
               <div class="col-md-12 d-flex flex-column">
                 <div
