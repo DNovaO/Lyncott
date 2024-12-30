@@ -10,21 +10,31 @@ Diego Nova Olguín
     
     Usando get para asi obtener los multiples datos.
     
-*/ 
+*/
+
+export let contador = 0;
+
 export async function apiVentasYDevoluciones() {
     console.log('apiVentasYDevoluciones');
     const endpointURL = '/dashboard/';
 
-    showLoader(); // Mostrar el loader antes de la solicitud
+    showLoaderContainer('loader-wrapper-ventas'); // Mostrar el loader antes de la solicitud
 
     try {
         const response = await fetch(endpointURL, {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
                 "X-CSRFToken": getCookie("csrftoken"),
             },
+            body:JSON.stringify( {
+                "Titulo": "Ventas y Devoluciones",
+            }),
+        }).then(response => {
+            hideLoaderContainer('loader-wrapper-ventas'); // Ocultar el loader una vez que la petición se complete
+            console.log('holi');
+            return response;
         });
 
         if (!response.ok) {
@@ -32,29 +42,34 @@ export async function apiVentasYDevoluciones() {
         }
 
         const data = await response.json();
-        console.log(data);
         return data;
+
     } catch (error) {
         console.error("Error en la solicitud:", error);
-    } finally {
-        hideLoader(); // Ocultar el loader una vez que la petición se complete
-    }
+    } 
 }
 
 export async function estadisticasRapidas() {
     console.log('estadisticasRapidas');
     const endpointURL = '/dashboard/';
 
-    showLoader(); // Mostrar el loader antes de la solicitud
+    showLoaderContainer('loader-wrapper-estadisticas-rapidas'); // Mostrar el loader antes de la solicitud
 
     try {
         const response = await fetch(endpointURL, {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
                 "X-CSRFToken": getCookie("csrftoken"),
             },
+            body:JSON.stringify( { 
+                "Titulo": "Estadisticas Rapidas",
+            }),
+        }).then(response => {
+            hideLoaderContainer('loader-wrapper-estadisticas-rapidas'); // Ocultar el loader una vez que la petición se complete
+            console.log('holi');
+            return response;
         });
 
         if (!response.ok) {
@@ -62,12 +77,9 @@ export async function estadisticasRapidas() {
         }
 
         const data = await response.json();
-        console.log(data);
         return data;
     } catch (error) {
         console.error("Error en la solicitud:", error);
-    } finally {
-        hideLoader(); // Ocultar el loader una vez que la petición se complete
     }
 }
 
@@ -75,16 +87,23 @@ export async function distribucionVentas() {
     console.log('distribucionVentas');
     const endpointURL = '/dashboard/';
 
-    showLoader(); // Mostrar el loader antes de la solicitud
+    showLoaderContainer('loader-wrapper-productos'); // Mostrar el loader antes de la solicitud
 
     try {
         const response = await fetch(endpointURL, {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
                 "X-CSRFToken": getCookie("csrftoken"),
             },
+            body:JSON.stringify( {
+                "Titulo": "Distribucion de Ventas",
+            }),
+        }).then(response => {
+            hideLoaderContainer('loader-wrapper-productos'); // Ocultar el loader una vez que la petición se complete
+            console.log('holi');
+            return response;
         });
 
         if (!response.ok) {
@@ -92,12 +111,9 @@ export async function distribucionVentas() {
         }
 
         const data = await response.json();
-        console.log(data);
         return data;
     } catch (error) {
         console.error("Error en la solicitud:", error);
-    } finally {
-        hideLoader(); // Ocultar el loader una vez que la petición se complete
     }
 }
 
@@ -105,16 +121,23 @@ export async function autorizacionesGasto() {
     console.log('autorizacionesGasto');
     const endpointURL = '/dashboard/';
 
-    showLoader(); // Mostrar el loader antes de la solicitud
+    showLoaderContainer('loader-wrapper-autorizaciones-gastos'); // Mostrar el loader antes de la solicitud
 
     try {
         const response = await fetch(endpointURL, {
-            method: "GET",
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
                 "X-CSRFToken": getCookie("csrftoken"),
             },
+            body:JSON.stringify( {
+                "Titulo": "Autorizaciones de Gasto",
+            }),
+        }).then(response => {
+            hideLoaderContainer('loader-wrapper-autorizaciones-gastos'); // Ocultar el loader una vez que la petición se complete
+            console.log('holi');
+            return response;
         });
 
         if (!response.ok) {
@@ -122,12 +145,11 @@ export async function autorizacionesGasto() {
         }
 
         const data = await response.json();
-        console.log(data);
         return data;
     } catch (error) {
         console.error("Error en la solicitud:", error);
     } finally {
-        hideLoader(); // Ocultar el loader una vez que la petición se complete
+        hideLoaderContainer('loader-wrapper-autorizaciones-gastos'); // Ocultar el loader una vez que la petición se complete
     }
 }
 
@@ -146,18 +168,20 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function showLoader() {
-    const loaderWrapper = document.getElementsByClassName('loader-wrapper');
+function showLoaderContainer(containerID) {
+    const loaderWrapper = document.getElementById(containerID);  // Selecciona un solo elemento
 
-    loaderWrapper.innerHTML = `
-        <p class="loading-text">Cargando</p>
-        <span class="loader-container"></span>
-    `;
-
+    if (loaderWrapper) {  // Asegúrate de que el elemento existe
+        loaderWrapper.innerHTML = `
+            <p class="loading-text">Cargando</p>
+            <span class="loader-container"></span>
+        `;
+    }
 }
 
-function hideLoader() {
-    const loaderWrapper = document.getElementsByClassName('loader-wrapper');
-    loaderWrapper.innerHTML = '';  
+function hideLoaderContainer(containerID) {
+    const loaderWrapper = document.getElementById(containerID);  // Selecciona un solo elemento
+    if (loaderWrapper) {  // Asegúrate de que el elemento existe
+        loaderWrapper.innerHTML = '';  // Elimina el contenido del loader
+    }
 }
-

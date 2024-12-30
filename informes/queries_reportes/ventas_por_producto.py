@@ -30,7 +30,7 @@ def consultaVentasPorProducto(fecha_inicial, fecha_final, cliente_inicial, clien
                 dbo.KDII.C11 AS tipo_unidad,
                 SUM(dbo.KDIJ.C11 * dbo.KDII.C13) AS kgslts,
                 dbo.KDII.C12 AS unidad_medida,
-                SUM(dbo.KDIJ.C14) AS VENTA,
+                SUM(dbo.KDIJ.C14) AS venta,
                 SUM(dbo.KDIJ.C14) / SUM(dbo.KDIJ.C11 * dbo.KDII.C13) AS KG,
                 SUM(dbo.KDIJ.C14) / SUM(dbo.KDIJ.C11) AS unidad_vendida
             FROM dbo.KDIJ
