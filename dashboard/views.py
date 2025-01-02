@@ -25,12 +25,12 @@ def dashboard_view(request):
                 
                 
                 if data_1.get('Titulo') == 'Ventas y Devoluciones':
-                    ventas_ind = ventas_indivuales()
+                    ventas_devoluciones = ventas_contra_devoluciones()
                     
                     data = {
                         "status": "ok",
-                        "ventas": ventas_ind,
-                        "devoluciones": 50,
+                        "titulo": "Ventas y Devoluciones",
+                        "ventas": ventas_devoluciones,
                     } 
                 
                     json_data = json.dumps(data)
@@ -40,10 +40,11 @@ def dashboard_view(request):
                     response['Content-Encoding'] = 'gzip'
 
                     return response
-                
                 elif data_1.get('Titulo') == "Estadisticas Rapidas":
+                
                     data = {
                         "status": "ok",
+                        "titulo": "Estadisticas Rapidas",
                         "ventas": 150,
                         "devoluciones": 50,
                         "productos": 100,
@@ -59,9 +60,11 @@ def dashboard_view(request):
 
                     return response
                 
-                elif data_1.get('Titulo') == "Distribucion de Ventas":
+                elif data_1.get('Titulo') == "Distribucion de Ventas":             
+    
                     data = {
                         "status": "ok",
+                        "titulo": "Distribucion de Ventas",
                         "ventas": 150,
                         "productos": 100,
                         "ventas_totales":500000,
@@ -75,11 +78,11 @@ def dashboard_view(request):
                     response['Content-Encoding'] = 'gzip'
 
                     return response
-                
                 elif data_1.get('Titulo') == "Autorizaciones de Gasto":
                     data = {
                         "status": "ok",
-                        "titulo": "Viaje gastos",
+                        "titulo": "Autorizaciones de Gasto",
+                        "asunto": "Viaje gastos",
                         "gastos": 150,
                         "fecha": "2021-10-10",
                         "autorizacion": "Pendiente",
@@ -93,11 +96,8 @@ def dashboard_view(request):
 
                     return response
                 
-                ventas_ind = ventas_indivuales()
                 data = {
                     "status": "ok",
-                    "ventas": ventas_ind,
-                    "devoluciones": 45,
                 }
 
                 json_data = json.dumps(data)
@@ -120,10 +120,37 @@ def dashboard_view(request):
     return render(request, 'dashboard/dashboard.html')
 
 
-def ventas_indivuales():
+def ventas_contra_devoluciones():
     with connection.cursor() as cursor:
         query_ventas_indivuales = """
-            SELECT SUM(C14) AS VENTAS FROM KDIJ ;
+            SELECT
+                ventas.VENTAS AS ventas,
+                devoluciones.DEVOLUCIONES AS devoluciones
+            FROM (
+                SELECT 
+                    SUM(KDM1.C16) AS VENTAS
+                FROM KDM1
+                WHERE
+                    KDM1.C2 = 'U' 
+                    AND KDM1.C3 = 'D'
+                    AND KDM1.C4 IN ('5', '45')
+                    AND KDM1.C5 IN ('1', '2', '3', '4', '5', '6', '18', '19', '20', '21', '22', '25', '26')
+                    AND KDM1.C9 >= '01-01-2024'
+                    AND KDM1.C9 <= '03-31-2024'
+            ) AS ventas
+            FULL JOIN (
+                SELECT
+                    SUM(KDM1.C16) AS DEVOLUCIONES
+                FROM KDM1
+                WHERE 
+                    KDM1.C2 = 'N' 
+                    AND KDM1.C3 = 'D'   
+                    AND KDM1.C4 = '25' 
+                    AND KDM1.C5 = '12'
+                    AND KDM1.C9 >= '01-01-2024'
+                    AND KDM1.C9 <= '12-31-2024'
+            ) AS devoluciones
+            ON 1=1;
         """
         
         # Ejecutar la consulta

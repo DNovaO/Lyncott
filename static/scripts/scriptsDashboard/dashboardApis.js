@@ -12,10 +12,8 @@ Diego Nova Olguín
     
 */
 
-export let contador = 0;
-
 export async function apiVentasYDevoluciones() {
-    console.log('apiVentasYDevoluciones');
+    // console.log('apiVentasYDevoluciones');
     const endpointURL = '/dashboard/';
 
     showLoaderContainer('loader-wrapper-ventas'); // Mostrar el loader antes de la solicitud
@@ -33,7 +31,7 @@ export async function apiVentasYDevoluciones() {
             }),
         }).then(response => {
             hideLoaderContainer('loader-wrapper-ventas'); // Ocultar el loader una vez que la petición se complete
-            console.log('holi');
+            
             return response;
         });
 
@@ -50,7 +48,7 @@ export async function apiVentasYDevoluciones() {
 }
 
 export async function estadisticasRapidas() {
-    console.log('estadisticasRapidas');
+    // console.log('estadisticasRapidas');
     const endpointURL = '/dashboard/';
 
     showLoaderContainer('loader-wrapper-estadisticas-rapidas'); // Mostrar el loader antes de la solicitud
@@ -68,7 +66,7 @@ export async function estadisticasRapidas() {
             }),
         }).then(response => {
             hideLoaderContainer('loader-wrapper-estadisticas-rapidas'); // Ocultar el loader una vez que la petición se complete
-            console.log('holi');
+            
             return response;
         });
 
@@ -84,7 +82,7 @@ export async function estadisticasRapidas() {
 }
 
 export async function distribucionVentas() {
-    console.log('distribucionVentas');
+    // console.log('distribucionVentas');
     const endpointURL = '/dashboard/';
 
     showLoaderContainer('loader-wrapper-productos'); // Mostrar el loader antes de la solicitud
@@ -102,7 +100,7 @@ export async function distribucionVentas() {
             }),
         }).then(response => {
             hideLoaderContainer('loader-wrapper-productos'); // Ocultar el loader una vez que la petición se complete
-            console.log('holi');
+            
             return response;
         });
 
@@ -118,7 +116,7 @@ export async function distribucionVentas() {
 }
 
 export async function autorizacionesGasto() {
-    console.log('autorizacionesGasto');
+    // console.log('autorizacionesGasto');
     const endpointURL = '/dashboard/';
 
     showLoaderContainer('loader-wrapper-autorizaciones-gastos'); // Mostrar el loader antes de la solicitud
@@ -136,7 +134,7 @@ export async function autorizacionesGasto() {
             }),
         }).then(response => {
             hideLoaderContainer('loader-wrapper-autorizaciones-gastos'); // Ocultar el loader una vez que la petición se complete
-            console.log('holi');
+            
             return response;
         });
 
@@ -151,21 +149,6 @@ export async function autorizacionesGasto() {
     } finally {
         hideLoaderContainer('loader-wrapper-autorizaciones-gastos'); // Ocultar el loader una vez que la petición se complete
     }
-}
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
 }
 
 function showLoaderContainer(containerID) {
@@ -183,5 +166,22 @@ function hideLoaderContainer(containerID) {
     const loaderWrapper = document.getElementById(containerID);  // Selecciona un solo elemento
     if (loaderWrapper) {  // Asegúrate de que el elemento existe
         loaderWrapper.innerHTML = '';  // Elimina el contenido del loader
+        //Eliminar el loader del DOM
+        loaderWrapper.remove();
     }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }

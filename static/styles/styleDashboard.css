@@ -29,8 +29,7 @@ body {
   justify-content: center;
   flex: 1;
   margin: 0;
-  padding-left: 2vh;
-  padding-right: 2vh;
+  width: 100%;
 }
 
 .content-wrapper-footer {
@@ -284,4 +283,29 @@ footer {
     box-shadow: 18px 0 0 #010000;
     margin-top: 0;
   }
+}
+
+.chart-container {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  width: 100%;   
+  height: 100%;
+}
+
+#barChart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+#resumen-grafica {
+  opacity: 0;               /* Inicialmente el resumen estará oculto */
+  transform: translateY(20px); /* Inicia desplazado hacia abajo */
+  transition: opacity 0.8s ease-in, transform 0.5s ease-in; /* Transición suave */
+}
+#resumen-grafica.visible {
+  opacity: 1;               /* Aparece cuando se le agrega la clase 'visible' */
+  transform: translateY(0); /* Vuelve a su posición original */
 }

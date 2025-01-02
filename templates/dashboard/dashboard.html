@@ -42,19 +42,19 @@
       </div>
     </nav>
 
-    <div class="container-flex pt-3 pl-3 pr-3">
+    <div class="container-flex pt-3">
       <div class="content-wrapper">
         <div id="loader" class="loader"></div>
 
-        <div class="container mt-4 ">
+        <div class="container-fluid mt-4" style="width: 100%">
           <div class="row g-4">
             <!-- Centro de Notificaciones -->
-            <div class="col-md-4">
+            <div class="col-md-3">
               <div class="card h-100 shadow-sm">
                 <div class="card-header card-header-custom-1 text-white">
-                  <h3 class="card-title mb-0">Centro de notificaciones</h3>
+                  <h3 class="card-title mb-0">Avisos</h3>
                 </div>
-                <div class="card-body">
+                <div id="body-notificaciones" class="card-body">
                   <div id="loader-wrapper-notificaciones" class="loader-wrapper"></div>
                   <ul class="list-group list-group-flush">
                     <!-- Aqui se deben de cargar las notificaciones de manera dinamica -->
@@ -64,40 +64,35 @@
             </div>
 
             <!-- Gráfica de Barras -->
-            <div class="col-md-8">
-              <div class="card h-100 shadow-sm">
-                <div class="card-header card-header-custom-2 text-white">
-                  <h3 class="card-title mb-0">Gráfica de ventas</h3>
-                </div>
-                <div class="card-body">
-                  <div id="loader-wrapper-ventas" class="loader-wrapper"></div>
-                  <!-- En base a datos reportados de manera anual se debe de generar la gráfica -->
-                  <canvas id="barChart"></canvas>
-                </div>
-              </div>
-            </div>
-
-            <!-- Gráfica Circular -->
             <div class="col-md-6">
-              <div class="card h-100 shadow-sm">
-                <div class="card-header card-header-custom-3 text-white">
-                  <h3 class="card-title mb-0">Distribución de productos</h3>
+              <div class="card h-60 shadow-sm">
+                <div class="card-header card-header-custom-2 text-white">
+                  <h3 class="card-title mb-0">Ventas/Devoluciones</h3>
                 </div>
-                <div class="card-body">
-                  <div id="loader-wrapper-productos" class="loader-wrapper"></div>
-                  <!-- En base a datos reportados de manera anual se debe de generar la gráfica -->
-                  <canvas id="pieChart"></canvas>
+
+                <div id="body-venta-devoluciones" class="card-body d-flex flex-column">
+                  
+                  <div id="resumen-grafica" class="data-container mb-3 mb-md-0 d-flex flex-column justify-content-center" style="flex: 0.5;">
+                    <br></br>
+                  </div>
+                  
+                  <div  id="loader-wrapper-ventas" class="loader-wrapper"></div>
+                  
+                  <!-- Gráfico abajo -->
+                  <div class="chart-container d-flex flex-column justify-content-center" style="flex: 1.5; position: relative;">
+                    <canvas id="barChart"></canvas>
+                  </div>
                 </div>
               </div>
             </div>
 
             <!-- Estadísticas -->
-            <div class="col-md-6">
+            <div class="col-md-3">
               <div class="card h-100 shadow-sm">
                 <div class="card-header card-header-custom-4 text-white">
                   <h3 class="card-title mb-0">Estadísticas rápidas</h3>
                 </div>
-                <div class="card-body">
+                <div id="body-estadisticas-rapidas" class="card-body">
                   <div id="loader-wrapper-estadisticas-rapidas" class="loader-wrapper"></div>
                   <ul class="list-group list-group-flush">
                     <!-- En base a datos reportados de manera anual se deben de obtener las estadisticas mas rapidas como ventas, devoluciones, kilos vendidos, etc. Sin gráfica. -->
@@ -105,6 +100,21 @@
                 </div>
               </div>
             </div>
+
+            <!-- Gráfica Circular -->
+            <div class="col-md-12">
+              <div class="card h-100 shadow-sm">
+                <div class="card-header card-header-custom-3 text-white">
+                  <h3 class="card-title mb-0">Distribución de productos</h3>
+                </div>
+                <div id="body-distribucion-productos" class="card-body">
+                  <div id="loader-wrapper-productos" class="loader-wrapper"></div>
+                  <!-- En base a datos reportados de manera anual se debe de generar la gráfica -->
+                  <canvas id="pieChart"></canvas>
+                </div>
+              </div>
+            </div>
+
 
             <!-- Autorizaciones de Gastos -->
             <div class="col-md-12 mb-5">
@@ -115,7 +125,7 @@
                 <div id="loader-wrapper-autorizaciones-gastos" class="loader-wrapper">
 
                 </div>
-                <div class="card-body">
+                <div id="body-autorizaciones-gastos" class="card-body">
                   <ul class="list-group list-group-flush">
                     <!-- Autorizaciones de gastos -->
                     <li class="list-group-item">
@@ -187,6 +197,8 @@
 
     <script type="module" src="{% static 'scripts/scriptsDashboard/mainDashboard.js' %}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </body>
