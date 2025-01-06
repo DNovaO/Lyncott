@@ -73,6 +73,115 @@ body {
     background-color: #ED1C24; /* Gama de rojo intenso */
 }
 
+/* Contenedor principal */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Contenedor del Date Picker */
+.date-container {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Espaciado entre etiqueta e input */
+  justify-content: center;
+  flex-wrap: nowrap; /* Mantiene elementos en una sola fila */
+  margin: 20px auto;
+}
+
+/* Etiqueta */
+.date-label {
+  font-weight: 700;
+  white-space: nowrap; /* Evita que el texto salte de línea */
+  font-size: medium;
+}
+
+/* Input y Calendario */
+.date-input-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  max-width: 200px; /* Limita el ancho del input */
+}
+
+.form-control {
+  width: 100%; /* Input ocupa el espacio disponible en su contenedor */
+  padding-right: 35px; /* Espacio para el ícono */
+  padding-left: 10px;
+  font-size: 14px; /* Tamaño de texto ajustado */
+  box-sizing: border-box;
+}
+
+/* Ícono del Calendario */
+.calendar-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #000;
+  cursor: pointer;
+}
+
+/* Contenedor principal */
+#resumen-grafica-numeros {
+  display: flex;
+  flex-direction: column; /* Elementos en columna por defecto */
+  justify-content: center;
+  flex: 0.5;
+}
+
+.resumen-numeros {
+  display: flex;
+  flex-wrap: wrap; /* Permite que los elementos se ajusten si el espacio es pequeño */
+  gap: 20px; /* Espacio entre columnas */
+  justify-content: center; /* Alinea los elementos al centro */
+}
+
+.resumen-numeros p {
+  flex: 1 0 45%; /* Asegura que cada párrafo ocupe el 45% del ancho (en 2 columnas) */
+  text-align: left; /* Alineación izquierda de texto */
+  margin: 0; /* Elimina márgenes innecesarios */
+}
+
+@media (max-width: 768px) {
+  .resumen-numeros p {
+    flex: 1 0 100%; /* En pantallas pequeñas, los elementos ocupan el 100% del ancho */
+    text-align: center; /* Centra el texto en pantallas pequeñas */
+  }
+}
+
+/* Media Queries para Responsividad */
+@media (max-width: 768px) {
+  .date-container {
+    flex-direction: column; /* Elementos en columna para pantallas pequeñas */
+    align-items: center;
+    gap: 10px; /* Espacio reducido */
+  }
+
+  .date-label {
+    margin-bottom: 5px; /* Espacio entre la etiqueta y el input */
+  }
+
+  .date-input-wrapper {
+    max-width: 100%; /* Input ocupa todo el ancho disponible */
+  }
+
+  .form-control {
+    font-size: 13px; /* Ajusta el tamaño del texto */
+  }
+}
+
+@media (max-width: 480px) {
+  .form-control {
+    font-size: 12px; /* Texto más pequeño en pantallas muy pequeñas */
+  }
+
+  .calendar-icon {
+    right: 5px; /* Ajusta la posición del ícono */
+  }
+}
 
 footer {
   background-color: #ed1c24;
@@ -291,8 +400,9 @@ footer {
   flex-direction: column;
   justify-content: center;
   position: relative;
-  width: 100%;   
-  height: 100%;
+  width: 60%;   
+  height: 60%;
+  margin: 0 auto;
 }
 
 #barChart {
@@ -301,11 +411,23 @@ footer {
 }
 
 #resumen-grafica {
-  opacity: 0;               /* Inicialmente el resumen estará oculto */
-  transform: translateY(20px); /* Inicia desplazado hacia abajo */
-  transition: opacity 0.8s ease-in, transform 0.5s ease-in; /* Transición suave */
+  opacity: 0;               
+  transform: translateY(20px); 
+  transition: opacity 0.8s ease-in, transform 0.5s ease-in;
 }
+
 #resumen-grafica.visible {
-  opacity: 1;               /* Aparece cuando se le agrega la clase 'visible' */
-  transform: translateY(0); /* Vuelve a su posición original */
+  opacity: 1;               
+  transform: translateY(0);
+}
+
+#resumen-grafica-numeros {
+  opacity: 0;               
+  transform: translateY(20px); 
+  transition: opacity 0.8s ease-in, transform 0.5s ease-in;
+}
+
+#resumen-grafica-numeros.visible {
+  opacity: 1;               
+  transform: translateY(0);
 }

@@ -12,11 +12,11 @@ Diego Nova Olguín
     
 */
 
-export async function apiVentasYDevoluciones() {
+export async function apiVentasYDevoluciones(fecha) {
     // console.log('apiVentasYDevoluciones');
     const endpointURL = '/dashboard/';
 
-    showLoaderContainer('loader-wrapper-ventas'); // Mostrar el loader antes de la solicitud
+    showLoaderContainer('loader-wrapper-ventas','body-venta-devoluciones'); // Mostrar el loader antes de la solicitud
 
     try {
         const response = await fetch(endpointURL, {
@@ -28,9 +28,10 @@ export async function apiVentasYDevoluciones() {
             },
             body:JSON.stringify( {
                 "Titulo": "Ventas y Devoluciones",
+                "Fecha": fecha,
             }),
         }).then(response => {
-            hideLoaderContainer('loader-wrapper-ventas'); // Ocultar el loader una vez que la petición se complete
+            hideLoaderContainer('loader-wrapper-ventas','body-venta-devoluciones'); // Ocultar el loader una vez que la petición se complete
             
             return response;
         });
@@ -51,7 +52,7 @@ export async function estadisticasRapidas() {
     // console.log('estadisticasRapidas');
     const endpointURL = '/dashboard/';
 
-    showLoaderContainer('loader-wrapper-estadisticas-rapidas'); // Mostrar el loader antes de la solicitud
+    showLoaderContainer('loader-wrapper-estadisticas-rapidas','body-estadisticas-rapidas'); // Mostrar el loader antes de la solicitud
 
     try {
         const response = await fetch(endpointURL, {
@@ -65,7 +66,7 @@ export async function estadisticasRapidas() {
                 "Titulo": "Estadisticas Rapidas",
             }),
         }).then(response => {
-            hideLoaderContainer('loader-wrapper-estadisticas-rapidas'); // Ocultar el loader una vez que la petición se complete
+            hideLoaderContainer('loader-wrapper-estadisticas-rapidas', 'body-estadisticas-rapidas'); // Ocultar el loader una vez que la petición se complete
             
             return response;
         });
@@ -85,7 +86,7 @@ export async function distribucionVentas() {
     // console.log('distribucionVentas');
     const endpointURL = '/dashboard/';
 
-    showLoaderContainer('loader-wrapper-productos'); // Mostrar el loader antes de la solicitud
+    showLoaderContainer('loader-wrapper-productos','body-distribucion-productos'); // Mostrar el loader antes de la solicitud
 
     try {
         const response = await fetch(endpointURL, {
@@ -99,7 +100,7 @@ export async function distribucionVentas() {
                 "Titulo": "Distribucion de Ventas",
             }),
         }).then(response => {
-            hideLoaderContainer('loader-wrapper-productos'); // Ocultar el loader una vez que la petición se complete
+            hideLoaderContainer('loader-wrapper-productos','body-distribucion-productos'); // Ocultar el loader una vez que la petición se complete
             
             return response;
         });
@@ -119,7 +120,7 @@ export async function autorizacionesGasto() {
     // console.log('autorizacionesGasto');
     const endpointURL = '/dashboard/';
 
-    showLoaderContainer('loader-wrapper-autorizaciones-gastos'); // Mostrar el loader antes de la solicitud
+    showLoaderContainer('loader-wrapper-autorizaciones-gastos','body-autorizaciones-gastos'); // Mostrar el loader antes de la solicitud
 
     try {
         const response = await fetch(endpointURL, {
@@ -133,7 +134,7 @@ export async function autorizacionesGasto() {
                 "Titulo": "Autorizaciones de Gasto",
             }),
         }).then(response => {
-            hideLoaderContainer('loader-wrapper-autorizaciones-gastos'); // Ocultar el loader una vez que la petición se complete
+            hideLoaderContainer('loader-wrapper-autorizaciones-gastos','body-autorizaciones-gastos'); // Ocultar el loader una vez que la petición se complete
             
             return response;
         });
@@ -151,24 +152,37 @@ export async function autorizacionesGasto() {
     }
 }
 
-function showLoaderContainer(containerID) {
+export function showLoaderContainer(containerID, bodyID) {
     const loaderWrapper = document.getElementById(containerID);  // Selecciona un solo elemento
+    const cardBody = document.getElementById(bodyID);  // Selecciona un solo elemento
+    console.log('loaderWrapper', loaderWrapper);
+    
+    if (cardBody){
+        cardBody.style.opacity = 0.5;  // Reducir la opacidad del contenido mientras se carga el loader
+        loaderWrapper.style.opacity = 1; 
+    }
 
-    if (loaderWrapper) {  // Asegúrate de que el elemento existe
+    if (loaderWrapper) {  // Asegúrate de que el elemento loaderWrapper existe
         loaderWrapper.innerHTML = `
-            <p class="loading-text">Cargando</p>
+            <p class="loading-text">Cargando...</p>
             <span class="loader-container"></span>
         `;
     }
 }
 
-function hideLoaderContainer(containerID) {
+export function hideLoaderContainer(containerID, bodyID) {
     const loaderWrapper = document.getElementById(containerID);  // Selecciona un solo elemento
+    const cardBody = document.getElementById(bodyID);  // Selecciona un solo elemento
+    console.log('loaderWrapper', loaderWrapper);
+
+    if (cardBody){
+        cardBody.style.opacity = 1;  // Restaurar la opacidad del contenido
+    }
+    
     if (loaderWrapper) {  // Asegúrate de que el elemento existe
         loaderWrapper.innerHTML = '';  // Elimina el contenido del loader
-        //Eliminar el loader del DOM
-        loaderWrapper.remove();
     }
+
 }
 
 function getCookie(name) {

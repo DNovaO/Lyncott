@@ -1,3 +1,6 @@
+import { apiVentasYDevoluciones, hideLoaderContainer,  showLoaderContainer } from './dashboardApis.js';
+import { flatpickrdate } from './utilsDashboard.js';
+
 export function manejarVentasYDevoluciones(datos) {
     console.log('Datos desde el manejo del API de ventas y devoluciones', datos);
 
@@ -60,7 +63,7 @@ export function manejarVentasYDevoluciones(datos) {
             plugins: {
                 legend: {
                     display: true,
-                    position: 'top',  // Coloca la leyenda debajo del gráfico
+                    position: 'top',  // Coloca la leyenda en la parte superior del gráfico
                     labels: {
                         font: {
                             size: 14,  // Tamaño de la fuente de la leyenda
@@ -93,25 +96,75 @@ export function manejarVentasYDevoluciones(datos) {
     // Después de que el gráfico se haya generado, agregar el resumen
     setTimeout(() => {
         const resumenHtml = document.getElementById('resumen-grafica');  // Obtener el contenedor del resumen
+        const resumenHtmlnumeros = document.getElementById('resumen-grafica-numeros');  // Obtener el contenedor del resumen
 
         if (resumenHtml) {
             resumenHtml.innerHTML = `
-                <h5 class="mb-3 text-center">Resumen trimestral</h5>
-                <div class="justify-content-center">
-                    <p class="text-center">
-                        <strong>Total ventas:</strong> <span id="ventasData">$${ventas.toLocaleString('es-MX')}</span>
-                        <br>
-                        <strong>Total devoluciones:</strong> <span id="devolucionesData">$${devoluciones.toLocaleString('es-MX')}</span>
+                <h5 class="mb-1 text-center">Resumen de periodo</h5>
+
+                <div class="container text-center">    
+                    <div class="date-container">
+                        <label for="fecha_inicial" class="date-label">Fecha inicial:</label>
+                        <div class="date-input-wrapper">
+                            <input type="text" id="fecha_inicial" name="fecha_inicial" class="form-control" />
+                            <i class="fas fa-calendar-alt calendar-icon" id="calendar-icon-inicial"></i>
+                        </div>
+                    </div>
+                </div>
+
+            `;
+
+            resumenHtmlnumeros.innerHTML = `
+                <div class="resumen-numeros">
+                    <p class="text-center mt-2">
+                    <strong>Total ventas:</strong> <span id="ventasData">$${ventas.toLocaleString('es-MX')}</span>
+                    </p>
+                    <p class="text-center mt-2">
+                    <strong>Total devoluciones:</strong> <span id="devolucionesData">$${devoluciones.toLocaleString('es-MX')}</span>
                     </p>
                 </div>
             `;
 
+            // Agregar funcionalidad al ícono para abrir el selector
+            const calendarIconInicial = document.getElementById('calendar-icon-inicial');
+            if (calendarIconInicial) {
+                calendarIconInicial.addEventListener('click', () => {
+                    document.getElementById('fecha_inicial').focus();
+                });
+            }
+
             // Esperar un poco antes de activar la transición
             setTimeout(() => {
-                resumenHtml.classList.add('visible');  // Añadir la clase 'visible' para iniciar la transición
+                const fechaInput = document.getElementById('fecha_inicial');
+                if (fechaInput) {
+                    fechaInput.addEventListener('change', function () {
+                        const fecha = fechaInput.value;  // Obtener el valor actualizado del input
+                        console.log('Fecha seleccionada:', fecha);  // Mostrar la fecha actualizada
+                        recargarDatos(fecha);
+                    });
+                }
+
+                flatpickrdate();
+                resumenHtml.classList.add('visible'); 
+                resumenHtmlnumeros.classList.add('visible');  
             }, 100);  // Retraso corto para permitir que el contenido se cargue antes de la animación
         } else {
             console.error('No se encontró el contenedor con id "resumen-grafica"');
         }
     }, 50);  // Tiempo de espera para asegurarse de que la gráfica se haya renderizado
+}
+
+function recargarDatos(fecha) {
+    showLoaderContainer('loader-wrapper-ventas', 'body-venta-devoluciones');
+    apiVentasYDevoluciones(fecha)
+        .then(response => {
+            if (response) {
+                manejarVentasYDevoluciones(response);
+            }
+        })
+        .catch(error => {
+            console.error('Error al recargar los datos:', error);
+        }).finally(() => {
+            hideLoaderContainer('loader-wrapper-ventas','body-venta-devoluciones');
+        });
 }
