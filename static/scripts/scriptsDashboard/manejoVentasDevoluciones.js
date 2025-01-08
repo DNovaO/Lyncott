@@ -1,5 +1,9 @@
-import { apiVentasYDevoluciones, hideLoaderContainer,  showLoaderContainer } from './dashboardApis.js';
+import { apiVentasYDevoluciones, hideLoaderContainer, showLoaderContainer } from './dashboardApis.js';
 import { flatpickrdate } from './utilsDashboard.js';
+
+let isReloading = false;  // Flag to track if a reload is in progress
+let fecha_inicial_actual = null;
+let fecha_final_actual = null;
 
 export function manejarVentasYDevoluciones(datos) {
     console.log('Datos desde el manejo del API de ventas y devoluciones', datos);
@@ -100,25 +104,39 @@ export function manejarVentasYDevoluciones(datos) {
 
         if (resumenHtml) {
             resumenHtml.innerHTML = `
-                <h5 class="mb-1 text-center">Resumen de periodo</h5>
+                <h4 class="mb-1 text-center">Resumen de periodo</h4>
 
-                <div class="row container text-center">    
-                    <div class="date-container">
-                        <label for="fecha_inicial" class="date-label">Fecha inicial:</label>
-                        <div class="date-input-wrapper">
-                            <input type="text" id="fecha_inicial" name="fecha_inicial" class="form-control" />
-                            <i class="fas fa-calendar-alt calendar-icon" id="calendar-icon-inicial"></i>
+                <div class="container mb-2">
+                    <!-- Fila para las fechas -->
+                    <div class="row g-3 align-items-center justify-content-center">
+                        <div class="col-md-6">
+                            <div class="date-container">
+                                <label for="fecha_inicial" class="date-label">Fecha inicial:</label>
+                                <div class="date-input-wrapper">
+                                    <input type="text" id="fecha_inicial" name="fecha_inicial" class="form-control" />
+                                    <i class="fas fa-calendar-alt calendar-icon" id="calendar-icon-inicial"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="date-container">
+                                <label for="fecha_final" class="date-label">Fecha final:</label>
+                                <div class="date-input-wrapper">
+                                    <input type="text" id="fecha_final" name="fecha_final" class="form-control" />
+                                    <i class="fas fa-calendar-alt calendar-icon" id="calendar-icon-final"></i>
+                                </div>
                         </div>
                     </div>
-                    <div class="date-container">
-                        <label for="fecha_final" class="date-label">Fecha final:</label>
-                        <div class="date-input-wrapper">
-                            <input type="text" id="fecha_final" name="fecha_final" class="form-control" />
-                            <i class="fas fa-calendar-alt calendar-icon" id="calendar-icon-final"></i>
+
+                    <!-- Botón de actualizar -->
+                    <div class="row justify-content-center mt-3">
+                        <div class="col-md-6 text-center">
+                            <button id="btnActualizar" class="btn btn-custom w-100">
+                                <i class="fas fa-sync-alt me-2"></i><span style="font-weight:500;">Actualizar</span>
+                            </button>
                         </div>
                     </div>
                 </div>
-
             `;
 
             resumenHtmlnumeros.innerHTML = `
@@ -140,49 +158,104 @@ export function manejarVentasYDevoluciones(datos) {
                 });
             }
 
+            const calendarIconFinal = document.getElementById('calendar-icon-final');
+            if (calendarIconFinal) {
+                calendarIconFinal.addEventListener('click', () => {
+                    document.getElementById('fecha_final').focus();
+                });
+            }
+
             // Esperar un poco antes de activar la transición
             setTimeout(() => {
                 const fechaInput = document.getElementById('fecha_inicial');
                 const fechaInputFinal = document.getElementById('fecha_final');
-                if (fechaInput) {
-                    fechaInput.addEventListener('change', function () {
-                        const fecha = fechaInput.value;  // Obtener el valor actualizado del input
-                        const fechaFinal = fechaInputFinal.value;  // Obtener el valor actualizado del input
-                        console.log('Fecha seleccionada:', fecha, fechaFinal);  // Mostrar la fecha actualizada
-                        recargarDatos(fecha, fechaFinal);
+                const btnActualizar = document.getElementById('btnActualizar');
+
+                // Establecer las fechas en los inputs solo si no están definidas
+                if (fecha_inicial_actual && fecha_final_actual) {
+                    fechaInput.value = fecha_inicial_actual;
+                    fechaInputFinal.value = fecha_final_actual;
+                }
+
+                // Configurar flatpickr si aún no está configurado
+                flatpickrdate(fecha_inicial_actual, fecha_final_actual);
+
+                // Configurar el evento de actualización de las fechas
+                if (btnActualizar) {
+                    btnActualizar.addEventListener('click', function () {
+                        const fechaSeleccionada = fechaInput.value || fecha_inicial_actual;
+                        const fechaFinalSeleccionada = fechaInputFinal.value || fecha_final_actual;
+
+                        console.log('Fecha seleccionada por el usuario:', fechaSeleccionada, fechaFinalSeleccionada);
+                        recargarDatosAPI(fechaSeleccionada, fechaFinalSeleccionada);
                     });
                 }
 
-                if (fechaInputFinal) {
-                    fechaInputFinal.addEventListener('change', function () {
-                        const fechaFinal = fechaInputFinal.value;  // Obtener el valor actualizado del input
-                        const fecha = fechaInput.value;  // Obtener el valor actualizado del input
-                        console.log('Fecha seleccionada:', fecha, fechaFinal);  // Mostrar la fecha actualizada
-                        recargarDatos(fecha, fechaFinal);
-                    });
+                // Activar la visibilidad del resumen
+                if (resumenHtml && resumenHtmlnumeros) {
+                    resumenHtml.classList.add('visible');
+                    resumenHtmlnumeros.classList.add('visible');
                 }
+            }, 100); // Retraso corto para permitir que el contenido se cargue antes de la animación
 
-                flatpickrdate();
-                resumenHtml.classList.add('visible'); 
-                resumenHtmlnumeros.classList.add('visible');  
-            }, 100);  // Retraso corto para permitir que el contenido se cargue antes de la animación
+
+
         } else {
             console.error('No se encontró el contenedor con id "resumen-grafica"');
         }
     }, 50);  // Tiempo de espera para asegurarse de que la gráfica se haya renderizado
 }
 
-function recargarDatos(fecha, fechaFinal) {
+function recargarDatosAPI(fecha, fechaFinal) {
+    if (isReloading) {
+        console.log('Reload already in progress. Skipping this request.');
+        return;
+    }
+
+    isReloading = true; // Indica que una recarga está en curso
+
+    const fechaInput = document.getElementById('fecha_inicial');
+    const fechaInputFinal = document.getElementById('fecha_final');
+    const btnActualizar = document.getElementById('btnActualizar');
+
+    console.log('Fechas enviadas para recarga:', fecha, fechaFinal);
+
     showLoaderContainer('loader-wrapper-ventas', 'body-venta-devoluciones');
+    fechaInput.disabled = true;
+    fechaInputFinal.disabled = true;
+    btnActualizar.disabled = true;
+
     apiVentasYDevoluciones(fecha, fechaFinal)
         .then(response => {
-            if (response) {
+            if (response && response.status === "ok") {
                 manejarVentasYDevoluciones(response);
+
+                // Verifica si el API contiene fechas y actualiza los inputs solo si son diferentes
+                if (response.fecha && response.fecha_final) {
+                    if (response.fecha !== fecha_inicial_actual) {
+                        fechaInput.value = response.fecha;
+                        fecha_inicial_actual = response.fecha;
+                    }
+                    if (response.fecha_final !== fecha_final_actual) {
+                        fechaInputFinal.value = response.fecha_final;
+                        fecha_final_actual = response.fecha_final;
+                    }
+                    console.log('Fechas actualizadas desde el API:', response.fecha, response.fecha_final);
+                } else {
+                    console.log('El API no devolvió fechas. Se mantienen las actuales.');
+                }
+            } else {
+                console.error('Datos inválidos recibidos del API:', response);
             }
         })
         .catch(error => {
             console.error('Error al recargar los datos:', error);
-        }).finally(() => {
-            hideLoaderContainer('loader-wrapper-ventas','body-venta-devoluciones');
+        })
+        .finally(() => {
+            hideLoaderContainer('loader-wrapper-ventas', 'body-venta-devoluciones');
+            fechaInput.disabled = false;
+            fechaInputFinal.disabled = false;
+            btnActualizar.disabled = false;
+            isReloading = false; // Restablece el indicador de recarga
         });
 }

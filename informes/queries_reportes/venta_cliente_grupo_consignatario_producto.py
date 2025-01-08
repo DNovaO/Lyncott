@@ -22,11 +22,11 @@ def consultaVentaClienteGrupoConsignatarioProducto(fecha_inicial, fecha_final, s
         filtro_sucursal = f"AND KDIJ.C1 BETWEEN '{sucursal_inicial}' AND '{sucursal_final}'"
 
     if grupoCorporativo_inicial == 'ALL' and grupoCorporativo_final == 'ALL':
-        filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
+        filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '' AND 'POSAD'"
     elif grupoCorporativo_inicial == 'ALL':
-        filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
+        filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '' AND 'POSAD'"
     elif grupoCorporativo_final == 'ALL':
-        filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '7 ELEV' AND 'POSAD'"
+        filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '' AND 'POSAD'"
     else:
         filtro_grupoCorporativo = f"KDUD.C66 BETWEEN '{grupoCorporativo_inicial}' AND '{grupoCorporativo_final}'"
     
@@ -69,7 +69,7 @@ def consultaVentaClienteGrupoConsignatarioProducto(fecha_inicial, fecha_final, s
                 KDIJ 
                 INNER JOIN KDMS ON KDMS.C1 = KDIJ.C1
                 INNER JOIN KDII ON KDIJ.C3 = KDII.C1 
-                INNER JOIN KDUD ON KDIJ.C15 = KDUD.C2
+                LEFT JOIN KDUD ON KDIJ.C15 = KDUD.C2
                 LEFT JOIN KDCORPO ON KDUD.C66 = KDCORPO.C1    
                 INNER JOIN KDM1 ON KDIJ.C1 = KDM1.C1 
                     AND KDIJ.C4 = KDM1.C2 
@@ -77,12 +77,12 @@ def consultaVentaClienteGrupoConsignatarioProducto(fecha_inicial, fecha_final, s
                     AND KDIJ.C6 = KDM1.C4 
                     AND KDIJ.C7 = KDM1.C5 
                     AND KDIJ.C8 = KDM1.C6
-                INNER JOIN KDVDIREMB ON KDM1.C10 = KDVDIREMB.C1 
+                LEFT JOIN KDVDIREMB ON KDM1.C10 = KDVDIREMB.C1 
                     AND KDM1.C181 = KDVDIREMB.C2
                 LEFT JOIN KDIF ON KDIF.C1 = KDII.C5
                 LEFT JOIN KDSEGMENTACION ON KDSEGMENTACION.C1 = KDVDIREMB.C78
                 -- Join directo con los clientes filtrados
-                INNER JOIN ClientesFiltrados CF ON KDUD.C2 = CF.C2
+                FULL JOIN ClientesFiltrados CF ON KDUD.C2 = CF.C2
             WHERE  
                 KDIJ.C10 BETWEEN @fecha_inicial AND @fecha_final
                 {filtro_sucursal}
@@ -105,7 +105,6 @@ def consultaVentaClienteGrupoConsignatarioProducto(fecha_inicial, fecha_final, s
                 KDSEGMENTACION.C2
             ORDER BY
                 KDM1.C181, KDII.C1;
-
         """
 
         params = [

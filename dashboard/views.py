@@ -24,17 +24,20 @@ def dashboard_view(request):
                 print(f"POST Data Received: {data_json}")
                 
                 if data_json.get('Titulo') == 'Ventas y Devoluciones':
-                    fecha_inicio = data_json.get('Fecha_inicial')
-                    fecha_fin = data_json.get('Fecha_final')
-                    ventas_devoluciones = ventas_contra_devoluciones(fecha_inicio, fecha_fin)
+                    fecha_inicial = data_json.get('Fecha_inicial')
+                    fecha_final = data_json.get('Fecha_final')
+                    
+                    ventas_devoluciones = ventas_contra_devoluciones(fecha_inicial, fecha_final)
                     
                     data = {
                         "status": "ok",
                         "titulo": "Ventas y Devoluciones",
                         "ventas": ventas_devoluciones,
-                        "fecha": fecha_inicio,
-                        "fecha_final": fecha_fin,
+                        "fecha": fecha_inicial,
+                        "fecha_final": fecha_final,
                     } 
+
+                    print(f"Ventas y Devoluciones: {data}")
                 
                     json_data = json.dumps(data)
                     compressed_data = gzip.compress(json_data.encode('utf-8'))

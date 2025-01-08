@@ -1,21 +1,18 @@
 from decimal import Decimal
+from datetime import datetime
 from django.db import connection
 
 
 def ventas_contra_devoluciones(fecha=None, fecha_final=None):
+    print(f"Fecha Inicial: {fecha}")
+    print(f"Fecha Final: {fecha_final}")
     
     # Establecer la fecha por defecto si no se pasa ninguna
-    if not fecha and not fecha_final:
-        fecha = '01-01-2024'   
-        fecha_final = '01-31-2024'
-        
-
+    fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
+    fecha_final_parseada = parse_date(fecha_final) or '2024-01-31'
+    
     with connection.cursor() as cursor:
-        query_ventas_indivuales = f"""
-            DECLARE
-                @fecha_inicial AS VARCHAR(20) = %s,
-                @fecha_final as VARCHAR(20) = %s;
-                
+        query_ventas_indivuales = """
             SELECT
                 ventas.VENTAS AS ventas,
                 devoluciones.DEVOLUCIONES AS devoluciones
@@ -28,8 +25,8 @@ def ventas_contra_devoluciones(fecha=None, fecha_final=None):
                     AND KDM1.C3 = 'D'
                     AND KDM1.C4 IN ('5', '45')
                     AND KDM1.C5 IN ('1', '2', '3', '4', '5', '6', '18', '19', '20', '21', '22', '25', '26')
-                    AND KDM1.C9 >= CONVERT(DATETIME, @fecha_inicial, 102)
-                    AND KDM1.C9 <= CONVERT(DATETIME, @fecha_final, 102)
+                    AND KDM1.C9 >= CAST(%s AS DATE)
+                    AND KDM1.C9 <= CAST(%s AS DATE)
             ) AS ventas
             FULL JOIN (
                 SELECT
@@ -40,15 +37,14 @@ def ventas_contra_devoluciones(fecha=None, fecha_final=None):
                     AND KDM1.C3 = 'D'   
                     AND KDM1.C4 = '25' 
                     AND KDM1.C5 = '12'
-                    AND KDM1.C9 >= CONVERT(DATETIME, @fecha_inicial, 102)
-                    AND KDM1.C9 <= CONVERT(DATETIME, @fecha_final, 102)
+                    AND KDM1.C9 >= CAST(%s AS DATE)
+                    AND KDM1.C9 <= CAST(%s AS DATE)
             ) AS devoluciones
             ON 1=1;
         """
         
-        
         # Ejecutar la consulta
-        cursor.execute(query_ventas_indivuales, [fecha, fecha_final])
+        cursor.execute(query_ventas_indivuales, [fecha_inicial_parseada, fecha_final_parseada, fecha_inicial_parseada, fecha_final_parseada])
 
         # Obtener los resultados
         columns = [col[0] for col in cursor.description]
@@ -60,3 +56,13 @@ def ventas_contra_devoluciones(fecha=None, fecha_final=None):
                     row[key] = float(value)
 
     return result
+
+
+def parse_date(date_str):
+    if not date_str:
+        return None
+    try:
+        # Asegurar que las fechas se conviertan a formato yyyy-MM-dd
+        return datetime.strptime(date_str, '%d-%m-%Y').strftime('%Y-%m-%d')
+    except ValueError:
+        return None

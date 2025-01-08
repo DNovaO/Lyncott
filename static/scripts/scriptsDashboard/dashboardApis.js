@@ -156,7 +156,6 @@ export async function autorizacionesGasto() {
 export function showLoaderContainer(containerID, bodyID) {
     const loaderWrapper = document.getElementById(containerID);  // Selecciona un solo elemento
     const cardBody = document.getElementById(bodyID);  // Selecciona un solo elemento
-    console.log('loaderWrapper', loaderWrapper);
     
     if (cardBody){
         cardBody.style.opacity = 0.5;  // Reducir la opacidad del contenido mientras se carga el loader
@@ -174,7 +173,6 @@ export function showLoaderContainer(containerID, bodyID) {
 export function hideLoaderContainer(containerID, bodyID) {
     const loaderWrapper = document.getElementById(containerID);  // Selecciona un solo elemento
     const cardBody = document.getElementById(bodyID);  // Selecciona un solo elemento
-    console.log('loaderWrapper', loaderWrapper);
 
     if (cardBody){
         cardBody.style.opacity = 1;  // Restaurar la opacidad del contenido
