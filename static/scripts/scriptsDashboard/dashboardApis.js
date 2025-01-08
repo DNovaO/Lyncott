@@ -12,7 +12,7 @@ Diego Nova Olguín
     
 */
 
-export async function apiVentasYDevoluciones(fecha) {
+export async function apiVentasYDevoluciones(fecha, fecha_final) {
     // console.log('apiVentasYDevoluciones');
     const endpointURL = '/dashboard/';
 
@@ -28,7 +28,8 @@ export async function apiVentasYDevoluciones(fecha) {
             },
             body:JSON.stringify( {
                 "Titulo": "Ventas y Devoluciones",
-                "Fecha": fecha,
+                "Fecha_inicial": fecha,
+                "Fecha_final": fecha_final,
             }),
         }).then(response => {
             hideLoaderContainer('loader-wrapper-ventas','body-venta-devoluciones'); // Ocultar el loader una vez que la petición se complete

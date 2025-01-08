@@ -102,12 +102,19 @@ export function manejarVentasYDevoluciones(datos) {
             resumenHtml.innerHTML = `
                 <h5 class="mb-1 text-center">Resumen de periodo</h5>
 
-                <div class="container text-center">    
+                <div class="row container text-center">    
                     <div class="date-container">
                         <label for="fecha_inicial" class="date-label">Fecha inicial:</label>
                         <div class="date-input-wrapper">
                             <input type="text" id="fecha_inicial" name="fecha_inicial" class="form-control" />
                             <i class="fas fa-calendar-alt calendar-icon" id="calendar-icon-inicial"></i>
+                        </div>
+                    </div>
+                    <div class="date-container">
+                        <label for="fecha_final" class="date-label">Fecha final:</label>
+                        <div class="date-input-wrapper">
+                            <input type="text" id="fecha_final" name="fecha_final" class="form-control" />
+                            <i class="fas fa-calendar-alt calendar-icon" id="calendar-icon-final"></i>
                         </div>
                     </div>
                 </div>
@@ -136,11 +143,22 @@ export function manejarVentasYDevoluciones(datos) {
             // Esperar un poco antes de activar la transición
             setTimeout(() => {
                 const fechaInput = document.getElementById('fecha_inicial');
+                const fechaInputFinal = document.getElementById('fecha_final');
                 if (fechaInput) {
                     fechaInput.addEventListener('change', function () {
                         const fecha = fechaInput.value;  // Obtener el valor actualizado del input
-                        console.log('Fecha seleccionada:', fecha);  // Mostrar la fecha actualizada
-                        recargarDatos(fecha);
+                        const fechaFinal = fechaInputFinal.value;  // Obtener el valor actualizado del input
+                        console.log('Fecha seleccionada:', fecha, fechaFinal);  // Mostrar la fecha actualizada
+                        recargarDatos(fecha, fechaFinal);
+                    });
+                }
+
+                if (fechaInputFinal) {
+                    fechaInputFinal.addEventListener('change', function () {
+                        const fechaFinal = fechaInputFinal.value;  // Obtener el valor actualizado del input
+                        const fecha = fechaInput.value;  // Obtener el valor actualizado del input
+                        console.log('Fecha seleccionada:', fecha, fechaFinal);  // Mostrar la fecha actualizada
+                        recargarDatos(fecha, fechaFinal);
                     });
                 }
 
@@ -154,9 +172,9 @@ export function manejarVentasYDevoluciones(datos) {
     }, 50);  // Tiempo de espera para asegurarse de que la gráfica se haya renderizado
 }
 
-function recargarDatos(fecha) {
+function recargarDatos(fecha, fechaFinal) {
     showLoaderContainer('loader-wrapper-ventas', 'body-venta-devoluciones');
-    apiVentasYDevoluciones(fecha)
+    apiVentasYDevoluciones(fecha, fechaFinal)
         .then(response => {
             if (response) {
                 manejarVentasYDevoluciones(response);
