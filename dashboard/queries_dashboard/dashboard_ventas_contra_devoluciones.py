@@ -5,7 +5,7 @@ from django.db import connection
 
 def ventas_contra_devoluciones(fecha=None, fecha_final=None):
     print(f"Fecha Inicial: {fecha}")
-    print(f"Fecha Final: {fecha_final}")
+    print(f" Fecha Final: {fecha_final}")
     
     # Establecer la fecha por defecto si no se pasa ninguna
     fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
