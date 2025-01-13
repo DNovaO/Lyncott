@@ -1,3 +1,5 @@
+const body_venta_devoluciones = document.getElementById('body-venta-devoluciones');
+
 export function flatpickrdate(fechaInicial, fechaFinal) {
     const fechaInicialInput = document.getElementById('fecha_inicial');
     const fechaFinalInput = document.getElementById('fecha_final');
@@ -74,4 +76,92 @@ export function flatpickrdate(fechaInicial, fechaFinal) {
     calendarIconFinal.addEventListener('click', function () {
         fechaFinalInput._flatpickr.open();
     });
+}
+
+export function transformHeader(header) {
+    // Validar que el header sea un string
+    if (typeof header !== 'string') {
+        return 'Sin título'; // Valor por defecto
+    }
+    // Reemplazar guiones bajos por espacios y capitalizar cada palabra
+    return header.replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase());
+}
+
+export function formatNumber(value, isCurrency = false, key = '') {
+    // Lista de claves que no deben ser formateadas
+    const keysToExcludeFromFormatting = ['clave_producto', 'descripcion_producto', 'producto','sucursal', 
+        'clave', 'clave_sucursal', 'numero_tipo_documento', 'grupo_movimiento',
+        'detalles_tipo_documento', 'almacen_correspondiente', 'moneda','zona',
+        'orden', 'orden_fecha', 'numero_folio', 'partes_folio', 'partes_fecha',
+        'termina_folio', 'nombre', 'zona', 'nombre_producto','UPC','linea',
+        'Promedio_Cliente', 'Promedio_Consignatario', 'fecha', 'dia','clave_cliente', 'consignatario', 'segmentacion', 'clave_grupo_corporativo', 'clave_cliente', 'clave_consignatario', 'producto', 'No', 'id_vendedor', 'id_almacen','vendedor','id_grupo_corporativo','grupo_corporativo',
+        'id_consignatario', 'consignatario', 'CP', 'colonia', 'cantidad','folio','RFC', 'UUID', 'serie','clave_vendedor','cliente', 'nombre_vendedor','numero_mes', 'zona_vendedor', 'nombre_cliente', 'descripcion', 'grupo','folio_facturas','tipo_documento', 'folio_documento','clave_vendedor', 'grupo_documento_anexado', 'tipo_documento_anexado', 'folio_documento_anexado', 'naturaleza_documento_anexado',
+    ];
+
+
+    // Si la clave está en la lista de exclusión, devolver el valor sin cambios
+    if (keysToExcludeFromFormatting.includes(key)) {
+        return value;
+    }
+
+    if (value == null || value === '') {
+        return ' - ';
+    }
+
+    // Convertir el valor a una cadena si no lo es
+    let valueStr = value.toString().trim();
+
+    // Si el valor es una cadena y comienza con $, limpiarlo
+    if (valueStr.startsWith('$')) {
+        isCurrency = true;
+        valueStr = valueStr.replace(/^\$/, ''); // Elimina el símbolo $
+    }
+    valueStr = valueStr.replace(/,/g, ''); // Elimina comas si las hay
+
+    // Convierte el valor a número
+    const numericValue = parseFloat(valueStr);
+
+    if (isNaN(numericValue)) {
+        return value; // Devuelve el valor original si no es un número válido
+    }
+
+    // Si el valor es 0 , devolverlo en rojo y negrita
+    if (numericValue === 0) {
+        return '<span style="color: red; font-weight: bold; text-align: right;" > 0 </span>';
+    }
+
+    if(numericValue < 0){
+        return '<span style="color: red; font-weight: bold; text-align: right;">' + numericValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</span>';
+    }
+
+    // Formatear el número con o sin símbolo de moneda
+    const formattedValue = numericValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    return isCurrency ? `$${formattedValue}` : formattedValue;
+}
+
+export function errorParametros(estado, mensaje = 'Ocurrió un error al procesar los parámetros.') {
+    // Obtener el contenedor principal
+    const bodyVentaDevoluciones = document.getElementById('body-venta-devoluciones');
+    if (!bodyVentaDevoluciones) {
+        console.error('No se encontró el contenedor con id "body-venta-devoluciones".');
+        return;
+    }
+
+    // Limpiar alertas existentes
+    const alertas = document.querySelectorAll('.alertContainer-ventas-devoluciones .alert');
+    alertas.forEach(alert => alert.remove());
+    
+    // Si el estado es true, agregar la alerta
+    if (estado) {
+        bodyVentaDevoluciones.insertAdjacentHTML('afterbegin', `
+            <div class="alert alert-danger fade show text-center" role="alert">
+                <strong>¡Oops!</strong> ${mensaje}
+            </div> 
+        `);
+
+        setTimeout(() => {
+            bodyVentaDevoluciones.querySelector('.alert').remove();
+        }, 1000);
+    }
 }

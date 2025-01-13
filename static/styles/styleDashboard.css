@@ -416,8 +416,8 @@ footer {
   flex-direction: column;
   justify-content: center;
   position: relative;
-  width: 60%;   
-  height: 60%;
+  width: 85%;   
+  height: 85%;
   margin: 0 auto;
 }
 
@@ -446,4 +446,21 @@ footer {
 #resumen-grafica-numeros.visible {
   opacity: 1;               
   transform: translateY(0);
+}
+
+.estadistica-item {
+  opacity: 0;               
+  transform: translateY(20px); 
+  transition: opacity 0.8s ease-in, transform 0.5s ease-in;
+}
+
+/* Clase visible para la animación */
+.estadistica-item.visible {
+  opacity: 1;               
+  transform: translateY(0);
+}
+
+.fade-out {
+    transition: opacity 2s ease-out;
+    opacity: 0;
 }

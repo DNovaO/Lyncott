@@ -1,5 +1,5 @@
 import { apiVentasYDevoluciones, hideLoaderContainer, showLoaderContainer } from './dashboardApis.js';
-import { flatpickrdate } from './utilsDashboard.js';
+import { errorParametros, flatpickrdate } from './utilsDashboard.js';
 
 let isReloading = false;  // Flag to track if a reload is in progress
 let fecha_inicial_actual = null;
@@ -26,20 +26,20 @@ export function manejarVentasYDevoluciones(datos) {
         return;
     }
 
-    const ventasData = datos.ventas[0]; // Extraer el primer objeto del array de ventas
+    const ventasData = datos.ventas && datos.ventas[0] ? datos.ventas[0] : { ventas: 0, devoluciones: 0 };
     const labels = ['Ventas', 'Devoluciones']; // Etiquetas para las barras
-    const ventas = ventasData.ventas || 0; // Valor de ventas
-    const devoluciones = ventasData.devoluciones || 0; // Valor de devoluciones
+    const ventas = typeof ventasData.ventas === 'number' && !isNaN(ventasData.ventas) ? ventasData.ventas : 0;
+    const devoluciones = typeof ventasData.devoluciones === 'number' && !isNaN(ventasData.devoluciones) ? ventasData.devoluciones : 0;
     const valores = [ventas, devoluciones]; // Agrupar los datos para la gráfica
 
     // Renderizar la gráfica
     new Chart(canvas, {
-        type: 'pie',  // Tipo de gráfico 'pie'
+        type: 'bar', // Tipo de gráfico 'bar' (barras)
         data: {
             labels: labels, // Etiquetas de las categorías
             datasets: [
                 {
-                    label: 'Monto en Pesos (MXN)',
+
                     data: valores, // Los valores que quieres graficar
                     backgroundColor: [
                         'rgba(53, 163, 236, 0.7)', // Color para 'Ventas'
@@ -50,30 +50,16 @@ export function manejarVentasYDevoluciones(datos) {
                         'rgb(255, 0, 55)',  // Borde para 'Devoluciones'
                     ],
                     borderWidth: 1,
-                    hoverBackgroundColor: [
-                        'rgba(53, 163, 236, 1)',  // Color de hover para 'Ventas'
-                        'rgba(255, 61, 103, 1)',  // Color de hover para 'Devoluciones'
-                    ],
-                    hoverBorderColor: [
-                        'rgb(53, 163, 236)',  // Borde de hover para 'Ventas'
-                        'rgb(255, 61, 103)',  // Borde de hover para 'Devoluciones'
-                    ],
                 },
             ],
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            indexAxis: 'x', // Eje horizontal
             plugins: {
                 legend: {
-                    display: true,
-                    position: 'top',  // Coloca la leyenda en la parte superior del gráfico
-                    labels: {
-                        font: {
-                            size: 14,  // Tamaño de la fuente de la leyenda
-                        },
-                        color: '#333',  // Color del texto de la leyenda
-                    },
+                    display: false, // Ocultar la leyenda
                 },
                 tooltip: {
                     callbacks: {
@@ -86,16 +72,39 @@ export function manejarVentasYDevoluciones(datos) {
                     },
                     backgroundColor: 'rgba(0, 0, 0, 0.7)', // Fondo del tooltip
                     titleFont: {
-                        size: 16,  // Tamaño de la fuente del título del tooltip
+                        size: 16, // Tamaño de la fuente del título del tooltip
                     },
                     bodyFont: {
-                        size: 14,  // Tamaño de la fuente del contenido del tooltip
+                        size: 14, // Tamaño de la fuente del contenido del tooltip
                     },
-                    displayColors: false,  // Desactiva los cuadros de colores en el tooltip
+                    displayColors: false, // Desactiva los cuadros de colores en el tooltip
                 },
             },
         },
+        plugins: [
+            {
+                id: 'customLabels', // Identificador del plugin
+                afterDatasetsDraw: (chart) => {
+                    const { ctx, chartArea: { top }, scales: { x, y } } = chart;
+
+                    chart.data.datasets[0].data.forEach((value, index) => {
+                        const barX = x.getPixelForValue(index); // Posición en el eje X
+                        const barY = y.getPixelForValue(value); // Posición en el eje Y
+                        const label = `$${value.toLocaleString('es-MX')}`; // Valor formateado en MXN
+
+                        ctx.save();
+                        ctx.fillStyle = chart.data.datasets[0].backgroundColor[index]; // Color según la barra
+                        ctx.font = 'bold 12px Arial'; // Fuente del texto
+                        ctx.textAlign = 'center';
+                        ctx.fillText(label, barX, barY - 10); // Dibuja el texto encima de la barra
+                        ctx.restore();
+                    });
+                },
+            },
+        ],
     });
+
+        
 
     // Después de que el gráfico se haya generado, agregar el resumen
     setTimeout(() => {
@@ -185,11 +194,33 @@ export function manejarVentasYDevoluciones(datos) {
                     btnActualizar.addEventListener('click', function () {
                         const fechaSeleccionada = fechaInput.value || fecha_inicial_actual;
                         const fechaFinalSeleccionada = fechaInputFinal.value || fecha_final_actual;
-
+                
                         console.log('Fecha seleccionada por el usuario:', fechaSeleccionada, fechaFinalSeleccionada);
-                        recargarDatosAPI(fechaSeleccionada, fechaFinalSeleccionada);
+                
+                        // Convertir fechas a objetos Date
+                        const fechaInicial = new Date(fechaSeleccionada);
+                        const fechaFinal = new Date(fechaFinalSeleccionada);
+                
+                        // Validar si las fechas son válidas
+                        if (isNaN(fechaInicial) || isNaN(fechaFinal)) {
+                            errorParametros(true, 'Las fechas seleccionadas no son válidas.');
+                            console.log('Fechas no válidas');
+                            return; // Detener la ejecución si las fechas no son válidas
+                        }
+                
+                        // Validar si la fecha inicial es mayor que la fecha final
+                        if (fechaInicial > fechaFinal) {
+                            errorParametros(true, 'La fecha inicial no puede ser mayor a la fecha final.');
+                            console.log('Fechas incorrectas: la fecha inicial es mayor que la fecha final');
+                            return; // Detener la ejecución si la validación falla
+                        } else {
+                            // Limpiar cualquier error anterior y recargar datos
+                            errorParametros(false);
+                            recargarDatosAPI(fechaSeleccionada, fechaFinalSeleccionada);
+                        }
                     });
                 }
+                
 
                 // Activar la visibilidad del resumen
                 if (resumenHtml && resumenHtmlnumeros) {
@@ -197,8 +228,6 @@ export function manejarVentasYDevoluciones(datos) {
                     resumenHtmlnumeros.classList.add('visible');
                 }
             }, 100); // Retraso corto para permitir que el contenido se cargue antes de la animación
-
-
 
         } else {
             console.error('No se encontró el contenedor con id "resumen-grafica"');
