@@ -426,6 +426,22 @@ footer {
   height: 100% !important;
 }
 
+.lineChart-container {
+  flex: 1.5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  width: 100%;   
+  height: 100%;
+  margin: 0 auto;
+}
+
+#lineChart {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 #resumen-grafica {
   opacity: 0;               
   transform: translateY(20px); 
@@ -448,19 +464,61 @@ footer {
   transform: translateY(0);
 }
 
-.estadistica-item {
+/* .estadistica-item {
   opacity: 0;               
   transform: translateY(20px); 
   transition: opacity 0.8s ease-in, transform 0.5s ease-in;
-}
+} */
 
 /* Clase visible para la animación */
-.estadistica-item.visible {
+/* .estadistica-item.visible {
   opacity: 1;               
   transform: translateY(0);
+} */
+
+
+.pagination-wrapper {
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  margin: 0 auto;
+  margin-top: 20px;
 }
 
-.fade-out {
-    transition: opacity 2s ease-out;
-    opacity: 0;
+.pagination-controls {
+  flex-wrap: wrap; /* Permite que los números de página ocupen varias líneas si es necesario */
+}
+
+#paginationNumbers button {
+  min-width: 40px; /* Asegura un tamaño consistente */
+  margin: 2px;     /* Espaciado entre botones */
+}
+
+/* Media query para pantallas pequeñas (teléfonos) */
+@media (max-width: 768px) {
+  #resumen-estadisticas-rapidas {
+      max-height: 400px;  /* Ajusta la altura máxima en pantallas pequeñas */
+      overflow-y: none; 
+  }
+
+  #paginationNumbers button {
+      min-width: 30px; /* Tamaño más pequeño en pantallas pequeñas */
+  }
+
+  .btn {
+      padding: 5px 10px;
+  }
+
+  .pagination-controls {
+      flex-wrap: nowrap;  /* Evita que los botones de paginación se partan en múltiples líneas */
+  }
+
+  .pagination-wrapper {
+      position: sticky;
+      bottom: 0;
+      background-color: white;
+      z-index: 10;
+      padding: 8px 0;
+      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  }
 }

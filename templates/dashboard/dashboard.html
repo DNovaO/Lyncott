@@ -52,10 +52,10 @@
         <div class="container-fluid mt-4" style="width: 100%">
           <div class="row g-4">
             <!-- Centro de Notificaciones -->
-            <div class="col-md-3">
+            <div class="col-md-2">
               <div class="card h-100 shadow-sm">
                 <div class="card-header card-header-custom-1 text-white">
-                  <h3 class="card-title mb-0">Avisos</h3>
+                  <h3 class="card-title mb-0">Bolsa</h3>
                 </div>
                 <div id="body-notificaciones" class="card-body">
                   <div id="loader-wrapper-notificaciones" class="loader-wrapper"></div>
@@ -69,7 +69,7 @@
 
             <!-- Gráfica de Barras -->
             <div class="col-md-6">
-              <div class="card h-60 shadow-sm">
+              <div class="card h-80 shadow-sm">
                 <div class="card-header card-header-custom-2 text-white">
                   <h3 class="card-title mb-0">Ventas/Devoluciones</h3>
                 </div>
@@ -96,14 +96,14 @@
             </div>
 
             <!-- Estadísticas -->
-            <div class="col-md-3">
+            <div class="col-md-4">
               <div class="card h-100 shadow-sm">
                 <div class="card-header card-header-custom-4 text-white">
                   <h3 class="card-title mb-0">Estadísticas rápidas</h3>
                 </div>
                 <div id="body-estadisticas-rapidas" class="card-body">
-                  <div id="alertContainer" class="alert alert-danger mt-3 w-50 mx-auto text-center" style="display: none;"></div>
                   <div id="loader-wrapper-estadisticas-rapidas" class="loader-wrapper"></div>
+                  <div id="alertContainer" class="alert alert-danger mt-3 w-50 mx-auto text-center" style="display: none;"></div>
                   <ul id="resumen-estadisticas-rapidas" class="list-group list-group-flush">
                     <!-- En base a datos reportados de manera anual se deben de obtener las estadisticas mas rapidas como ventas, devoluciones, kilos vendidos, etc. Sin gráfica. -->
                   </ul>
@@ -111,9 +111,9 @@
               </div>
             </div>
 
-            <!-- Gráfica Circular -->
+            <!-- Gráfica linas -->
             <div class="col-md-12">
-              <div class="card h-100 shadow-sm">
+              <div class="card h-60 shadow-sm">
                 <div class="card-header card-header-custom-3 text-white">
                   <h3 class="card-title mb-0">Distribución de productos</h3>
                 </div>
@@ -121,7 +121,9 @@
                   <div id="alertContainer" class="alert alert-danger mt-3 w-50 mx-auto text-center" style="display: none;"></div>
                   <div id="loader-wrapper-productos" class="loader-wrapper"></div>
                   <!-- En base a datos reportados de manera anual se debe de generar la gráfica -->
-                  <canvas id="pieChart"></canvas>
+                  <div class="lineChart-container d-flex flex-column justify-content-center mb-2" style="flex: 1.5; position: relative;">
+                    <canvas id="lineChart"></canvas>
+                  </div>
                 </div>
               </div>
             </div>
@@ -211,6 +213,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

@@ -2,6 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from .queries_dashboard.dashboard_ventas_contra_devoluciones import ventas_contra_devoluciones
 from .queries_dashboard.dasboard_estadisticas_rapidas import estadisticas_rapidas
+from .queries_dashboard.dashboard_distribucion_productos import distribucion_venta_productos
 import json
 import gzip
 
@@ -61,15 +62,13 @@ def dashboard_view(request):
                     response['Content-Encoding'] = 'gzip'
 
                     return response
-                elif data_json.get('Titulo') == "Distribucion de Ventas":             
+                elif data_json.get('Titulo') == "Distribucion de Ventas": 
+                                
     
                     data = {
                         "status": "ok",
                         "titulo": "Distribucion de Ventas",
-                        "ventas": 150,
-                        "productos": 100,
-                        "ventas_totales":500000,
-                        "sucursales": 20,
+                        "distribucion_ventas": distribucion_venta_productos()
                     }
                     
                     json_data = json.dumps(data)

@@ -1,7 +1,10 @@
 import { formatNumber, transformHeader } from './utilsDashboard.js';
 
+let paginaActual = 1; // Página actual
+const elementosPorPagina = 10; // Máximo de elementos por página
+
 export function manejarEstadisticasRapidas(datos) {
-    console.log('Datos desde el manejo del API de estadísticas rápidas', datos);
+
 
     const contenedor = document.getElementById('body-estadisticas-rapidas');
     if (!contenedor) {
@@ -9,56 +12,113 @@ export function manejarEstadisticasRapidas(datos) {
         return;
     }
 
-    // Limpiar el contenedor antes de renderizar nuevos datos
-    contenedor.innerHTML = '<ul class="list-group list-group-flush"></ul>';
-
-    // Validar datos básicos
-    if (datos.status !== "ok" || !Array.isArray(datos.estadisticas)) {
-        console.error('Datos no válidos recibidos desde el API:', datos);
+    if (!datos || datos.status !== "ok" || !Array.isArray(datos.estadisticas)) {
+        console.error('Datos no válidos recibidos:', datos);
+        contenedor.innerHTML = '<p class="text-center text-danger">Error al cargar las estadísticas.</p>';
         return;
     }
 
-    const lista = contenedor.querySelector('.list-group-flush');
+    // Filtrar datos no válidos
+    const estadisticasValidas = datos.estadisticas.filter((grupo) => Array.isArray(grupo) && grupo.length > 0);
+  
 
-    // Iterar sobre las estadísticas y procesarlas
-    datos.estadisticas.forEach((grupo, index) => {
-        const titulo = transformHeader(`Grupo ${index + 1}`); // Título del grupo basado en el índice (si es necesario)
+    const totalElementos = estadisticasValidas.flat().length;
+    const totalPaginas = Math.ceil(totalElementos / elementosPorPagina);
 
-        // Verificar que el grupo no sea nulo y que sea un arreglo
-        if (grupo && Array.isArray(grupo) && grupo.length > 0) {
-            grupo.forEach(estadistica => {
-                // Procesar cada objeto dentro del grupo
-                if (estadistica && typeof estadistica === 'object') {
-                    const key = Object.keys(estadistica)[0]; // Extraer la primera clave del objeto
-                    const value = estadistica[key];
+    // Función para renderizar los datos de la página actual
+    const renderizarPagina = () => {
+       
+        // Limpiar el contenedor antes de renderizar nuevos datos
+        contenedor.innerHTML = `
+            <ul id="resumen-estadisticas-rapidas" class="list-group list-group-flush"></ul>
+            <div class="pagination-wrapper">
+                <div class="pagination-controls d-flex justify-content-center align-items-center">
+                    <button id="prevPage" class="btn btn-secondary mx-1"><</button>
+                    <div id="paginationNumbers" class="d-flex flex-wrap justify-content-center mx-2"></div>
+                    <button id="nextPage" class="btn btn-secondary mx-1">></button>
+                </div>
+            </div>
+        `;
 
-                    // Aplicar transformHeader a la clave para formatearla
-                    const keyTransformada = transformHeader(key);
+        const lista = document.getElementById('resumen-estadisticas-rapidas');
+        const inicio = (paginaActual - 1) * elementosPorPagina;
+        const fin = inicio + elementosPorPagina;
+        const datosPaginados = estadisticasValidas.flat().slice(inicio, fin);
 
-                    // Formatear el valor si corresponde
-                    const formattedValue = (!isNaN(value) && value !== 0)
-                        ? formatNumber(value, false, key)
-                        : value; // Si no es un número, mostrar el valor tal cual
+        if (datosPaginados.length === 0) {
+            lista.innerHTML = '<li class="list-group-item text-center">No hay datos para mostrar.</li>';
+            return;
+        }
 
-                    // Crear un elemento de lista para cada estadística
-                    const item = document.createElement('li');
-                    item.className = 'list-group-item d-flex justify-content-between align-items-center estadistica-item';
+        datosPaginados.forEach((estadistica, index) => {
+           
 
-                    item.innerHTML = `
-                        <span class="key" style="font-weight:500;">${keyTransformada}</span>
-                        <span class="value">${formattedValue}</span>
-                    `;
+            const item = document.createElement('li');
+            item.className = 'list-group-item d-flex justify-content-between align-items-center estadistica-item';
 
-                    lista.appendChild(item);
+            if (estadistica.sucursal && estadistica.venta_pesos) {
+                const sucursalTransformada = transformHeader(estadistica.sucursal);
+                const ventaFormateada = formatNumber(estadistica.venta_pesos, true, 'pesos');
 
-                    // Agregar la clase para animación
-                    setTimeout(() => {
-                        item.classList.add('visible');
-                    }, 50); // Tiempo mínimo para aplicar la clase (para iniciar la animación)
+                item.innerHTML = `
+                    <span class="sucursal" style="font-weight:500;">${sucursalTransformada}</span>
+                    <span class="venta">${ventaFormateada}</span>
+                `;
+            } else {
+                const key = Object.keys(estadistica)[0];
+                const value = estadistica[key];
+                const keyTransformada = transformHeader(key);
+                const formattedValue = (!isNaN(value) && value !== 0)
+                    ? formatNumber(value, false, key)
+                    : value;
+
+                item.innerHTML = `
+                    <span class="key" style="font-weight:500;">${keyTransformada}</span>
+                    <span class="value">$${formattedValue}</span>
+                `;
+            }
+
+            lista.appendChild(item);
+        });
+
+        // Renderizar los números de paginación
+        const paginationNumbers = document.getElementById('paginationNumbers');
+        paginationNumbers.innerHTML = '';
+        for (let i = 1; i <= totalPaginas; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.className = `btn mx-1 ${i === paginaActual ? 'btn-primary' : 'btn-outline-primary'}`;
+            pageButton.innerText = i;
+            pageButton.addEventListener('click', () => {
+                if (paginaActual !== i) {
+                    paginaActual = i;
+                    renderizarPagina();
                 }
             });
-        } else if (!grupo) {
-            console.warn(`Elemento nulo o vacío en la posición ${index} de las estadísticas.`);
+            paginationNumbers.appendChild(pageButton);
         }
-    });
+
+        // Manejar la visibilidad de los botones
+        const btnPrev = document.getElementById('prevPage');
+        const btnNext = document.getElementById('nextPage');
+
+        btnPrev.disabled = paginaActual === 1;
+        btnNext.disabled = paginaActual === totalPaginas;
+
+        btnPrev.addEventListener('click', () => {
+            if (paginaActual > 1) {
+                paginaActual--;
+                renderizarPagina();
+            }
+        });
+
+        btnNext.addEventListener('click', () => {
+            if (paginaActual < totalPaginas) {
+                paginaActual++;
+                renderizarPagina();
+            }
+        });
+    };
+
+    // Renderizar la primera página
+    renderizarPagina();
 }

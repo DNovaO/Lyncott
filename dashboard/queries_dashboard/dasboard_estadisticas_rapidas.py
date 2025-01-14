@@ -10,9 +10,10 @@ def estadisticas_rapidas():
     ventas_kilos_resultado = ventas_kilos(fecha='2024-01-01', fecha_final='2024-01-31')
     devoluciones_totales_resultado = devoluciones_totales(fecha='2024-01-01', fecha_final='2024-01-31')
     notas_credito_resultado = notas_credito(fecha='2024-01-01', fecha_final='2024-01-31')
+    ventas_por_sucursal_resultado = ventas_por_sucursal(fecha='2024-01-01', fecha_final='2024-01-31')
     ingresos_resultado = 0
     
-    return [ventas_totales_resultado, ventas_kilos_resultado, devoluciones_totales_resultado, notas_credito_resultado, ingresos_resultado ]
+    return [ventas_totales_resultado, ventas_kilos_resultado, devoluciones_totales_resultado, notas_credito_resultado, ventas_por_sucursal_resultado,ingresos_resultado]
     
 
 def ventas_totales(fecha=None, fecha_final=None):
@@ -142,7 +143,7 @@ def ingresos():
 def notas_credito(fecha=None, fecha_final=None):
     print("estadisticas_rapidas: notas_credito")
     
-        # Establecer la fecha por defecto si no se pasa ninguna
+    # Establecer la fecha por defecto si no se pasa ninguna
     fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
     fecha_final_parseada = parse_date(fecha_final) or '2024-01-31'
     
@@ -168,6 +169,64 @@ def notas_credito(fecha=None, fecha_final=None):
                     row[key] = float(value)
 
     return result
+
+def ventas_por_sucursal(fecha=None, fecha_final=None):
+    print("estadisticas_rapidas: ventas_por_sucursal")
+    
+    # Establecer la fecha por defecto si no se pasa ninguna
+    fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
+    fecha_final_parseada = parse_date(fecha_final) or '2024-01-31'
+    
+    with connection.cursor() as cursor:
+        query_ventas_indivuales = """
+        SELECT
+            CASE
+                WHEN KDIJ.C1 = '02' THEN 'venta_vallejo'
+                WHEN KDIJ.C1 = '03' THEN 'venta_guadalajara'
+                WHEN KDIJ.C1 = '04' THEN 'venta_monterrey'
+                WHEN KDIJ.C1 = '05' THEN 'venta_queretaro'
+                WHEN KDIJ.C1 = '06' THEN 'venta_hermosillo'
+                WHEN KDIJ.C1 = '07' THEN 'venta_cancun'
+                WHEN KDIJ.C1 = '08' THEN 'venta_puebla'
+                WHEN KDIJ.C1 = '09' THEN 'venta_tijuana'
+                WHEN KDIJ.C1 = '10' THEN 'venta_acapulco'
+                WHEN KDIJ.C1 = '11' THEN 'venta_villahermosa'
+                WHEN KDIJ.C1 = '12' THEN 'venta_culiacan'
+                WHEN KDIJ.C1 = '13' THEN 'venta_veracruz'
+                WHEN KDIJ.C1 = '14' THEN 'venta_los_cabos'
+                WHEN KDIJ.C1 = '15' THEN 'venta_aguascalientes'
+                WHEN KDIJ.C1 = '16' THEN 'venta_toluca'
+                WHEN KDIJ.C1 = '17' THEN 'venta_chihuahua'
+                WHEN KDIJ.C1 = '18' THEN 'venta_merida'
+                WHEN KDIJ.C1 = '19' THEN 'venta_oaxaca'
+                WHEN KDIJ.C1 = '20' THEN 'venta_vallarta'
+                ELSE 'otra'
+            END AS sucursal,
+            SUM(KDIJ.C14) AS venta_pesos
+        FROM KDIJ
+        WHERE 
+        KDIJ.C10 BETWEEN CAST(%s AS DATE) AND CAST(%s AS DATE)
+        AND KDIJ.C1 BETWEEN '02' AND '20'
+        GROUP BY KDIJ.C1;
+
+        """
+        
+        # Ejecutar la consulta
+        cursor.execute(query_ventas_indivuales, [fecha_inicial_parseada, fecha_final_parseada])
+
+        # Obtener los resultados
+        columns = [col[0] for col in cursor.description]
+        result = [dict(zip(columns, row)) for row in cursor.fetchall()]
+        
+        for row in result:
+            for key, value in row.items():
+                if isinstance(value, Decimal):
+                    row[key] = float(value)
+
+    return result
+    
+
+
     
 def parse_date(date_str):
     if not date_str:
