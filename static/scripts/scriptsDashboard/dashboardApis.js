@@ -83,7 +83,7 @@ export async function estadisticasRapidas() {
     }
 }
 
-export async function distribucionVentas() {
+export async function distribucionVentas(fecha, fecha_final) {
     // console.log('distribucionVentas');
     const endpointURL = '/dashboard/';
 
@@ -99,6 +99,8 @@ export async function distribucionVentas() {
             },
             body:JSON.stringify( {
                 "Titulo": "Distribucion de Ventas",
+                "Fecha_inicial": fecha,
+                "Fecha_final": fecha_final,
             }),
         }).then(response => {
             hideLoaderContainer('loader-wrapper-productos','body-distribucion-productos'); // Ocultar el loader una vez que la petición se complete
@@ -160,6 +162,7 @@ export function showLoaderContainer(containerID, bodyID) {
     if (cardBody){
         cardBody.style.opacity = 0.5;  // Reducir la opacidad del contenido mientras se carga el loader
         loaderWrapper.style.opacity = 1; 
+        loaderWrapper.style.display = 'flex';
     }
 
     if (loaderWrapper) {  // Asegúrate de que el elemento loaderWrapper existe
@@ -180,6 +183,8 @@ export function hideLoaderContainer(containerID, bodyID) {
     
     if (loaderWrapper) {  // Asegúrate de que el elemento existe
         loaderWrapper.innerHTML = '';  // Elimina el contenido del loader
+        loaderWrapper.style.opacity = 0;  // Oculta el loader
+        loaderWrapper.style.display = 'none';  // Oculta el loader
     }
 
 }

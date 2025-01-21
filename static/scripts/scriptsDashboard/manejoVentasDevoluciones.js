@@ -1,7 +1,7 @@
 import { apiVentasYDevoluciones, hideLoaderContainer, showLoaderContainer } from './dashboardApis.js';
-import { errorParametros, flatpickrdate } from './utilsDashboard.js';
+import { errorParametros, inicializarFlatpickr } from './utilsDashboard.js';
 
-let isReloading = false;  // Flag to track if a reload is in progress
+let isReloading = false; 
 let fecha_inicial_actual = null;
 let fecha_final_actual = null;
 
@@ -150,12 +150,31 @@ export function manejarVentasYDevoluciones(datos) {
 
             resumenHtmlnumeros.innerHTML = `
                 <div class="resumen-numeros">
-                    <p class="text-center mt-2">
-                    <strong>Total ventas:</strong> <span id="ventasData">$${ventas.toLocaleString('es-MX')}</span>
-                    </p>
-                    <p class="text-center mt-2">
-                    <strong>Total devoluciones:</strong> <span id="devolucionesData">$${devoluciones.toLocaleString('es-MX')}</span>
-                    </p>
+                    <div class="row justify-content-center w-100">
+                        <!-- Tarjeta de Ventas -->
+                        <div class="col-12 col-md-6 text-center mb-4">
+                            <div class="card shadow-sm border-success d-flex flex-column h-100">
+                                <div class="card-body d-flex flex-column justify-content-center">
+                                    <h6 class="card-title">Total Ventas</h6>
+                                    <p class="card-text text-center text-success mt-auto fs-5">
+                                        <span id="ventasData">$${ventas.toLocaleString('es-MX')}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tarjeta de Devoluciones -->
+                        <div class="col-12 col-md-6 text-center mb-4">
+                            <div class="card shadow-sm border-danger d-flex flex-column h-100">
+                                <div class="card-body d-flex flex-column justify-content-center">
+                                    <h6 class="card-title">Total Devoluciones</h6>
+                                    <p class="card-text text-center text-danger mt-auto fs-5">
+                                        <span id="devolucionesData">$${devoluciones.toLocaleString('es-MX')}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
 
@@ -184,10 +203,12 @@ export function manejarVentasYDevoluciones(datos) {
                 if (fecha_inicial_actual && fecha_final_actual) {
                     fechaInput.value = fecha_inicial_actual;
                     fechaInputFinal.value = fecha_final_actual;
+
+                    console.log('fechas actuales desde el input:', fecha_inicial_actual, fecha_final_actual);
                 }
 
                 // Configurar flatpickr si aún no está configurado
-                flatpickrdate(fecha_inicial_actual, fecha_final_actual);
+                inicializarFlatpickr(fecha_inicial_actual, fecha_final_actual, 'general');
 
                 // Configurar el evento de actualización de las fechas
                 if (btnActualizar) {
@@ -289,7 +310,7 @@ function recargarDatosAPI(fecha, fechaFinal) {
         });
 }
 
-export function parseDate(fechaStr) {
+function parseDate(fechaStr) {
     const [day, month, year] = fechaStr.split('-').map(Number);
     return new Date(year, month - 1, day); // Mes es 0-based
 }

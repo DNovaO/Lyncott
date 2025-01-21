@@ -2,7 +2,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from .queries_dashboard.dashboard_ventas_contra_devoluciones import ventas_contra_devoluciones
 from .queries_dashboard.dasboard_estadisticas_rapidas import estadisticas_rapidas
-from .queries_dashboard.dashboard_distribucion_productos import distribucion_venta_productos
+from .queries_dashboard.dashboard_distribucion_productos import distribucion_venta_productos, parse_date
 import json
 import gzip
 
@@ -63,12 +63,20 @@ def dashboard_view(request):
 
                     return response
                 elif data_json.get('Titulo') == "Distribucion de Ventas": 
-                                
+                    fecha_inicial = data_json.get('Fecha_inicial')
+                    fecha_final = data_json.get('Fecha_final')
+    
+                    distrubucion_ventas = distribucion_venta_productos(fecha_inicial, fecha_final)
+
+                    fecha_inicial = parse_date(fecha_inicial)
+                    fecha_final = parse_date(fecha_final)
     
                     data = {
                         "status": "ok",
                         "titulo": "Distribucion de Ventas",
-                        "distribucion_ventas": distribucion_venta_productos()
+                        "distribucion_ventas": distrubucion_ventas,
+                        "fecha": fecha_inicial,
+                        "fecha_final": fecha_final,
                     }
                     
                     json_data = json.dumps(data)

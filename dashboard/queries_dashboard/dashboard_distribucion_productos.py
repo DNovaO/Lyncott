@@ -4,11 +4,14 @@ from django.db import connection
 
 def distribucion_venta_productos(fecha=None, fecha_final=None):
     print(f"Fecha Inicial: {fecha}")
-    print(f" Fecha Final: {fecha_final}")
+    print(f"Fecha Final: {fecha_final}")
     
     # Establecer la fecha por defecto si no se pasa ninguna
     fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
     fecha_final_parseada = parse_date(fecha_final) or '2024-01-31'
+    
+    print(f"Fecha Inicial Parseada: {fecha_inicial_parseada}")
+    print(f"Fecha Final Parseada: {fecha_final_parseada}")
     
     with connection.cursor() as cursor:
         query_ventas_indivuales = """
@@ -44,7 +47,11 @@ def parse_date(date_str):
     if not date_str:
         return None
     try:
-        # Asegurar que las fechas se conviertan a formato yyyy-MM-dd
+        # Manejar formato ISO '2023-01-01T06:00:00.000Z'
+        if 'T' in date_str:
+            return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d')
+        # Manejar formato 'dd-mm-YYYY'
         return datetime.strptime(date_str, '%d-%m-%Y').strftime('%Y-%m-%d')
     except ValueError:
         return None
+
