@@ -432,9 +432,14 @@ footer {
   flex-direction: column;
   justify-content: center;
   position: relative;
-  width: 100%;   
+  width: 90%;   
   height: 100%;
   margin: 0 auto;
+}
+
+.lineChart-container:hover{
+  cursor: pointer;
+  border: #00aae9 2px solid;
 }
 
 #lineChart {
@@ -476,13 +481,12 @@ footer {
   transform: translateY(0);
 } */
 
-
 .pagination-wrapper {
   width: 100%;
   position: sticky;
   bottom: 0;
   margin: 0 auto;
-  margin-top: 20px;
+  margin-top: 35px;
 }
 
 .pagination-controls {

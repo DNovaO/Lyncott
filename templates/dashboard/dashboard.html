@@ -118,11 +118,18 @@
                   <h3 class="card-title mb-0">Distribución de productos</h3>
                 </div>
                 <div id="body-distribucion-productos" class="card-body">
-                  <div id="alertContainer" class="alert alert-danger mt-3 w-50 mx-auto text-center" style="display: none;"></div>
+                  <div id="alertContainer-productos" class="alert alert-danger mt-3 w-50 mx-auto text-center" style="display: none;"></div>
                   <div id="loader-wrapper-productos" class="loader-wrapper"></div>
+                  <div id="resumen-graficaProductos" class="data-container mb-3 mb-md-0 d-flex flex-column justify-content-center" style="flex: 0.5;">
+                    <br></br>
+                  </div>
+
                   <!-- En base a datos reportados de manera anual se debe de generar la gráfica -->
                   <div class="lineChart-container d-flex flex-column justify-content-center mb-2" style="flex: 1.5; position: relative;">
                     <canvas id="lineChart"></canvas>
+                  </div>
+                  <div id="resumen-graficaProductos-numeros" class="data-container mb-3 mb-md-0 d-flex flex-column justify-content-center" style="flex: 0.5;">
+                    <br></br>
                   </div>
                 </div>
               </div>

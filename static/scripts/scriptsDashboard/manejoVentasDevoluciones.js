@@ -194,31 +194,31 @@ export function manejarVentasYDevoluciones(datos) {
                     btnActualizar.addEventListener('click', function () {
                         const fechaSeleccionada = fechaInput.value || fecha_inicial_actual;
                         const fechaFinalSeleccionada = fechaInputFinal.value || fecha_final_actual;
-                
+                    
                         console.log('Fecha seleccionada por el usuario:', fechaSeleccionada, fechaFinalSeleccionada);
-                
+                    
                         // Convertir fechas a objetos Date
-                        const fechaInicial = new Date(fechaSeleccionada);
-                        const fechaFinal = new Date(fechaFinalSeleccionada);
-                
+                        const fechaInicial = parseDate(fechaSeleccionada);
+                        const fechaFinal = parseDate(fechaFinalSeleccionada);
+                    
                         // Validar si las fechas son válidas
                         if (isNaN(fechaInicial) || isNaN(fechaFinal)) {
-                            errorParametros(true, 'Las fechas seleccionadas no son válidas.');
-                            console.log('Fechas no válidas');
-                            return; // Detener la ejecución si las fechas no son válidas
+                            errorParametros(true, 'Las fechas ingresadas no son válidas.');
+                            console.error('Fecha inválida:', fechaSeleccionada, fechaFinalSeleccionada);
+                            return;
                         }
-                
+                    
                         // Validar si la fecha inicial es mayor que la fecha final
-                        if (fechaInicial > fechaFinal) {
+                        if (fechaInicial.getTime() > fechaFinal.getTime()) {
                             errorParametros(true, 'La fecha inicial no puede ser mayor a la fecha final.');
                             console.log('Fechas incorrectas: la fecha inicial es mayor que la fecha final');
-                            return; // Detener la ejecución si la validación falla
-                        } else {
-                            // Limpiar cualquier error anterior y recargar datos
-                            errorParametros(false);
-                            recargarDatosAPI(fechaSeleccionada, fechaFinalSeleccionada);
+                            return;
                         }
-                    });
+                    
+                        // Limpiar cualquier error anterior y recargar datos
+                        errorParametros(false);
+                        recargarDatosAPI(fechaSeleccionada, fechaFinalSeleccionada);
+                    });                    
                 }
                 
 
@@ -287,4 +287,9 @@ function recargarDatosAPI(fecha, fechaFinal) {
             btnActualizar.disabled = false;
             isReloading = false; // Restablece el indicador de recarga
         });
+}
+
+export function parseDate(fechaStr) {
+    const [day, month, year] = fechaStr.split('-').map(Number);
+    return new Date(year, month - 1, day); // Mes es 0-based
 }
