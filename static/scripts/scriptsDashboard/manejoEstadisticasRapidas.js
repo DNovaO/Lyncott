@@ -1,10 +1,9 @@
 import { formatNumber, transformHeader } from './utilsDashboard.js';
 
 let paginaActual = 1; // Página actual
-const elementosPorPagina = 10; // Máximo de elementos por página
+const elementosPorPagina = 15; // Máximo de elementos por página
 
 export function manejarEstadisticasRapidas(datos) {
-
 
     const contenedor = document.getElementById('body-estadisticas-rapidas');
     if (!contenedor) {
@@ -20,24 +19,26 @@ export function manejarEstadisticasRapidas(datos) {
 
     // Filtrar datos no válidos
     const estadisticasValidas = datos.estadisticas.filter((grupo) => Array.isArray(grupo) && grupo.length > 0);
-  
-
     const totalElementos = estadisticasValidas.flat().length;
     const totalPaginas = Math.ceil(totalElementos / elementosPorPagina);
 
     // Función para renderizar los datos de la página actual
     const renderizarPagina = () => {
-       
         // Limpiar el contenedor antes de renderizar nuevos datos
         contenedor.innerHTML = `
             <ul id="resumen-estadisticas-rapidas" class="list-group list-group-flush"></ul>
-            <div class="pagination-wrapper">
-                <div class="pagination-controls d-flex justify-content-center align-items-center">
-                    <button id="prevPage" class="btn btn-secondary mx-1"><</button>
-                    <div id="paginationNumbers" class="d-flex flex-wrap justify-content-center mx-2"></div>
-                    <button id="nextPage" class="btn btn-secondary mx-1">></button>
+            
+            <nav class="pagination-wrapper" aria-label="Controles de paginación">
+                <div class="pagination-controls d-flex justify-content-center align-items-center" style="margin-top:50px;">
+                    <button id="prevPage" class="btn btn-secondary mx-1" aria-label="Página anterior" disabled>
+                        &lt;
+                    </button>
+                    <div id="paginationNumbers" class="d-flex flex-wrap justify-content-center mx-2" role="navigation" aria-live="polite"></div>
+                    <button id="nextPage" class="btn btn-secondary mx-1" aria-label="Página siguiente" disabled>
+                        &gt;
+                    </button>
                 </div>
-            </div>
+            </nav>
         `;
 
         const lista = document.getElementById('resumen-estadisticas-rapidas');
@@ -50,9 +51,7 @@ export function manejarEstadisticasRapidas(datos) {
             return;
         }
 
-        datosPaginados.forEach((estadistica, index) => {
-           
-
+        datosPaginados.forEach((estadistica) => {
             const item = document.createElement('li');
             item.className = 'list-group-item d-flex justify-content-between align-items-center estadistica-item';
 

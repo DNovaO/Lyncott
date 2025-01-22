@@ -155,6 +155,41 @@ export async function autorizacionesGasto() {
     }
 }
 
+
+export async function accionesBolsaAPI(){
+    const endpointURL = '/dashboard/';
+
+    showLoaderContainer('loader-wrapper-acciones-bolsa','body-acciones-bolsa'); // Mostrar el loader antes de la solicitud
+
+    try {
+        const response = await fetch(endpointURL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-CSRFToken": getCookie("csrftoken"),
+            },
+            body:JSON.stringify( {
+                "Titulo": "Bolsa Acciones",
+            }),
+        }).then(response => {
+            hideLoaderContainer('loader-wrapper-acciones-bolsa', 'body-acciones-bolsa'); // Ocultar el loader una vez que la petición se complete
+            return response;
+        });
+
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+    } finally {
+        hideLoaderContainer('loader-wrapper-autorizaciones-gastos'); // Ocultar el loader una vez que la petición se complete
+    }
+}
+
 export function showLoaderContainer(containerID, bodyID) {
     const loaderWrapper = document.getElementById(containerID);  // Selecciona un solo elemento
     const cardBody = document.getElementById(bodyID);  // Selecciona un solo elemento

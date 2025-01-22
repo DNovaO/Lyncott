@@ -285,12 +285,13 @@ function recargarDatosAPI(fecha, fechaFinal) {
                     if (response.fecha !== fecha_inicial_actual) {
                         fechaInput.value = response.fecha;
                         fecha_inicial_actual = response.fecha;
+                        console.log('Fechas actualizadas desde el API con:', response.fecha, response.fecha_final);
                     }
                     if (response.fecha_final !== fecha_final_actual) {
                         fechaInputFinal.value = response.fecha_final;
                         fecha_final_actual = response.fecha_final;
+                        console.log('Fechas actualizadas desde el API con:', response.fecha, response.fecha_final);
                     }
-                    console.log('Fechas actualizadas desde el API:', response.fecha, response.fecha_final);
                 } else {
                     console.log('El API no devolvió fechas. Se mantienen las actuales.');
                 }

@@ -1,10 +1,10 @@
-import { apiVentasYDevoluciones, estadisticasRapidas, distribucionVentas, autorizacionesGasto } from './dashboardApis.js';
+import { apiVentasYDevoluciones, estadisticasRapidas, distribucionVentas, autorizacionesGasto, accionesBolsaAPI } from './dashboardApis.js';
 
 import { manejarVentasYDevoluciones } from './manejoVentasDevoluciones.js';
 import { manejarEstadisticasRapidas } from './manejoEstadisticasRapidas.js';
 import { manejarDistribucionVentas } from './manejoDistribucionVentas.js';
 import { manejarAutorizacionesGasto } from './manejoAutorizacionesGastos.js';
-
+import { manejarAccionesBolsa } from './manejoAccionesBolsa.js';
 
 document.addEventListener('DOMContentLoaded', function () {
     showLoader();  // Mostrar el loader al iniciar
@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', function () {
         apiVentasYDevoluciones(),
         estadisticasRapidas(),
         distribucionVentas(),
-        autorizacionesGasto()
+        autorizacionesGasto(),
+        accionesBolsaAPI(),
     ];
 
     // Ejecutar cada promesa individualmente
@@ -54,6 +55,7 @@ function manejoDatosDashboard(data) {
         'Estadisticas Rapidas': manejarEstadisticasRapidas,
         'Distribucion de Ventas': manejarDistribucionVentas,
         'Autorizaciones de Gasto': manejarAutorizacionesGasto,
+        'Bolsa Acciones': manejarAccionesBolsa,
     };
 
     // Verifica si existe un manejador para el título y lo ejecuta

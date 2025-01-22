@@ -3,6 +3,7 @@ from django.shortcuts import render
 from .queries_dashboard.dashboard_ventas_contra_devoluciones import ventas_contra_devoluciones
 from .queries_dashboard.dasboard_estadisticas_rapidas import estadisticas_rapidas
 from .queries_dashboard.dashboard_distribucion_productos import distribucion_venta_productos, parse_date
+from .queries_dashboard.dashboard_bolsa_mercado import get_stock_data
 import json
 import gzip
 
@@ -103,7 +104,27 @@ def dashboard_view(request):
                     response['Content-Encoding'] = 'gzip'
 
                     return response
-                
+                elif data_json.get('Titulo') == "Bolsa Acciones":
+                    symbols = ["VOO", "IVV", "VNO", "MSFT", "GOOGL"]
+                    
+                    bolsa_acciones = {}
+
+                    for symbol in symbols:
+                        bolsa_acciones[symbol] = get_stock_data(symbol)
+
+                    data = {
+                        "status": "ok",
+                        "titulo": "Bolsa Acciones",
+                        "acciones": bolsa_acciones,
+                    }
+
+                    json_data = json.dumps(data)
+                    compressed_data = gzip.compress(json_data.encode('utf-8'))
+
+                    response = HttpResponse(compressed_data, content_type='application/json')
+                    response['Content-Encoding'] = 'gzip'
+
+                    return response
                 else:
                     return JsonResponse({"status": "error", "message": "Titulo no valido"}, status=400)
 
