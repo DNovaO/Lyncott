@@ -119,11 +119,11 @@ export async function distribucionVentas(fecha, fecha_final) {
     }
 }
 
-export async function autorizacionesGasto() {
+export async function tendenciaVentas(fecha, fecha_final) {
     // console.log('autorizacionesGasto');
     const endpointURL = '/dashboard/';
 
-    showLoaderContainer('loader-wrapper-autorizaciones-gastos','body-autorizaciones-gastos'); // Mostrar el loader antes de la solicitud
+    showLoaderContainer('loader-wrapper-tendencia_ventas','body-tendencia_ventas'); // Mostrar el loader antes de la solicitud
 
     try {
         const response = await fetch(endpointURL, {
@@ -134,10 +134,12 @@ export async function autorizacionesGasto() {
                 "X-CSRFToken": getCookie("csrftoken"),
             },
             body:JSON.stringify( {
-                "Titulo": "Autorizaciones de Gasto",
+                "Titulo": "Tendencia de Ventas",
+                "Fecha_inicial": fecha,
+                "Fecha_final": fecha_final,
             }),
         }).then(response => {
-            hideLoaderContainer('loader-wrapper-autorizaciones-gastos','body-autorizaciones-gastos'); // Ocultar el loader una vez que la petición se complete
+            hideLoaderContainer('loader-wrapper-tendencia_ventas','body-tendencia_ventas'); // Ocultar el loader una vez que la petición se complete
             
             return response;
         });

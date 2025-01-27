@@ -1,14 +1,22 @@
-export function inicializarFlatpickr(fechaInicial, fechaFinal, tipo = 'general') {
+export function inicializarFlatpickr(fechaInicial, fechaFinal, tipo) {
     // Identificadores dinámicos basados en el tipo
-    const fechaInicialId = tipo === 'productos' ? 'fecha_inicial_productos' : 'fecha_inicial';
-    const fechaFinalId = tipo === 'productos' ? 'fecha_final_productos' : 'fecha_final';
-    const iconoInicialId = tipo === 'productos' ? 'calendar-icon-inicial-producto' : 'calendar-icon-inicial';
-    const iconoFinalId = tipo === 'productos' ? 'calendar-icon-final-producto' : 'calendar-icon-final';
+    let fechaInicialId = tipo === 'productos' ? 'fecha_inicial_productos' : 'fecha_inicial';
+    let fechaFinalId = tipo === 'productos' ? 'fecha_final_productos' : 'fecha_final';
+    let iconoInicialId = tipo === 'productos' ? 'calendar-icon-inicial-producto' : 'calendar-icon-inicial';
+    let iconoFinalId = tipo === 'productos' ? 'calendar-icon-final-producto' : 'calendar-icon-final';
 
+    // Ajuste para el tipo 'tendencia'
+    fechaInicialId = tipo === 'tendencia' ? 'fecha_inicial_tendencia' : fechaInicialId;
+    fechaFinalId = tipo === 'tendencia' ? 'fecha_final_tendencia' : fechaFinalId;
+    iconoInicialId = tipo === 'tendencia' ? 'calendar-icon-inicial-tendencia' : iconoInicialId;
+    iconoFinalId = tipo === 'tendencia' ? 'calendar-icon-final-tendencia' : iconoFinalId;
+
+    // Obtener elementos del DOM
     const fechaInicialInput = document.getElementById(fechaInicialId);
     const fechaFinalInput = document.getElementById(fechaFinalId);
     const calendarIconInicial = document.getElementById(iconoInicialId);
     const calendarIconFinal = document.getElementById(iconoFinalId);
+
 
     console.log(`Desde inicializarFlatpickr (${tipo})`, fechaInicial, fechaFinal);
 
@@ -187,3 +195,31 @@ export function errorParametrosProductos(estado, mensaje = 'Ocurrió un error al
         }, 1000);
     }
 }
+
+export function errorParametrosTendencia(estado, mensaje = 'Ocurrió un error al procesar los parámetros.') {
+    
+    // Obtener el contenedor principal
+    const bodyVentaDevoluciones = document.getElementById('body-tendencia_ventas');
+    if (!bodyVentaDevoluciones) {
+        console.error('No se encontró el contenedor con id "body-tendencia_ventas".');
+        return;
+    }
+
+    // Limpiar alertas existentes
+    const alertas = document.querySelectorAll('.alertContainerTendencia');
+    alertas.forEach(alert => alert.remove());
+    
+    // Si el estado es true, agregar la alerta
+    if (estado) {
+        bodyVentaDevoluciones.insertAdjacentHTML('afterbegin', `
+            <div class="alert alert-danger fade show text-center" role="alert">
+                <strong>¡Oops!</strong> ${mensaje}
+            </div> 
+        `);
+
+        setTimeout(() => {
+            bodyVentaDevoluciones.querySelector('.alert').remove();
+        }, 1000);
+    }
+}
+

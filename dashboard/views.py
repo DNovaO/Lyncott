@@ -4,6 +4,7 @@ from .queries_dashboard.dashboard_ventas_contra_devoluciones import ventas_contr
 from .queries_dashboard.dasboard_estadisticas_rapidas import estadisticas_rapidas
 from .queries_dashboard.dashboard_distribucion_productos import distribucion_venta_productos, parse_date
 from .queries_dashboard.dashboard_bolsa_mercado import get_stock_data
+from .queries_dashboard.dashboard_tendencia_ventas import consultaTendenciaVentasDashboard
 import json
 import gzip
 
@@ -30,6 +31,9 @@ def dashboard_view(request):
                     fecha_final = data_json.get('Fecha_final')
                     
                     ventas_devoluciones = ventas_contra_devoluciones(fecha_inicial, fecha_final)
+                    
+                    fecha_inicial = parse_date(fecha_inicial)
+                    fecha_final = parse_date(fecha_final)
                     
                     data = {
                         "status": "ok",
@@ -87,14 +91,21 @@ def dashboard_view(request):
                     response['Content-Encoding'] = 'gzip'
 
                     return response
-                elif data_json.get('Titulo') == "Autorizaciones de Gasto":
+                elif data_json.get('Titulo') == "Tendencia de Ventas":
+                    fecha_inicial = data_json.get('Fecha_inicial')
+                    fecha_final = data_json.get('Fecha_final')
+    
+                    tendencia_ventas = consultaTendenciaVentasDashboard(fecha_inicial, fecha_final)
+
+                    fecha_inicial = parse_date(fecha_inicial)
+                    fecha_final = parse_date(fecha_final)
+                    
                     data = {
                         "status": "ok",
-                        "titulo": "Autorizaciones de Gasto",
-                        "asunto": "Viaje gastos",
-                        "gastos": 150,
-                        "fecha": "2021-10-10",
-                        "autorizacion": "Pendiente",
+                        "titulo": "Tendencia de Ventas",
+                        "tendencia_ventas": tendencia_ventas,
+                        "fecha": fecha_inicial,
+                        "fecha_final": fecha_final,
                     }
                     
                     json_data = json.dumps(data)

@@ -203,10 +203,8 @@ export function manejarVentasYDevoluciones(datos) {
                 if (fecha_inicial_actual && fecha_final_actual) {
                     fechaInput.value = fecha_inicial_actual;
                     fechaInputFinal.value = fecha_final_actual;
-
-                    console.log('fechas actuales desde el input:', fecha_inicial_actual, fecha_final_actual);
                 }
-
+        
                 // Configurar flatpickr si aún no está configurado
                 inicializarFlatpickr(fecha_inicial_actual, fecha_final_actual, 'general');
 
@@ -215,31 +213,31 @@ export function manejarVentasYDevoluciones(datos) {
                     btnActualizar.addEventListener('click', function () {
                         const fechaSeleccionada = fechaInput.value || fecha_inicial_actual;
                         const fechaFinalSeleccionada = fechaInputFinal.value || fecha_final_actual;
-                    
-                        console.log('Fecha seleccionada por el usuario:', fechaSeleccionada, fechaFinalSeleccionada);
-                    
-                        // Convertir fechas a objetos Date
-                        const fechaInicial = parseDate(fechaSeleccionada);
-                        const fechaFinal = parseDate(fechaFinalSeleccionada);
-                    
-                        // Validar si las fechas son válidas
-                        if (isNaN(fechaInicial) || isNaN(fechaFinal)) {
-                            errorParametros(true, 'Las fechas ingresadas no son válidas.');
-                            console.error('Fecha inválida:', fechaSeleccionada, fechaFinalSeleccionada);
-                            return;
+                        
+                        // Función para convertir una fecha en formato d-m-Y a un objeto Date
+                        function convertirAFecha(fechaStr) {
+                            const partes = fechaStr.split('-'); // Divide la fecha en día, mes y año
+                            const dia = parseInt(partes[0], 10); // Día
+                            const mes = parseInt(partes[1], 10) - 1; // Mes (0-indexado)
+                            const anio = parseInt(partes[2], 10); // Año
+                            return new Date(anio, mes, dia); // Devuelve el objeto Date
                         }
-                    
+                        
+                        // Convertir las fechas seleccionadas a objetos Date
+                        const fechaInicialDate = convertirAFecha(fechaSeleccionada);
+                        const fechaFinalDate = convertirAFecha(fechaFinalSeleccionada);
+                        
                         // Validar si la fecha inicial es mayor que la fecha final
-                        if (fechaInicial.getTime() > fechaFinal.getTime()) {
+                        if (fechaInicialDate > fechaFinalDate) {
+                            console.log('Fecha inicial mayor a la final:', fechaSeleccionada, fechaFinalSeleccionada);
                             errorParametros(true, 'La fecha inicial no puede ser mayor a la fecha final.');
-                            console.log('Fechas incorrectas: la fecha inicial es mayor que la fecha final');
                             return;
                         }
-                    
+    
                         // Limpiar cualquier error anterior y recargar datos
                         errorParametros(false);
                         recargarDatosAPI(fechaSeleccionada, fechaFinalSeleccionada);
-                    });                    
+                    });                                     
                 }
                 
 
@@ -258,7 +256,7 @@ export function manejarVentasYDevoluciones(datos) {
 
 function recargarDatosAPI(fecha, fechaFinal) {
     if (isReloading) {
-        console.log('Reload already in progress. Skipping this request.');
+        console.log('Ya se está recargando, se omite esta solicitud.');
         return;
     }
 
@@ -270,10 +268,12 @@ function recargarDatosAPI(fecha, fechaFinal) {
 
     console.log('Fechas enviadas para recarga:', fecha, fechaFinal);
 
+    // Muestra el loader y deshabilita los elementos mientras se realiza la petición
     showLoaderContainer('loader-wrapper-ventas', 'body-venta-devoluciones');
     fechaInput.disabled = true;
     fechaInputFinal.disabled = true;
     btnActualizar.disabled = true;
+
 
     apiVentasYDevoluciones(fecha, fechaFinal)
         .then(response => {
@@ -284,34 +284,31 @@ function recargarDatosAPI(fecha, fechaFinal) {
                 if (response.fecha && response.fecha_final) {
                     if (response.fecha !== fecha_inicial_actual) {
                         fechaInput.value = response.fecha;
-                        fecha_inicial_actual = response.fecha;
+                        fecha_inicial_actual = response.fecha; // Actualiza la variable global
                         console.log('Fechas actualizadas desde el API con:', response.fecha, response.fecha_final);
                     }
+
                     if (response.fecha_final !== fecha_final_actual) {
                         fechaInputFinal.value = response.fecha_final;
                         fecha_final_actual = response.fecha_final;
                         console.log('Fechas actualizadas desde el API con:', response.fecha, response.fecha_final);
                     }
                 } else {
-                    console.log('El API no devolvió fechas. Se mantienen las actuales.');
+                    console.log('El API no devolvió fechas válidas. Se mantienen los valores seleccionados.');
                 }
             } else {
-                console.error('Datos inválidos recibidos del API:', response);
+                console.error('Error: Respuesta inválida recibida del API:', response);
             }
         })
         .catch(error => {
-            console.error('Error al recargar los datos:', error);
+            console.error('Error al recargar los datos desde el API:', error);
         })
         .finally(() => {
+            // Restaura el estado de los elementos y oculta el loader
             hideLoaderContainer('loader-wrapper-ventas', 'body-venta-devoluciones');
             fechaInput.disabled = false;
             fechaInputFinal.disabled = false;
             btnActualizar.disabled = false;
-            isReloading = false; // Restablece el indicador de recarga
+            isReloading = false; // Indica que la recarga ha terminado
         });
-}
-
-function parseDate(fechaStr) {
-    const [day, month, year] = fechaStr.split('-').map(Number);
-    return new Date(year, month - 1, day); // Mes es 0-based
 }

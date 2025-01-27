@@ -1,9 +1,9 @@
-import { apiVentasYDevoluciones, estadisticasRapidas, distribucionVentas, autorizacionesGasto, accionesBolsaAPI } from './dashboardApis.js';
+import { apiVentasYDevoluciones, estadisticasRapidas, distribucionVentas, tendenciaVentas, accionesBolsaAPI } from './dashboardApis.js';
 
 import { manejarVentasYDevoluciones } from './manejoVentasDevoluciones.js';
 import { manejarEstadisticasRapidas } from './manejoEstadisticasRapidas.js';
 import { manejarDistribucionVentas } from './manejoDistribucionVentas.js';
-import { manejarAutorizacionesGasto } from './manejoAutorizacionesGastos.js';
+import { manejarTendenciaVentas } from './manejoTendenciaVentas.js';
 import { manejarAccionesBolsa } from './manejoAccionesBolsa.js';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
         apiVentasYDevoluciones(),
         estadisticasRapidas(),
         distribucionVentas(),
-        autorizacionesGasto(),
+        tendenciaVentas(),
         accionesBolsaAPI(),
     ];
 
@@ -54,7 +54,7 @@ function manejoDatosDashboard(data) {
         'Ventas y Devoluciones': manejarVentasYDevoluciones,
         'Estadisticas Rapidas': manejarEstadisticasRapidas,
         'Distribucion de Ventas': manejarDistribucionVentas,
-        'Autorizaciones de Gasto': manejarAutorizacionesGasto,
+        'Tendencia de Ventas': manejarTendenciaVentas,
         'Bolsa Acciones': manejarAccionesBolsa,
     };
 

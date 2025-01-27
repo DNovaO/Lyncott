@@ -9,7 +9,7 @@
         console.log('Datos desde el manejo del API de distribución de ventas:', data);
 
         if (!data || !data.distribucion_ventas) {
-            console.error('Dastos de ventas no válidos.');
+            console.error('Datos de ventas no válidos.');
             return;
         }
 
@@ -239,12 +239,27 @@ function actualizarContenedor(productos, ventas) {
             btnActualizar.addEventListener('click', function () {
                 const fechaSeleccionada = fechaInput.value || fecha_inicial_actual;
                 const fechaFinalSeleccionada = fechaInputFinal.value || fecha_final_actual;
-
-                if (new Date(fechaSeleccionada) > new Date(fechaFinalSeleccionada)) {
+                
+                // Función para convertir una fecha en formato d-m-Y a un objeto Date
+                function convertirAFecha(fechaStr) {
+                    const partes = fechaStr.split('-'); // Divide la fecha en día, mes y año
+                    const dia = parseInt(partes[0], 10); // Día
+                    const mes = parseInt(partes[1], 10) - 1; // Mes (0-indexado)
+                    const anio = parseInt(partes[2], 10); // Año
+                    return new Date(anio, mes, dia); // Devuelve el objeto Date
+                }
+                
+                // Convertir las fechas seleccionadas a objetos Date
+                const fechaInicialDate = convertirAFecha(fechaSeleccionada);
+                const fechaFinalDate = convertirAFecha(fechaFinalSeleccionada);
+                
+                // Validar si la fecha inicial es mayor que la fecha final
+                if (fechaInicialDate > fechaFinalDate) {
+                    console.log('Fecha inicial mayor a la final:', fechaSeleccionada, fechaFinalSeleccionada);
                     errorParametrosProductos(true, 'La fecha inicial no puede ser mayor a la fecha final.');
                     return;
                 }
-
+                
                 errorParametrosProductos(false);
                 recargarDatosProductosAPI(fechaSeleccionada, fechaFinalSeleccionada);
             });

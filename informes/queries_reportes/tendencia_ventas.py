@@ -28,6 +28,7 @@ def consultaTendenciaVentas(fecha_inicial, fecha_final):
                     WHEN DATEPART(dw, KDM1.C9) = 4 THEN 'Jueves'
                     WHEN DATEPART(dw, KDM1.C9) = 5 THEN 'Viernes'
                     WHEN DATEPART(dw, KDM1.C9) = 6 THEN 'Sabado'
+                    WHEN DATEPART(dw, KDM1.C9) = 7 THEN 'Domingo'
                     ELSE '-'
                 END AS dia,
                 FORMAT(KDM1.C9, 'dd/MM/yyyy') AS fecha,
