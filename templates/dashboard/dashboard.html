@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"/>
     <link rel="stylesheet" href="{% static 'styles/styleDashboard.css' %}" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/> 
 
   </head>
   <body>
@@ -100,14 +102,17 @@
               <div class="card h-100 shadow-sm">
                 <div class="card-header card-header-custom-4 text-white">
                   <h3 class="card-title mb-0">Estadísticas rápidas</h3>
+              
+                  <button id="boton-ayuda" class="btn-help" title="Ayuda" onclick="iniciarGuiaDashboard()">
+                    <strong>?</strong>
+                  </button>
                 </div>
                 <div id="body-estadisticas-rapidas" class="card-body">
                   <div id="loader-wrapper-estadisticas-rapidas" class="loader-wrapper"></div>
                   <div id="alertContainer" class="alert alert-danger mt-3 w-50 mx-auto text-center" style="display: none;"></div>
                   <ul id="resumen-estadisticas-rapidas" class="list-group list-group-flush">
                     <!-- En base a datos reportados de manera anual se deben de obtener las estadisticas mas rapidas como ventas, devoluciones, kilos vendidos, etc. Sin gráfica. -->
-                  </ul>
-                  
+                  </ul> 
                 </div>
               </div>
             </div>
@@ -152,15 +157,13 @@
                   </div>
                   <div id="alertContainerTendencia" class="alert alert-danger mt-3 w-50 mx-auto text-center" style="display: none;"></div>
                 </div>
-
-                <div class="tendenciaChart-container d-flex flex-column justify-content-center mb-2" style="flex: 1.5; position: relative;">
+                <div id="tendenciaChart-container" class="tendenciaChart-container d-flex flex-column justify-content-center mb-2" style="flex: 1.5; position: relative;">
                   <canvas id="tendenciaChart"></canvas>
                 </div>
 
                 <div id="resumen-graficaTendencia-numeros" class="data-container mb-3 mb-md-0 d-flex flex-column justify-content-center" style="flex: 0.5;">
                   <br></br>
-                </div>
-
+                </div>                
               </div>
             </div>
           </div>
@@ -213,6 +216,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="{% static 'scripts/scriptsDashboard/guiaDashboard.js' %}"></script> 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   </body>

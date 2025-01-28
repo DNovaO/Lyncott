@@ -26,6 +26,8 @@ export function manejarEstadisticasRapidas(datos) {
     const renderizarPagina = () => {
         // Limpiar el contenedor antes de renderizar nuevos datos
         contenedor.innerHTML = `
+            <h4 class="mb-1 text-center">Resumen de periodo mensual</h4>
+
             <ul id="resumen-estadisticas-rapidas" class="list-group list-group-flush"></ul>
             
             <nav class="pagination-wrapper" aria-label="Controles de paginación">
