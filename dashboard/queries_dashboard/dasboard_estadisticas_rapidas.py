@@ -1,7 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from django.db import connection
-
+import calendar
 
 def estadisticas_rapidas():
     print("Estadisticas Rapidas")
@@ -10,7 +10,7 @@ def estadisticas_rapidas():
     ventas_kilos_resultado = ventas_kilos(fecha='2024-01-01', fecha_final='2024-01-31')
     devoluciones_totales_resultado = devoluciones_totales(fecha='2024-01-01', fecha_final='2024-01-31')
     notas_credito_resultado = notas_credito(fecha='2024-01-01', fecha_final='2024-01-31')
-    ventas_por_sucursal_resultado = ventas_por_sucursal(fecha='2024-01-01', fecha_final='2024-01-31')
+    ventas_por_sucursal_resultado = ventas_por_sucursal()
     ingresos_resultado = 0
     
     return [ventas_totales_resultado, ventas_kilos_resultado, devoluciones_totales_resultado, notas_credito_resultado, ventas_por_sucursal_resultado,ingresos_resultado]
@@ -22,8 +22,21 @@ def ventas_totales(fecha=None, fecha_final=None):
     print(f" Fecha Final: {fecha_final}")
     
     # Establecer la fecha por defecto si no se pasa ninguna
-    fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
-    fecha_final_parseada = parse_date(fecha_final) or '2024-01-31'
+    # Obtener fechas por defecto (primer y último día del mes actual)
+    hoy = datetime.today()
+    primer_dia_mes = hoy.replace(day=1)
+    ultimo_dia_mes = primer_dia_mes.replace(
+        day=calendar.monthrange(primer_dia_mes.year, primer_dia_mes.month)[1]
+    )
+
+    # Establecer fechas si no se proporcionan
+    if not fecha:
+        fecha = primer_dia_mes.strftime('%d-%m-%Y')
+    if not fecha_final:
+        fecha_final = ultimo_dia_mes.strftime('%d-%m-%Y')
+
+    fecha_inicial_parseada = parse_date(fecha)
+    fecha_final_parseada = parse_date(fecha_final)
     
     with connection.cursor() as cursor:
         query_ventas_indivuales = """
@@ -63,8 +76,21 @@ def devoluciones_totales(fecha=None, fecha_final=None):
     print(f" Fecha Final: {fecha_final}")
     
     # Establecer la fecha por defecto si no se pasa ninguna
-    fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
-    fecha_final_parseada = parse_date(fecha_final) or '2024-01-31'
+    # Obtener fechas por defecto (primer y último día del mes actual)
+    hoy = datetime.today()
+    primer_dia_mes = hoy.replace(day=1)
+    ultimo_dia_mes = primer_dia_mes.replace(
+        day=calendar.monthrange(primer_dia_mes.year, primer_dia_mes.month)[1]
+    )
+
+    # Establecer fechas si no se proporcionan
+    if not fecha:
+        fecha = primer_dia_mes.strftime('%d-%m-%Y')
+    if not fecha_final:
+        fecha_final = ultimo_dia_mes.strftime('%d-%m-%Y')
+
+    fecha_inicial_parseada = parse_date(fecha)
+    fecha_final_parseada = parse_date(fecha_final)
     
     with connection.cursor() as cursor:
         query_ventas_indivuales = """
@@ -98,8 +124,21 @@ def ventas_kilos(fecha=None, fecha_final=None):
     print("estadisticas_rapidas: ventas_kilos")
         
     # Establecer la fecha por defecto si no se pasa ninguna
-    fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
-    fecha_final_parseada = parse_date(fecha_final) or '2024-01-31'
+    # Obtener fechas por defecto (primer y último día del mes actual)
+    hoy = datetime.today()
+    primer_dia_mes = hoy.replace(day=1)
+    ultimo_dia_mes = primer_dia_mes.replace(
+        day=calendar.monthrange(primer_dia_mes.year, primer_dia_mes.month)[1]
+    )
+
+    # Establecer fechas si no se proporcionan
+    if not fecha:
+        fecha = primer_dia_mes.strftime('%d-%m-%Y')
+    if not fecha_final:
+        fecha_final = ultimo_dia_mes.strftime('%d-%m-%Y')
+
+    fecha_inicial_parseada = parse_date(fecha)
+    fecha_final_parseada = parse_date(fecha_final)
     
     with connection.cursor() as cursor:
         query_ventas_indivuales = """
@@ -144,8 +183,22 @@ def notas_credito(fecha=None, fecha_final=None):
     print("estadisticas_rapidas: notas_credito")
     
     # Establecer la fecha por defecto si no se pasa ninguna
-    fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
-    fecha_final_parseada = parse_date(fecha_final) or '2024-01-31'
+    # Obtener fechas por defecto (primer y último día del mes actual)
+    hoy = datetime.today()
+    primer_dia_mes = hoy.replace(day=1)
+    ultimo_dia_mes = primer_dia_mes.replace(
+        day=calendar.monthrange(primer_dia_mes.year, primer_dia_mes.month)[1]
+    )
+
+    # Establecer fechas si no se proporcionan
+    if not fecha:
+        fecha = primer_dia_mes.strftime('%d-%m-%Y')
+    if not fecha_final:
+        fecha_final = ultimo_dia_mes.strftime('%d-%m-%Y')
+
+    fecha_inicial_parseada = parse_date(fecha)
+    fecha_final_parseada = parse_date(fecha_final)
+    
     
     with connection.cursor() as cursor:
         query_ventas_indivuales = """
@@ -170,12 +223,15 @@ def notas_credito(fecha=None, fecha_final=None):
 
     return result
 
-def ventas_por_sucursal(fecha=None, fecha_final=None):
+def ventas_por_sucursal():
     print("estadisticas_rapidas: ventas_por_sucursal")
     
-    # Establecer la fecha por defecto si no se pasa ninguna
-    fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
-    fecha_final_parseada = parse_date(fecha_final) or '2024-01-31'
+    
+    # fecha_inicial_parseada = datetime.today().replace(day=1).strftime('%Y-%m-%d')
+    # fecha_final_parseada = datetime.today().strftime('%Y-%m-%d')
+    
+    fecha_inicial_parseada = '2024-01-01'
+    fecha_final_parseada = '2024-01-31'
     
     with connection.cursor() as cursor:
         query_ventas_indivuales = """
@@ -224,9 +280,6 @@ def ventas_por_sucursal(fecha=None, fecha_final=None):
                     row[key] = float(value)
 
     return result
-    
-
-
     
 def parse_date(date_str):
     if not date_str:

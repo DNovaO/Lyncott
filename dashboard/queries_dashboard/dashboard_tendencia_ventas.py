@@ -1,7 +1,7 @@
-# Description: Consulta de tendencia ventas para el dashboard
 from decimal import Decimal
 from datetime import datetime
 from django.db import connection
+import calendar
 
 def consultaTendenciaVentasDashboard(fecha=None, fecha_final=None):
 
@@ -9,11 +9,23 @@ def consultaTendenciaVentasDashboard(fecha=None, fecha_final=None):
     print(f"Fecha Final: {fecha_final}")
     
     # Establecer la fecha por defecto si no se pasa ninguna
-    fecha_inicial_parseada = parse_date(fecha) or '2024-01-01'
-    fecha_final_parseada = parse_date(fecha_final) or '2024-01-31'
+    # Obtener fechas por defecto (primer y último día del mes actual)
     
-    print(f"Fecha Inicial Parseada: {fecha_inicial_parseada}")
-    print(f"Fecha Final Parseada: {fecha_final_parseada}")
+    # hoy = datetime.today()
+    # primer_dia_mes = hoy.replace(day=1)
+    # ultimo_dia_mes = primer_dia_mes.replace(
+    #     day=calendar.monthrange(primer_dia_mes.year, primer_dia_mes.month)[1]
+    # )
+
+    # # Establecer fechas si no se proporcionan
+    # if not fecha:
+    #     fecha = primer_dia_mes.strftime('%d-%m-%Y')
+    # if not fecha_final:
+    #     fecha_final = ultimo_dia_mes.strftime('%d-%m-%Y')
+
+    fecha_inicial_parseada = parse_date(fecha) or '01-01-2024'
+    fecha_final_parseada = parse_date(fecha_final) or '01-31-2024'
+    
 
     with connection.cursor() as cursor:
         query_tendencia_ventas = f"""

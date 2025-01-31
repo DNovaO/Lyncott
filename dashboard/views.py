@@ -5,12 +5,14 @@ from .queries_dashboard.dasboard_estadisticas_rapidas import estadisticas_rapida
 from .queries_dashboard.dashboard_distribucion_productos import distribucion_venta_productos, parse_date
 from .queries_dashboard.dashboard_bolsa_mercado import get_stock_data
 from .queries_dashboard.dashboard_tendencia_ventas import consultaTendenciaVentasDashboard
+# from .queries_dashboard.alta_usuarios import importar_usuarios
 import json
 import gzip
 
 def dashboard_view(request):
     if request.headers.get('Accept') == 'application/json':
         if request.method == "POST":
+            # importar_usuarios()
             try:
                 # Validar que el cuerpo no esté vacío
                 if not request.body:

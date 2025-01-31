@@ -95,7 +95,7 @@
                   {% csrf_token %}
                   <div id="alertContainer" class="alert alert-danger mt-3" style="display: none;"></div>
   
-                  <div class="form-group mt-3">
+                  <div class="form-group mt-5">
                     <label
                       for="categoriaReporte"
                       style="font-size: 1.25rem; font-weight: 500"
@@ -115,7 +115,7 @@
                       {% endfor %}
                     </select>
                   </div>
-                  <div class="form-group mt-4">
+                  <div class="form-group mt-5">
                     <label for="tipoReporte" style="font-size: 1.25rem;  font-weight: 500;"
                       >Tipo de reporte</label
                     >
@@ -131,7 +131,7 @@
                   </div>
                   <button
                     type="submit"
-                    class="btn btn-dark custom-btn max-content d-flex mt-3" style ="margin: 0 auto;"
+                    class="btn btn-dark custom-btn max-content d-flex mt-5" style ="margin: 0 auto;"
                     id = "btnBuscarReporte"
                     onclick="return validarFormulario()"
                   >
